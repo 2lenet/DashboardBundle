@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="dashboard">
+                <source>dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="available_widgets">
+                <source>available_widgets</source>
+                <target>Available widgets</target>
+            </trans-unit>
+            <trans-unit id="widget.loading">
+                <source>widget.loading</source>
+                <target>Loading</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

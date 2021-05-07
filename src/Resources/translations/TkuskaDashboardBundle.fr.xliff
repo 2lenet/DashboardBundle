@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="dashboard">
+                <source>dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="available_widgets">
+                <source>available_widgets</source>
+                <target>Ajouter un widget</target>
+            </trans-unit>
+            <trans-unit id="widget.editTitle">
+                <source>widget.editTitle</source>
+                <target>Modifier le titre</target>
+            </trans-unit>
+            <trans-unit id="widget.deleteWidget">
+                <source>widget.deleteWidget</source>
+                <target>Supprimer le widget</target>
+            </trans-unit>
+            <trans-unit id="widget.configWidget">
+                <source>widget.configWidget</source>
+                <target>Configuration du widget</target>
+            </trans-unit>
+            <trans-unit id="widget.saveConfig">
+                <source>widget.saveConfig</source>
+                <target>Enregistrer</target>
+            </trans-unit>
+            <trans-unit id="widget.defaultConfig">
+                <source>widget.defaultConfig</source>
+                <target>Configuration par défaut</target>
+            </trans-unit>
+            <trans-unit id="reset_widgets">
+                <source>reset_widgets</source>
+                <target>Widgets par défaut</target>
+            </trans-unit>
+            <trans-unit id="widget.loading">
+                <source>widget.loading</source>
+                <target>Chargement en cours</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -1,0 +1,21 @@
+.grid-stack > .grid-stack-item > .grid-stack-item-content {
+    overflow-y: hidden !important;
+}
+
+.grid-stack .panel-default {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+}
+
+.show-hover {
+    display: none;
+    max-height: 20px;
+}
+
+.panel-heading:hover .show-hover {
+    display: block;
+}
+
+.panel-body {
+    height: calc(100% - 42px);
+    overflow-y: scroll;
+}

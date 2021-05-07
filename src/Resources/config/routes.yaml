@@ -1,0 +1,4 @@
+dashbord_routes:
+    resource: '@LleDashboardBundle/Controller/DashboardController.php'
+    prefix: /dashboard
+    type: annotation

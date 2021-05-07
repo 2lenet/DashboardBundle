@@ -1,0 +1,23 @@
+{
+    "name": "2lenet/dashboard2-bundle",
+    "type": "symfony-bundle",
+    "description": "Dashboard bundle 2, widgets",
+    "keywords": ["dashboard"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "HEITZMANN Sébastien",
+            "email": "2le@2le.net"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "friendsofsymfony/jsrouting-bundle": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lle\\DashboardBundle\\": "src/",
+        }
+    },
+    "minimum-stability": "dev"
+}

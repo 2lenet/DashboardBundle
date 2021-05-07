@@ -1,0 +1,11 @@
+{% extends '@LleDashboard/widget/base_widget.html.twig' %}
+
+{% block widget_body %}
+    <div class="panel-body text-center">
+        <i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
+        <span class="sr-only">{{ 'widget.loading'|trans(domain='LleDashboardBundle') }}</span>
+    </div>
+{% endblock %}
+
+{% block widget_config %}
+{% endblock %}
