@@ -6,13 +6,6 @@ This bundle provides a dashboard with customizable widgets.
 
 ## Setting up the bundle
 
-Add this to services.yaml
-```yaml
-App\Widgets\:
-        resource: '../src/Widgets'
-        tags: ['lle_dashboard.widget']
-```
-
 Add this to routes.yaml
 ```yaml
 dashboard_widgets:
