@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="available_widgets">
                 <source>available_widgets</source>
-                <target>Available widgets</target>
+                <target>Add a widget</target>
             </trans-unit>
             <trans-unit id="widget.loading">
                 <source>widget.loading</source>

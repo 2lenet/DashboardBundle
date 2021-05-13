@@ -4,248 +4,50 @@
 
 {% block head_stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css"/>
-    <link rel="stylesheet" href="{{ asset('bundles/Lledashboard/css/main.css') }}" />
-    <script src="{{ asset('bundles/Lledashboard/js/json-editor.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('bundles/lledashboard/dashboard/app.css') }}"/>
+    {# <script src="{{ asset('bundles/Lledashboard/js/json-editor.min.js') }}"></script> #}
 {% endblock %}
 
 {% block head_javascript %}
     {{ parent() }}
-    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
-    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.js'></script>
-    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.jQueryUI.min.js'></script>
+    <script src="{{ asset('bundles/lledashboard/dashboard/app.js') }}"></script>
 {% endblock %}
 
 {% block main %}
     {{ parent() }}
-
     <div class="page-header">
-        <h2 class="title">{{ 'dashboard'|trans(domain='messages')}}
-            <div class="btn-group pull-right">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ 'available_widgets'|trans(domain='LleDashboardBundle') }}
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                {% for type, widget_type in widget_types %}
-                    {% if widget_type.support() %}
-                    <li>
-                        <a href="#" onclick="addWidget('{{ widget_type.type }}')">
-                            {{ widget_type.name|trans }}
-                        </a>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-                    <li>
-                        <a href="{{ path('delete_my_widgets') }}">
+        <div class="row align-items-center">
+            <div class="col-sm mb-2 mb-sm-0">
+                <h2 class="page-header-title text-primary">{{ 'dashboard'|trans(domain='messages') }}</h2>
+            </div>
+
+            <div class="col-sm-auto">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" role="button" id="dropdownMenuButton"
+                       data-toggle="dropdown">
+                        {{ 'available_widgets'|trans(domain='LleDashboardBundle') }}
+                    </button>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for type, widget_type in widget_types %}
+                            {% if widget_type.support() %}
+                                <a class="dropdown-item add-widget" href="#" data-type="{{ widget_type.type }}">
+                                    {{ widget_type.name|trans }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                        <a class="dropdown-item" href="{{ path('delete_my_widgets') }}">
                             {{ 'reset_widgets'|trans(domain='LleDashboardBundle') }}
                         </a>
-                    </li>
-                </ul>
-            </div>
+                    </div>
+                </div>
 
-            <div class="pull-right">
-                <i id="gs-spin" class="fa fa-pulse"></i>
-                &nbsp;
-                &nbsp;
-                &nbsp;
             </div>
-        </h2>
+        </div>
     </div>
 
-    <script>
-        $(function () {
-            $('.grid-stack').gridstack({
-                width: 12,
-                animate: true,
-                float: true,
-                handleClass: 'panel-heading',
-                alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-                resizable: {
-                    // Don't put handles on the sizes so the user can still interact with scroll bars
-                    handles: 'se, sw, ne, nw'
-                }
-            });
-            grid = $('.grid-stack').data('gridstack');
-            grid.disable();
-        });
-    </script>
-
-    <div id="grid-stack" class="grid-stack" data-gs-animate="yes">
-        <script>
-            var widgetsRendered = 0;
-            {% for widget in widgets %}
-              {% if widget.support() %}
-                {% if widget.supportsAjax() %}
-
-                    {# Dynamically load the widget. #}
-                    $(function() {
-
-
-                        var grid = $('.grid-stack').data('gridstack');
-
-                        var emptyWidget = $("{{ include('@LleDashboard/widget/empty_widget.html.twig', { widget: widget}) | escape("js") }}");
-                        grid.addWidget(emptyWidget);
-
-                        $.ajax({
-                            url: Routing.generate('render_widget', {id: {{ widget.id }}}),
-                            success: function (response) {
-
-                                // Update the grid
-                                grid.removeWidget(emptyWidget, true);
-                                grid.addWidget(response);
-
-                                addWidgetListeners({{ widget.id }});
-                            },
-                            complete: function(response) {
-                                // When all widgets are rendered, enable ability for grid to change
-                                // do this in 'complete' so if some widgets have an error, still allow grid editing
-                                widgetsRendered++;
-                                if (widgetsRendered == {{ widgets|length }}) {
-                                    enableGridChanges();
-                                }
-                            }
-                        });
-                    });
-                {% else %}
-                    {# Directly load the widget#}
-                    $(function() {
-                        // Update the grid
-                        var grid = $('.grid-stack').data('gridstack');
-                        var widget = $("{{ widget.render() | escape("js") }}");
-                        grid.addWidget(widget);
-
-                        addWidgetListeners({{ widget.id }});
-                        // When all widgets are rendered, enable ability for grid to change
-                        // do this in 'complete' so if some widgets have an error, still allow grid editing
-                        widgetsRendered++;
-                        if (widgetsRendered == {{ widgets|length }}) {
-                            enableGridChanges();
-                        }
-                    });
-                {% endif %}
-              {% endif %}
-            {% endfor %}
-        </script>
-    </div>
+    <div class="grid-stack" data-gs-animate="yes" data-widgets="{{ widgets_data|json_encode|e('html_attr') }}"></div>
 
     <div style="height: 300px"></div>
 
-{% endblock %}
-
-
-{% block body_javascript %}
-
-    <script type="text/javascript">
-
-        // Add a widget to the grid & database (different from grid.addWidget)
-        function addWidget(type) {
-            toggleSpin();
-            $.ajax({
-                url: Routing.generate('add_widget', {type: type}),
-                success: function (response) {
-
-                    // Update the grid
-                    var grid = $('.grid-stack').data('gridstack');
-                    grid.addWidget(response);
-
-                    addWidgetListeners($(response).data('widget-id'));
-                    enableGridChanges();
-                },
-                complete: function (response) {
-                    toggleSpin();
-                }
-            });
-        }
-
-        // Add the event listeners for the buttons of the widget.
-        function addWidgetListeners(id) {
-
-            var grid = $('.grid-stack').data('gridstack');
-
-            // Close widget button
-            $('#close_' + id).click(function () {
-                var widget = $(this).closest('.grid-stack-item');
-                var id = widget.data('widget-id');
-                $.ajax(Routing.generate('remove_widget', {id: id}));
-                grid.removeWidget(widget);
-            });
-
-            // Configure widget button
-            $('#config_' + id).click(function () {
-
-                // toggle visibility
-                toggleConfigPanel($(this), id);
-            });
-
-            // Edit widget custom title
-            $(' #edit_' + id).click(function () {
-                editTitle($(this).siblings('#widget_title'));
-            });
-            $('span[data-widget-title-dblclick="true"]').dblclick(function () {
-                editTitle($(this));
-            })
-        }
-
-        // Edit the title of a widget.
-        function editTitle(title) {
-
-            // SCENE
-            var container = title.closest('div');
-            var newContainer = container.clone(true);
-
-            // FORM CONTROL
-            var input = $('<input></input>')
-                .attr('type', 'text')
-                .attr('value', title.text().trim())
-                .addClass('pull-left form-control')
-                .css('width', '15%')
-                .css('min-width', '150px');
-            var form = $('<form></form>').append(input).attr('action', '#');
-
-            var id = $(title).closest('.grid-stack-item').data('widget-id');
-
-            // user presses enter
-            form.submit(function() {
-                $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-                $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-                form.replaceWith(newContainer);
-            })
-
-            // user focuses out
-            input.blur(function() {
-                $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-                $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-                form.replaceWith(newContainer);
-            })
-
-            // show input and focus
-            container.replaceWith(form);
-            input.focus()[0].setSelectionRange(99999, 99999);;
-        }
-
-        function toggleSpin() {
-            $("#gs-spin").toggleClass("fa-circle-o-notch");
-        }
-
-        function toggleConfigPanel(cogButton, id) {
-            cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
-            $("#form_" + id).toggle();
-        }
-
-        function enableGridChanges() {
-            // When a widget is moved or resized
-            $('.grid-stack').on('change', function (e, items) {
-                $.each(items, function (index, element) {
-                    var id = element.el.data('widget-id');
-                    $.ajax(Routing.generate('update_widget', {id: id, x: element.x, y: element.y, width: element.width, height: element.height}));
-                })
-            });
-            grid = $('.grid-stack').data('gridstack');
-            grid.enable();
-        }
-
-    </script>
 {% endblock %}

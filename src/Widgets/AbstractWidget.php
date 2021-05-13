@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 use Lle\DashboardBundle\Form\Type\JsonType;
 use Lle\DashboardBundle\Entity\Widget;
-use Lle\DashboardBundle\Widget\WidgetTypeInterface;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 
 /**
  * Description of CalendarWidget.

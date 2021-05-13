@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Lle\DashboardBundle\WidgetProvider;
+use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Entity\Widget;
 
 /**
@@ -193,7 +193,6 @@ class DashboardController extends AbstractController
     {
         $user = $this->getUser();
         $widgetTypes = $provider->getWidgetTypes();
-
         if ($user) {
             $widgets = $provider->getMyWidgets();
 
@@ -206,8 +205,22 @@ class DashboardController extends AbstractController
             $widgets = [];
         }
 
+        $widgets_view = [];
+        foreach ($widgets as $w) {
+            $widgets_view[] = [
+                "id"=>$w->getId(),
+                "x"=>$w->getX(),
+                "y"=>$w->getY(),
+                "w"=>$w->getWidth(),
+                "h"=>$w->getHeight(),
+                "content"=>$w->render(),
+                "config"=>$w->getConfig(),
+                "title"=>$w->getTitle()
+            ];
+        }
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
-            "widgets" => $widgets,
+            "widgets_data" => $widgets_view,
+            "widgets" =>$widgets,
             "widget_types" => $widgetTypes,
         ));
     }

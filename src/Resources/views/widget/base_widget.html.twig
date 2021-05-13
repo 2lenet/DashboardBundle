@@ -1,42 +1,37 @@
-<div class="grid-stack-item" id="widget_{{ widget.id }}" data-gs-x="{{ widget.x }}" data-gs-y="{{ widget.y }}" data-gs-width="{{ widget.width }}" data-gs-height="{{ widget.height }}" data-widget-type="{{ widget.type }}" data-widget-id="{{ widget.id }}">
-    <div class="panel panel-default grid-stack-item-content">
+<div class="grid-stack-item" id="widget_{{ widget.id }}" gs-id="{{ widget.id }}">
+    <div class="card border-primary grid-stack-item-content">
 
-        <div class="panel-heading clearfix" style="position: sticky; top: 0; z-index: 1;">
-            <div class="pull-left">
-                <span id="widget_title" data-widget-title-dblclick="true">
+        <div class="card-header text-primary">
+            <div class="float-start">
+                <h5 class="card-title" data-widget-title-dblclick="true">
                     {% block widget_title %}
                         {{ widget.title|default(widget.name|trans) }}
                     {% endblock widget_title %}
-                    &nbsp;
-                </span>
-                <button type="button" class="close show-hover" aria-label="Edit" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}">
-                    <span class="fa fa-pen"></span>
-                </button>
+                    <span class="fa fa-pen show-hover" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></span>
+                </h5>
             </div>
 
-            <div class="pull-right">
+            <div class="float-end">
                 {% block widget_buttons %}
                     {% block widget_close_button %}
-                        <button type="button" class="close show-hover" aria-label="Close" id="close_{{ widget.id }}" title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}">
-                            <span class="fa fa-close"></span>
-                        </button>
-                    {% endblock %}
-                    <span class="pull-right">&nbsp;&nbsp;</span>
+                        <span class="widget-close" data-widgetid="{{ widget.id }}">
+                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
+                        </span>
+                            {% endblock %}
+                    <span class="float-end">&nbsp;&nbsp;</span>
                     {% block widget_config_button %}
-                        <button type="button" class="close show-hover" aria-label="Configure" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}">
-                            <span class="fa fa-cog"></span>
-                        </button>
+                        <span class="fa fa-cog widget-config show-hover" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"></span>
                     {% endblock %}
                 {% endblock widget_buttons %}
             </div>
         </div>
 
         {% block widget_body %}
-            <div class="panel-body"></div>
+            <div class="card-body"></div>
         {% endblock widget_body %}
 
         {% block widget_config %}
-            <div id="form_{{ widget.id }}" style="display: none;" class="panel-body">
+            <div id="form_{{ widget.id }}" style="display: none;" class="card-body">
                 {# CONFIGURATION FORM #}
                 {% if form is defined and form %}
                     {% form_theme form '@LleDashboard/form/widgets.html.twig' %}
@@ -67,7 +62,7 @@
         {% endblock widget_config %}
 
         {% block widget_footer %}
-            {# <div class="panel-footer"></div> #}
+            {# <div class="card-footer"></div> #}
         {% endblock widget_footer %}
 
     </div>

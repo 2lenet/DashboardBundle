@@ -4,7 +4,7 @@ namespace Lle\DashboardBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Lle\DashboardBundle\Widget\WidgetTypeInterface;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 
 /**
  * @ORM\Table(name="widgets")

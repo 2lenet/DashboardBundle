@@ -16,8 +16,8 @@ services:
     Lle\DashboardBundle\Repository\:
         resource: '../../Repository/*'
 
-    Lle\DashboardBundle\WidgetProvider:
-        class: Lle\DashboardBundle\WidgetProvider
+    Lle\DashboardBundle\Service\WidgetProvider:
+        class: Lle\DashboardBundle\Service\WidgetProvider
         public: true
         arguments:
             - '@doctrine.orm.entity_manager'

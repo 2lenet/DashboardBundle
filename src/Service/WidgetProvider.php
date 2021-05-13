@@ -1,6 +1,6 @@
 <?php
 
-namespace Lle\DashboardBundle;
+namespace Lle\DashboardBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
