@@ -7,7 +7,9 @@
                     {% block widget_title %}
                         {{ widget.title|default(widget.name|trans) }}
                     {% endblock widget_title %}
+                    {#
                     <span class="fa fa-pen show-hover" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></span>
+                    #}
                 </h5>
             </div>
 
@@ -15,12 +17,15 @@
                 {% block widget_buttons %}
                     {% block widget_close_button %}
                         <span class="widget-close" data-widgetid="{{ widget.id }}">
-                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
+                            <span class="fa fa-trash show-hover"
+                                  title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
                         </span>
-                            {% endblock %}
+                    {% endblock %}
                     <span class="float-end">&nbsp;&nbsp;</span>
                     {% block widget_config_button %}
+                        {#
                         <span class="fa fa-cog widget-config show-hover" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"></span>
+                        #}
                     {% endblock %}
                 {% endblock widget_buttons %}
             </div>
@@ -40,7 +45,8 @@
                     {{ form_widget(form.Configuration, { 'id': id }) }}
                     {{ form_rest(form) }}
                     {# SUBMIT BUTTON #}
-                    <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">{{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}</button>
+                    <button id="submit_{{ widget.id }}" class="btn btn-primary"
+                            type="submit">{{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}</button>
                     {# RESET CONFIG BUTTON #}
                     <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
                         {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
@@ -48,7 +54,7 @@
                     {{ form_end(form) }}
                     <script>
                         {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
-                        window.editor{{ id }}.on("change",  function() {
+                        window.editor{{ id }}.on("change", function () {
                             $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
                         });
                     </script>
