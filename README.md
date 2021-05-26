@@ -51,9 +51,10 @@ If you use the widget configuration (getJsonSchema) you must pass the form to th
 This method renders the widget that is shown. All your logic should be in there.
 
 
-# cache
+# Widget cache
 
-by default the cache is enable, you can change timeout and key with
+The cache is enabled by default.
+You can change the timeout and the cache key with the following :
 
 ```php
 public function getCacheKey():string{
@@ -65,6 +66,6 @@ public function getCacheTimeout():int {
 }
 ```
 
-above you see the default return.
+In the example above, the cache lasts 300 s (5 minutes) and is invalidated if widget configuration changes.
 
-If you want disable the cache for a widget getCacheTimeout have to return 0.
+If you want to disable the cache for a widget, make sure getCacheTimeout returns 0.

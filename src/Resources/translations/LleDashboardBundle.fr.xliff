@@ -38,6 +38,18 @@
                 <source>widget.loading</source>
                 <target>Chargement en cours</target>
             </trans-unit>
+            <trans-unit id="dashboard.administration">
+                <source>dashboard.administration</source>
+                <target>Administration Dashboard</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.set_as_default">
+                <source>dashboard.administration.set_as_default</source>
+                <target>Mettre mon dashboard par défaut</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.delete_all">
+                <source>dashboard.administration.delete_all</source>
+                <target>Réinitialiser tous les dashboards</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -2,6 +2,7 @@
 
 namespace Lle\DashboardBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -223,6 +224,41 @@ class DashboardController extends AbstractController
             "widgets" =>$widgets,
             "widget_types" => $widgetTypes,
         ));
+    }
+
+    /**
+     * @Route("/dashboard/admin/default")
+     * @IsGranted("ROLE_SUPER_ADMIN")
+     *
+     * Sets the current user's dashboard as default dashboard
+     */
+    public function setMyDashboardAsDefault()
+    {
+        $user = $this->getUser();
+
+        if ($user) {
+            $repo = $this->em->getRepository(Widget::class);
+
+            $repo->deleteDefaultDashboard()->getQuery()->execute();
+            $repo->setDashboardAsDefault($user->getId())->getQuery()->execute();
+        }
+
+        return $this->redirectToRoute("homepage");
+    }
+
+    /**
+     * @Route("/dashboard/admin/reset-all")
+     * @IsGranted("ROLE_SUPER_ADMIN")
+     *
+     * Delete all dashboards (not the default one)
+     */
+    public function deleteAllUserDashboards()
+    {
+        $repo = $this->em->getRepository(Widget::class);
+
+        $repo->deleteAllUserDashboards()->getQuery()->execute();
+
+        return $this->redirectToRoute("homepage");
     }
 
     protected function getUser()
