@@ -14,6 +14,42 @@
                 <source>widget.loading</source>
                 <target>Loading</target>
             </trans-unit>
+            <trans-unit id="dashboard.administration">
+                <source>dashboard.administration</source>
+                <target>Dashboard administration</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.set_as_default">
+                <source>dashboard.administration.set_as_default</source>
+                <target>Set my dashboard as default</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.delete_all">
+                <source>dashboard.administration.delete_all</source>
+                <target>Reset all the dashboards</target>
+            </trans-unit>
+            <trans-unit id="widget.editTitle">
+                <source>widget.editTitle</source>
+                <target>Edit title</target>
+            </trans-unit>
+            <trans-unit id="widget.deleteWidget">
+                <source>widget.deleteWidget</source>
+                <target>Delete widget</target>
+            </trans-unit>
+            <trans-unit id="widget.configWidget">
+                <source>widget.configWidget</source>
+                <target>Widget configuration</target>
+            </trans-unit>
+            <trans-unit id="widget.saveConfig">
+                <source>widget.saveConfig</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="widget.defaultConfig">
+                <source>widget.defaultConfig</source>
+                <target>Default configuration</target>
+            </trans-unit>
+            <trans-unit id="reset_widgets">
+                <source>reset_widgets</source>
+                <target>Default widgets</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

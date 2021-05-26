@@ -3,6 +3,7 @@
 namespace Lle\DashboardBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -67,5 +68,39 @@ class WidgetRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Delete the default dashboard (i.e. widgets with user_id = null)
+     */
+    public function deleteDefaultDashboard(): QueryBuilder
+    {
+        return $this->createQueryBuilder("w")
+            ->delete()
+            ->andWhere("w.user_id IS NULL");
+    }
+
+    /**
+     * @param $userId the user
+     *
+     * Set user's widgets as default widgets
+     */
+    public function setDashboardAsDefault($userId): QueryBuilder
+    {
+        return $this->createQueryBuilder("w")
+            ->update()
+            ->set("w.user_id", "NULL")
+            ->andWhere("w.user_id = :userId")
+            ->setParameter("userId", $userId);
+    }
+
+    /**
+     * Delete all the widgets (not the default ones)
+     */
+    public function deleteAllUserDashboards(): QueryBuilder
+    {
+        return $this->createQueryBuilder("w")
+            ->delete()
+            ->andWhere("w.user_id IS NOT NULL");
     }
 }
