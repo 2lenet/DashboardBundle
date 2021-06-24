@@ -24,8 +24,7 @@
             {# Widget choice #}
             <div class="col-sm-auto">
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" role="button" id="dashboardDropdownWidget"
-                            data-toggle="dropdown">
+                    <button id="dashboardDropdownWidget" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {{ 'available_widgets'|trans(domain='LleDashboardBundle') }}
                     </button>
 
@@ -38,7 +37,7 @@
                             {% endif %}
                         {% endfor %}
                         <a class="dropdown-item" href="{{ path('delete_my_widgets') }}">
-                            {{ 'reset_widgets'| trans(domain='LleDashboardBundle') }}
+                            {{ 'reset_widgets'|trans(domain='LleDashboardBundle') }}
                         </a>
                     </div>
                 </div>
@@ -47,28 +46,25 @@
             {% if is_granted('ROLE_SUPER_ADMIN') %}
                 <div class="col-sm-auto">
                     <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" role="button" id="dashboardDropdownAdmin"
-                                data-toggle="dropdown">
-                            {{ 'dashboard.administration' | trans(domain='LleDashboardBundle') }}
+                        <button id="dashboardDropdownAdmin" class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ 'dashboard.administration'|trans(domain='LleDashboardBundle') }}
                         </button>
 
                         <div class="dropdown-menu" aria-labelledby="dashboardDropdownAdmin">
                             <a class="dropdown-item" href="{{ path('lle_dashboard_dashboard_setmydashboardasdefault') }}">
-                                {{ 'dashboard.administration.set_as_default' | trans(domain='LleDashboardBundle') }}
+                                {{ 'dashboard.administration.set_as_default'|trans(domain='LleDashboardBundle') }}
                             </a>
                             <a class="dropdown-item" href="{{ path('lle_dashboard_dashboard_deletealluserdashboards') }}">
-                                {{ 'dashboard.administration.delete_all' | trans(domain='LleDashboardBundle') }}
+                                {{ 'dashboard.administration.delete_all'|trans(domain='LleDashboardBundle') }}
                             </a>
                         </div>
                     </div>
                 </div>
             {% endif %}
-
         </div>
     </div>
 
     <div class="grid-stack" data-gs-animate="yes" data-widgets="{{ widgets_data|json_encode|e('html_attr') }}"></div>
 
     <div style="height: 300px"></div>
-
 {% endblock %}
