@@ -2,7 +2,17 @@ This bundle provides a dashboard with customizable widgets.
 
 ## Install
 
-`composer require 2lenet/dashboard-bundle`
+`composer.json` : 
+```
+"repositories": [
+    {
+        "url": "https://github.com/2lenet/DashboardBundle.git",
+        "type": "git"
+    }
+],
+```
+
+`composer require 2lenet/dashboard2-bundle`
 
 ## Setting up the bundle
 
