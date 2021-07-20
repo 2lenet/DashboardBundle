@@ -1,6 +1,5 @@
 <div class="grid-stack-item" id="widget_{{ widget.id }}" gs-id="{{ widget.id }}">
     <div class="card border-primary grid-stack-item-content">
-
         <div class="card-header text-primary">
             <div class="float-start">
                 <h5 class="card-title" data-widget-title-dblclick="true">
@@ -17,8 +16,7 @@
                 {% block widget_buttons %}
                     {% block widget_close_button %}
                         <span class="widget-close" data-widgetid="{{ widget.id }}">
-                            <span class="fa fa-trash show-hover"
-                                  title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
+                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
                         </span>
                     {% endblock %}
                     <span class="float-end">&nbsp;&nbsp;</span>
@@ -31,9 +29,9 @@
             </div>
         </div>
 
-        {% block widget_body %}
-            <div class="card-body"></div>
-        {% endblock widget_body %}
+        <div class="card-body">
+            {% block widget_body %}{% endblock widget_body %}
+        </div>
 
         {% block widget_config %}
             <div id="form_{{ widget.id }}" style="display: none;" class="card-body">
@@ -45,8 +43,9 @@
                     {{ form_widget(form.Configuration, { 'id': id }) }}
                     {{ form_rest(form) }}
                     {# SUBMIT BUTTON #}
-                    <button id="submit_{{ widget.id }}" class="btn btn-primary"
-                            type="submit">{{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}</button>
+                    <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">
+                        {{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}
+                    </button>
                     {# RESET CONFIG BUTTON #}
                     <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
                         {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
@@ -70,6 +69,5 @@
         {% block widget_footer %}
             {# <div class="card-footer"></div> #}
         {% endblock widget_footer %}
-
     </div>
 </div>
