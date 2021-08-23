@@ -12,7 +12,8 @@
     ],
     "require": {
         "php": ">=7.2",
-        "friendsofsymfony/jsrouting-bundle": "^2.2"
+        "friendsofsymfony/jsrouting-bundle": "^2.2",
+        "sensio/framework-extra-bundle": ">=5.2"
     },
     "autoload": {
         "psr-4": {
