@@ -23,3 +23,6 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@security.token_storage'
             - [!tagged lle_dashboard.widget]
+
+    Lle\DashboardBundle\Maker\MakeWidget:
+        tags: [maker.command]

@@ -30,7 +30,16 @@ php bin/console doc:mi:mi
 
 ## Making widgets
 
-All your widget classes will lie in src/Widgets/.
+####With  the maker:
+
+`php bin/console make:widget`
+
+Juste provide a short name for your widget and the maker will generate the class and the template for you.
+
+
+#### If you prefer do it yourself:
+
+All your widget classes will lie in src/Widget/.
 
 They must extend AbstractWidget.
 ```php

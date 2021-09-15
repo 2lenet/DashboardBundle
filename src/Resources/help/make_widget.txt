@@ -1,0 +1,5 @@
+The <info>%command.name%</info> command generates a class and template for a Widget
+
+<info>php %command.full_name% MyWidget</info>
+
+If the argument is missing, the command will ask for the parameters interactively.
