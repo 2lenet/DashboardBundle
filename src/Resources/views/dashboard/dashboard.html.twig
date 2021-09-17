@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block page_title %}Dashboard{% endblock %}
+{% block page_title %}{{ 'dashboard'|trans(domain='messages') }}{% endblock %}
 
 {% block head_stylesheets %}
     {{ parent() }}
