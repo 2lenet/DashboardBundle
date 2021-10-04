@@ -4,6 +4,7 @@ namespace Lle\DashboardBundle\Widgets;
 
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Twig_Environment as Environment;
 use Symfony\Component\Form\Forms;
@@ -54,6 +55,16 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @var string widget title
      */
     private $title;
+
+    private $security;
+
+    /**
+     * @required
+     */
+    public function setSecurity(AuthorizationCheckerInterface $security): void
+    {
+        $this->security = $security;
+    }
 
     public function getId()
     {
@@ -190,9 +201,14 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function support(): bool
+    public function supports(): bool
     {
-        return true;
+        $widgetName = (new \ReflectionClass($this))->getShortName();
+        $widgetName = preg_replace("/(?<!\ )[A-Z]/", "_$0", $widgetName);
+        $widgetName = strtoupper($widgetName);
+        $role = "ROLE_DASHBOARD" . $widgetName;
+
+        return $this->security->isGranted($role);
     }
 
     /**
