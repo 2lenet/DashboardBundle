@@ -66,7 +66,7 @@ interface WidgetTypeInterface
      *
      * Is the widget supported ?
      */
-    public function support(): bool;
+    public function supports(): bool;
 
     /**
      * @return bool

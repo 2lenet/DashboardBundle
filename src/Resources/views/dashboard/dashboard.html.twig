@@ -30,7 +30,7 @@
 
                     <div class="dropdown-menu" aria-labelledby="dashboardDropdownWidget">
                         {% for type, widget_type in widget_types %}
-                            {% if widget_type.support() %}
+                            {% if widget_type.supports() %}
                                 <a class="dropdown-item add-widget" href="#" data-type="{{ widget_type.type }}">
                                     {{ widget_type.name|trans }}
                                 </a>

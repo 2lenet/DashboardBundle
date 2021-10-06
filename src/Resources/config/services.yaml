@@ -26,3 +26,7 @@ services:
 
     Lle\DashboardBundle\Maker\MakeWidget:
         tags: [maker.command]
+
+    Lle\DashboardBundle\Widgets\AbstractWidget:
+        calls:
+            - setSecurity: ['@security.authorization_checker']
