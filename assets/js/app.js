@@ -104,7 +104,7 @@ onLoad(() => {
     });
 
     // save changes
-    grid.on('change', function (event, widgets) {
+    grid.on("change", function (event, widgets) {
 
         // Create EventHandler for widget update
         for (let widget of widgets) {
@@ -125,9 +125,11 @@ onLoad(() => {
     /**
      * Chargement des widgets
      */
-    let items = JSON.parse(document.querySelector(".grid-stack").dataset.widgets);
+    let container = document.querySelector(".grid-stack");
+    let items = JSON.parse(container.dataset.widgets);
 
     grid.load(items);
+    container.removeAttribute("data-widgets");
 
     // add widget button
     let options = document.querySelectorAll(".add-widget");
@@ -135,7 +137,7 @@ onLoad(() => {
         option.addEventListener("click", (e) => {
             toggleSpin();
             let type = e.target.dataset.type;
-            let url = Routing.generate('add_widget', {type: type});
+            let url = Routing.generate("add_widget", {type: type});
 
             fetch(url)
                 .then((response) => {

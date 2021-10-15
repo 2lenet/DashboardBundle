@@ -4806,7 +4806,7 @@ onLoad(function () {
     }
   }); // save changes
 
-  grid.on('change', function (event, widgets) {
+  grid.on("change", function (event, widgets) {
     // Create EventHandler for widget update
     var _iterator2 = _createForOfIteratorHelper(widgets),
         _step2;
@@ -4833,8 +4833,10 @@ onLoad(function () {
    * Chargement des widgets
    */
 
-  var items = JSON.parse(document.querySelector(".grid-stack").dataset.widgets);
-  grid.load(items); // add widget button
+  var container = document.querySelector(".grid-stack");
+  var items = JSON.parse(container.dataset.widgets);
+  grid.load(items);
+  container.removeAttribute("data-widgets"); // add widget button
 
   var options = document.querySelectorAll(".add-widget");
 
@@ -4847,7 +4849,7 @@ onLoad(function () {
       option.addEventListener("click", function (e) {
         toggleSpin();
         var type = e.target.dataset.type;
-        var url = Routing.generate('add_widget', {
+        var url = Routing.generate("add_widget", {
           type: type
         });
         fetch(url).then(function (response) {

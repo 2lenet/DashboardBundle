@@ -4,11 +4,6 @@ namespace Lle\DashboardBundle\Contracts;
 
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Description of WidgetInterface
- *
- * @author Tomasz Kuśka <tomasz.kuska@gmail.com>
- */
 interface WidgetTypeInterface
 {
     /**

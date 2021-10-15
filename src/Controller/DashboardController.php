@@ -6,11 +6,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -218,12 +216,13 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/dashboard/admin/default")
-     * @IsGranted("ROLE_SUPER_ADMIN")
      *
      * Sets the current user's dashboard as default dashboard
      */
     public function setMyDashboardAsDefault()
     {
+        $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
+
         $user = $this->getUser();
 
         if ($user) {
@@ -238,12 +237,13 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/dashboard/admin/reset-all")
-     * @IsGranted("ROLE_SUPER_ADMIN")
      *
      * Delete all dashboards (not the default one)
      */
     public function deleteAllUserDashboards()
     {
+        $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
+
         $repo = $this->em->getRepository(Widget::class);
 
         $repo->deleteAllUserDashboards()->getQuery()->execute();
