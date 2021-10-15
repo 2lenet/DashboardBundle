@@ -18,7 +18,10 @@
     <div class="page-header">
         <div class="row align-items-center">
             <div class="col-sm mb-2 mb-sm-0">
-                <h2 class="page-header-title text-primary">{{ 'dashboard'|trans(domain='messages') }}</h2>
+                <h2 class="page-header-title text-primary">
+                    {{ 'dashboard' | trans }}
+                    <i id="gs-spin" class="fas fa-spin"></i>
+                </h2>
             </div>
 
             {# Widget choice #}
@@ -30,7 +33,7 @@
 
                     <div class="dropdown-menu" aria-labelledby="dashboardDropdownWidget">
                         {% for type, widget_type in widget_types %}
-                            {% if widget_type.supports() %}
+                            {% if widget_type.supports %}
                                 <a class="dropdown-item add-widget" href="#" data-type="{{ widget_type.type }}">
                                     {{ widget_type.name|trans }}
                                 </a>

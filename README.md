@@ -2,7 +2,7 @@ This bundle provides a dashboard with customizable widgets.
 
 ## Install
 
-`composer.json` : 
+If using development version : inside `composer.json` :
 ```
 "repositories": [
     {
@@ -25,12 +25,20 @@ dashboard_widgets:
 You also need to update your database to have widget table.
 ```
 php bin/console make:migration
-php bin/console doc:mi:mi
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Making widgets
 
-####With  the maker:
+First, you need to declare your widgets. Do that by adding the tag "lle_dashboard.widget" in `services.yaml`.
+
+```yaml
+App\Widget\:
+    resource: '../src/Widget'
+    tags: ['lle_dashboard.widget']
+```
+
+#### With the maker:
 
 `php bin/console make:widget`
 
