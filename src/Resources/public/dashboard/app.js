@@ -4836,22 +4836,37 @@ onLoad(function () {
   var items = JSON.parse(document.querySelector(".grid-stack").dataset.widgets);
   grid.load(items); // add widget button
 
-  document.querySelector(".add-widget").addEventListener("click", function (e) {
-    toggleSpin();
-    var type = e.target.dataset.type;
-    var url = Routing.generate('add_widget', {
-      type: type
-    });
-    fetch(url).then(function (response) {
-      response.json().then(function (widget) {
-        grid.addWidget(widget);
+  var options = document.querySelectorAll(".add-widget");
+
+  var _iterator3 = _createForOfIteratorHelper(options),
+      _step3;
+
+  try {
+    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+      var option = _step3.value;
+      option.addEventListener("click", function (e) {
+        toggleSpin();
+        var type = e.target.dataset.type;
+        var url = Routing.generate('add_widget', {
+          type: type
+        });
+        fetch(url).then(function (response) {
+          response.json().then(function (widget) {
+            grid.addWidget(widget);
+          });
+        })["finally"](function () {
+          toggleSpin();
+        });
       });
-    })["finally"](function () {
-      toggleSpin();
-    });
-  });
-  /*
-  grid.disable();*/
+    }
+    /*
+    grid.disable();*/
+
+  } catch (err) {
+    _iterator3.e(err);
+  } finally {
+    _iterator3.f();
+  }
 }); // Edit the title of a widget.
 // function editTitle(title) {
 //

@@ -130,9 +130,9 @@ onLoad(() => {
     grid.load(items);
 
     // add widget button
-    document
-        .querySelector(".add-widget")
-        .addEventListener("click", (e) => {
+    let options = document.querySelectorAll(".add-widget");
+    for (let option of options) {
+        option.addEventListener("click", (e) => {
             toggleSpin();
             let type = e.target.dataset.type;
             let url = Routing.generate('add_widget', {type: type});
@@ -146,7 +146,8 @@ onLoad(() => {
                 .finally(() => {
                     toggleSpin();
                 });
-    })
+        });
+    }
 
     /*
     grid.disable();*/
