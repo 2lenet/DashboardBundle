@@ -46,7 +46,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     protected $height = 5;
 
     /**
-     * @var string json config
+     * @var string|array json config
      */
     private $config;
 
@@ -131,8 +131,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function getConfig($key=null, $defaultValue=null)
     {
-        $config = json_decode($this->config, true);
-        
+        $config = $this->config;
+        if (is_string($config)) {
+            $config = json_decode($this->config, true);
+        }
+
         if ($key) {
             return $config[$key] ?? $defaultValue;
         }
