@@ -2,20 +2,17 @@
 
 namespace Lle\DashboardBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Lle\DashboardBundle\Entity\Widget;
+use Lle\DashboardBundle\Service\WidgetProvider;
+use Lle\DashboardBundle\Widgets\AbstractWidget;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Lle\DashboardBundle\Service\WidgetProvider;
-use Lle\DashboardBundle\Entity\Widget;
 
 /**
  * Akcja controller.
@@ -134,10 +131,10 @@ class DashboardController extends AbstractController
                 $content = $widgetType->render();
             }
 
+            return new JsonResponse($this->serializeWidget($widgetType));
         }
-        $response = new Response($content);
 
-        return $response;
+        throw $this->createNotFoundException();
     }
 
     /**
@@ -208,16 +205,7 @@ class DashboardController extends AbstractController
 
         $widgets_view = [];
         foreach ($widgets as $w) {
-            $widgets_view[] = [
-                "id"=>$w->getId(),
-                "x"=>$w->getX(),
-                "y"=>$w->getY(),
-                "w"=>$w->getWidth(),
-                "h"=>$w->getHeight(),
-                "content"=>$w->render(),
-                "config"=>$w->getConfig(),
-                "title"=>$w->getTitle()
-            ];
+            $widgets_view[] = $this->serializeWidget($w);
         }
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
             "widgets_data" => $widgets_view,
@@ -228,12 +216,13 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/dashboard/admin/default")
-     * @IsGranted("ROLE_SUPER_ADMIN")
      *
      * Sets the current user's dashboard as default dashboard
      */
     public function setMyDashboardAsDefault()
     {
+        $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
+
         $user = $this->getUser();
 
         if ($user) {
@@ -248,12 +237,13 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/dashboard/admin/reset-all")
-     * @IsGranted("ROLE_SUPER_ADMIN")
      *
      * Delete all dashboards (not the default one)
      */
     public function deleteAllUserDashboards()
     {
+        $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
+
         $repo = $this->em->getRepository(Widget::class);
 
         $repo->deleteAllUserDashboards()->getQuery()->execute();
@@ -268,5 +258,17 @@ class DashboardController extends AbstractController
         }
 
         return null;
+    }
+
+    protected function serializeWidget(AbstractWidget $widget): array
+    {
+        return [
+            "id" => $widget->getId(),
+            "x" => $widget->getX(),
+            "y" => $widget->getY(),
+            "w" => $widget->getWidth(),
+            "h" => $widget->getHeight(),
+            "content" => $widget->render(),
+        ];
     }
 }
