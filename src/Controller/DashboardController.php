@@ -8,6 +8,7 @@ use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -121,17 +122,17 @@ class DashboardController extends AbstractController
         if ($widget) {
             $widgetType = $provider->getWidgetType($widget->getType());
             $widgetType->setParams($widget);
-            if($widgetType->getCacheTimeout()) {
+            if ($widgetType->getCacheTimeout()) {
                 $uniqueKey = "widget_cache_" . $widgetType->getCacheKey();
                 $content = $cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
                     $item->expiresAfter($widgetType->getCacheTimeout());
                     return $widgetType->render();
                 });
-            }else{
+            } else {
                 $content = $widgetType->render();
             }
 
-            return new JsonResponse($this->serializeWidget($widgetType));
+            return new Response($content);
         }
 
         throw $this->createNotFoundException();
@@ -204,12 +205,13 @@ class DashboardController extends AbstractController
         }
 
         $widgets_view = [];
-        foreach ($widgets as $w) {
-            $widgets_view[] = $this->serializeWidget($w);
+        foreach ($widgets as $widget) {
+            $widgets_view[] = $widget->render();
         }
+
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
             "widgets_data" => $widgets_view,
-            "widgets" =>$widgets,
+            "widgets" => $widgets,
             "widget_types" => $widgetTypes,
         ));
     }
