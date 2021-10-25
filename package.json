@@ -15,7 +15,5 @@
         "watch": "encore dev --watch",
         "build": "encore production"
     },
-    "dependencies": {
-        "@json-editor/json-editor": "^2.6.0"
-    }
+    "dependencies": {}
 }
