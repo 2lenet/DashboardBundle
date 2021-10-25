@@ -32,9 +32,11 @@
                     {% endblock %}
                     <span class="float-end">&nbsp;&nbsp;</span>
                     {% block widget_config_button %}
-                        {#
-                        <span class="fa fa-cog widget-config show-hover" id="config_{{ widget.id }}" title="{{ 'widget.configWidget'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name|trans ~ '"' }}"></span>
-                        #}
+                        <span
+                                class="fa fa-cog widget-config show-hover"
+                                id="config_{{ widget.id }}"
+                                title="{{ 'widget.configWidget' | trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name | trans ~ '"' }}">
+                        </span>
                     {% endblock %}
                 {% endblock widget_buttons %}
             </div>
@@ -45,35 +47,20 @@
         </div>
 
         {% block widget_config %}
-            <div id="form_{{ widget.id }}" style="display: none;" class="card-body">
-                {# CONFIGURATION FORM #}
+            <div id="form_{{ widget.id }}" class="card-body d-none">
                 {% if form is defined and form %}
-                    {% form_theme form '@LleDashboard/form/widgets.html.twig' %}
                     {% set id = 'form_' ~ widget.id %}
                     {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
-                    {{ form_widget(form.Configuration, { 'id': id }) }}
                     {{ form_rest(form) }}
-                    {# SUBMIT BUTTON #}
                     <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">
                         {{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}
                     </button>
-                    {# RESET CONFIG BUTTON #}
-                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
-                        {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
-                    </a>
                     {{ form_end(form) }}
-                    <script>
-                        {# Save config in a field with the correct data [ Symfony is screwing up some field values ] #}
-                        window.editor{{ id }}.on("change", function () {
-                            $("#form_json_{{ id }}").val(JSON.stringify(window.editor{{ id }}.getValue()));
-                        });
-                    </script>
-                {% else %}
-                    {# RESET CONFIG BUTTON #}
-                    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
-                        {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
-                    </a>
                 {% endif %}
+
+                <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+                    {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
+                </a>
             </div>
         {% endblock widget_config %}
 

@@ -123,9 +123,8 @@ onLoad(() => {
 function createWidgetElement(html) {
     let el = document.createElement("template");
     el.innerHTML = html.trim();
-    let widgetEl = el.content.firstChild;
 
-    return widgetEl;
+    return el.content.firstChild;
 }
 
 /**
@@ -184,10 +183,10 @@ function toggleSpin() {
     document.querySelector("#gs-spin").classList.toggle("fa-circle-notch");
 }
 
-// function toggleConfigPanel(cogButton, id) {
-//     cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
-//     $("#form_" + id).toggle();
-// }
+function toggleConfigPanel(id) {
+    document.querySelector(`#widget_${id} .card-body`).classList.toggle("d-none");
+    document.querySelector(`#form_${id}`).classList.toggle("d-none");
+}
 //
 // function enableGridChanges() {
 //     grid = $('.grid-stack').data('gridstack');
@@ -241,7 +240,7 @@ function initializeAddedHandler(grid) {
     grid.on("added", function (event, widgets) {
         for (let widget of widgets) {
 
-            // Create EventHandler for widget deletion
+            // Handle widget deletion
             document.querySelector(`#widget_close_${widget.id}`)
                 .addEventListener("click", () => {
                     toggleSpin();
@@ -254,6 +253,22 @@ function initializeAddedHandler(grid) {
                             toggleSpin();
                         });
                 });
+
+            // Handle widget config panel
+            document.querySelector(`#config_${ widget.id }`)
+                .addEventListener("click", () => {
+                    toggleConfigPanel(widget.id);
+                });
+
+            // Handle widget config form
+            /*
+            let editor = window[`editor${widget.id}`];
+            editor.addEventListener("change", function () {
+
+                // Save config in a field with the correct data because Symfony is screwing up some field values
+                document.querySelector(`#form_json_${widget.id}`)
+                    .value = JSON.stringify(editor.getValue());
+            });*/
         }
     });
 }

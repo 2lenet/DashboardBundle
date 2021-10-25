@@ -4831,8 +4831,7 @@ onLoad(function () {
 function createWidgetElement(html) {
   var el = document.createElement("template");
   el.innerHTML = html.trim();
-  var widgetEl = el.content.firstChild;
-  return widgetEl;
+  return el.content.firstChild;
 }
 /**
  * @see https://stackoverflow.com/a/47614491
@@ -4890,11 +4889,12 @@ function enableScripts(widget) {
 
 function toggleSpin() {
   document.querySelector("#gs-spin").classList.toggle("fa-circle-notch");
-} // function toggleConfigPanel(cogButton, id) {
-//     cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
-//     $("#form_" + id).toggle();
-// }
-//
+}
+
+function toggleConfigPanel(id) {
+  document.querySelector("#widget_".concat(id, " .card-body")).classList.toggle("d-none");
+  document.querySelector("#form_".concat(id)).classList.toggle("d-none");
+} //
 // function enableGridChanges() {
 //     grid = $('.grid-stack').data('gridstack');
 //     grid.enable();
@@ -4968,7 +4968,7 @@ function initializeAddedHandler(grid) {
     try {
       var _loop = function _loop() {
         var widget = _step5.value;
-        // Create EventHandler for widget deletion
+        // Handle widget deletion
         document.querySelector("#widget_close_".concat(widget.id)).addEventListener("click", function () {
           toggleSpin();
           var url = Routing.generate("remove_widget", {
@@ -4979,7 +4979,19 @@ function initializeAddedHandler(grid) {
           })["finally"](function () {
             toggleSpin();
           });
-        });
+        }); // Handle widget config panel
+
+        document.querySelector("#config_".concat(widget.id)).addEventListener("click", function () {
+          toggleConfigPanel(widget.id);
+        }); // Handle widget config form
+
+        /*
+        let editor = window[`editor${widget.id}`];
+        editor.addEventListener("change", function () {
+             // Save config in a field with the correct data because Symfony is screwing up some field values
+            document.querySelector(`#form_json_${widget.id}`)
+                .value = JSON.stringify(editor.getValue());
+        });*/
       };
 
       for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {

@@ -1,19 +1,21 @@
 {
-  "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.1",
-    "@symfony/webpack-encore": "^1.1.1",
-    "gridstack": "^4.2.3",
-    "node-sass": "^4.9.4",
-    "sass-loader": "^11.0.1",
-    "webpack-rtl-plugin": "^2.0.0"
-  },
-  "license": "UNLICENSED",
-  "private": true,
-  "scripts": {
-    "dev-server": "encore dev-server",
-    "dev": "encore dev",
-    "watch": "encore dev --watch",
-    "build": "encore production"
-  },
-  "dependencies": {}
+    "devDependencies": {
+        "@fortawesome/fontawesome-free": "^5.8.1",
+        "@symfony/webpack-encore": "^1.1.1",
+        "gridstack": "^4.2.3",
+        "node-sass": "^4.9.4",
+        "sass-loader": "^11.0.1",
+        "webpack-rtl-plugin": "^2.0.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production"
+    },
+    "dependencies": {
+        "@json-editor/json-editor": "^2.6.0"
+    }
 }
