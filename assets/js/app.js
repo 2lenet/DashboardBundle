@@ -68,11 +68,7 @@ onLoad(() => {
         {% endif %}
         {% endfor %}
 */
-    /**
-     * Initialisation
-     */
-    let grid = GridStack.init({
-        width: 12,
+    let options = {
         animate: true,
         float: true,
         // so we can only drag by clicking the title, so it won't drag if we select inside
@@ -82,78 +78,69 @@ onLoad(() => {
             // Don't put handles on the sizes so the user can still interact with scroll bars
             handles: "se, sw, ne, nw"
         }
-    });
-
-    grid.on("added", function (event, widgets) {
-        for (let widget of widgets) {
-
-            // Create EventHandler for widget deletion
-            document.querySelector(`#widget_close_${widget.id}`)
-                .addEventListener("click", () => {
-                    toggleSpin();
-                    let url = Routing.generate("remove_widget", { id : widget.id });
-                    fetch(url)
-                        .then(() => {
-                            grid.removeWidget(widget.el);
-                        })
-                        .finally(() => {
-                            toggleSpin();
-                        });
-                });
-        }
-    });
-
-    // save changes
-    grid.on("change", function (event, widgets) {
-
-        // Create EventHandler for widget update
-        for (let widget of widgets) {
-
-            let url = Routing.generate("update_widget", {
-                id: widget.id,
-                x: widget.x,
-                y: widget.y,
-                width: widget.w,
-                height: widget.h,
-            });
-
-            fetch(url);
-        }
-
-    });
+    }
 
     /**
-     * Chargement des widgets
+     * Initialize dashboard
+     */
+    let grid = GridStack.init(options);
+
+    // Update grid when user adds a new widget
+    initializeAddedHandler(grid);
+
+    // Button to add a widget
+    initializeAddWidget(grid);
+
+    // Save changes when a widget is moved or resized
+    initializeChangeHandler(grid);
+
+    /**
+     * Load widgets
      */
     let container = document.querySelector(".grid-stack");
     let items = JSON.parse(container.dataset.widgets);
 
-    grid.load(items);
-    container.removeAttribute("data-widgets");
-
-    // add widget button
-    let options = document.querySelectorAll(".add-widget");
-    for (let option of options) {
-        option.addEventListener("click", (e) => {
-            toggleSpin();
-            let type = e.target.dataset.type;
-            let url = Routing.generate("add_widget", {type: type});
-
-            fetch(url)
-                .then((response) => {
-                    response.json().then((widget) => {
-                        grid.addWidget(widget);
-                    });
-                })
-                .finally(() => {
-                    toggleSpin();
-                });
-        });
+    for (let item of items) {
+        grid.addWidget(createWidgetElement(item));
     }
+
+    for (let widget of grid.getGridItems()) {
+        enableScripts(widget);
+    }
+
+    /**
+     * Clear useless stuff
+     */
+    container.removeAttribute("data-widgets");
 
     /*
     grid.disable();*/
 });
+
+/**
+ * initialize DOM widget element
+ */
+function createWidgetElement(html) {
+    let el = document.createElement("template");
+    el.innerHTML = html.trim();
+
+    return el.content.firstChild;
+}
+
+/**
+ * @see https://stackoverflow.com/a/47614491
+ *
+ * enable scripts in widgets
+ */
+function enableScripts(widget) {
+    Array.from(widget.querySelectorAll("script")).forEach( oldScript => {
+        const newScript = document.createElement("script");
+        Array.from(oldScript.attributes)
+            .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+}
 
 // Edit the title of a widget.
 // function editTitle(title) {
@@ -196,14 +183,92 @@ function toggleSpin() {
     document.querySelector("#gs-spin").classList.toggle("fa-circle-notch");
 }
 
-// function toggleConfigPanel(cogButton, id) {
-//     cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
-//     $("#form_" + id).toggle();
-// }
+function toggleConfigPanel(id) {
+    document.querySelector(`#widget_${id} .card-body`).classList.toggle("d-none");
+    document.querySelector(`#form_${id}`).classList.toggle("d-none");
+}
 //
 // function enableGridChanges() {
-//     // When a widget is moved or resized
-//
 //     grid = $('.grid-stack').data('gridstack');
 //     grid.enable();
 // }
+
+function initializeAddWidget(grid) {
+    let options = document.querySelectorAll(".add-widget");
+    for (let option of options) {
+        option.addEventListener("click", (e) => {
+            toggleSpin();
+            let type = e.target.dataset.type;
+            let url = Routing.generate("add_widget", {type: type});
+
+            fetch(url)
+                .then((response) => {
+                    response.text().then((html) => {
+                        let widget = createWidgetElement(html);
+                        grid.addWidget(widget);
+                        enableScripts(widget);
+                    });
+                })
+                .finally(() => {
+                    toggleSpin();
+                });
+        });
+    }
+}
+
+function initializeChangeHandler(grid) {
+    grid.on("change", function (event, widgets) {
+
+        // Create EventHandler for widget update
+        for (let widget of widgets) {
+
+            let url = Routing.generate("update_widget", {
+                id: widget.id,
+                x: widget.x,
+                y: widget.y,
+                width: widget.w,
+                height: widget.h,
+            });
+
+            fetch(url);
+        }
+
+    });
+}
+
+function initializeAddedHandler(grid) {
+    grid.on("added", function (event, widgets) {
+        for (let widget of widgets) {
+
+            // Handle widget deletion
+            document.querySelector(`#widget_close_${widget.id}`)
+                .addEventListener("click", () => {
+                    toggleSpin();
+                    let url = Routing.generate("remove_widget", { id : widget.id });
+                    fetch(url)
+                        .then(() => {
+                            grid.removeWidget(widget.el);
+                        })
+                        .finally(() => {
+                            toggleSpin();
+                        });
+                });
+
+            // Handle widget config panel
+            document.querySelector(`#config_${ widget.id }`)
+                .addEventListener("click", () => {
+                    toggleConfigPanel(widget.id);
+                });
+
+            // Handle widget config form
+            /*
+            let editor = window[`editor${widget.id}`];
+            editor.addEventListener("change", function () {
+
+                // Save config in a field with the correct data because Symfony is screwing up some field values
+                document.querySelector(`#form_json_${widget.id}`)
+                    .value = JSON.stringify(editor.getValue());
+            });*/
+        }
+    });
+}

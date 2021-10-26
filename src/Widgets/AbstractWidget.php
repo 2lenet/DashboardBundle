@@ -3,6 +3,8 @@
 namespace Lle\DashboardBundle\Widgets;
 
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -140,14 +142,13 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @param $defaultValue default value when the key doesn't exist
      * @return string a string representing the entire config or the value of the key
      */
-    public function getConfig($key=null, $defaultValue=null)
+    public function getConfig($key = null, $defaultValue = null)
     {
-        $config = json_decode($this->config, true);
-        
         if ($key) {
-            return $config[$key] ?? $defaultValue;
+            return $this->config[$key] ?? $defaultValue;
         }
-        return $config;
+
+        return $this->config;
     }
 
     /**
@@ -184,17 +185,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this->getName().'('.$this->getType().')';
     }
 
-    public function getConfigForm()
+    public function getConfigForm(): ?FormInterface
     {
-        if ($this->getJsonSchema()) {
-            $formFactory = Forms::createFormFactory();
-            $form = $formFactory->create()
-                ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
-                ->add('json_form_'.$this->getId(), HiddenType::class)
-            ;
-            
-            return $form->createView();
-        }
         return null;
     }
 
