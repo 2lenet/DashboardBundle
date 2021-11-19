@@ -4,6 +4,7 @@ This bundle provides a dashboard with customizable widgets.
 * [Installation](#installation)
   * [Creating widgets](#creating-widgets)
 * [Recipes](#recipes)
+  * [Troubleshooting](#troubleshooting)
   * [Templating](#templating)
   * [Widget configuration](#widget-configuration)
   * [Widget cache](#widget-cache)
@@ -51,6 +52,27 @@ use Lle\DashboardBundle\Widgets\AbstractWidget;
 | supportsAjax | NOT SUPPORTED YET |
 
 # Recipes
+
+## Troubleshooting
+
+Why don't I see my widget ?!
+* Check the [roles](#widget-roles).
+* Check your network tab; maybe the widget is returning a 500.
+* Try clear the cache.
+
+How do I get the logged user ?!
+* Use $this->security->getUser().
+
+Why is the dashboard ugly/not working ?!
+* `bin/console asset:install`.
+
+Why do I get a 404 ?
+* RTFM. Add the routes as specified above.
+
+When I add a widget, they appear *very* far in the bottom ?!
+* The widgets are added below the most bottom existing widget. You may have a widget that does not appear.
+
+*Feel free to add more*
 
 ## Templating
 
