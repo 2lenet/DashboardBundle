@@ -4981,17 +4981,13 @@ function initializeAddedHandler(grid) {
           });
         }); // Handle widget config panel
 
-        document.querySelector("#config_".concat(widget.id)).addEventListener("click", function () {
-          toggleConfigPanel(widget.id);
-        }); // Handle widget config form
+        var configBtn = document.querySelector("#config_".concat(widget.id));
 
-        /*
-        let editor = window[`editor${widget.id}`];
-        editor.addEventListener("change", function () {
-             // Save config in a field with the correct data because Symfony is screwing up some field values
-            document.querySelector(`#form_json_${widget.id}`)
-                .value = JSON.stringify(editor.getValue());
-        });*/
+        if (configBtn) {
+          configBtn.addEventListener("click", function () {
+            toggleConfigPanel(widget.id);
+          });
+        }
       };
 
       for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {

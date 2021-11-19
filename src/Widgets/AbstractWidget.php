@@ -52,9 +52,9 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @var Security
      */
     private AuthorizationCheckerInterface $security;
-    
+
     private Environment $twig;
-    
+
     private FormFactoryInterface $formFactory;
 
     public function getId()
