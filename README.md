@@ -58,7 +58,7 @@ use Lle\DashboardBundle\Widgets\AbstractWidget;
 Why don't I see my widget ?!
 * Check the [roles](#widget-roles).
 * Check your network tab; maybe the widget is returning a 500.
-* Try clear the cache.
+* Try to clear the cache.
 
 How do I get the logged user ?!
 * Use $this->security->getUser().
