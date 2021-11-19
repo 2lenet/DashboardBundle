@@ -1,0 +1,22 @@
+{% extends '@LleDashboard/widget/base_widget.html.twig' %}
+
+{% block widget_title %}
+    {{ widget.title | default(widget.name | trans(domain='LleDashboardBundle')) }}
+{% endblock widget_title %}
+
+{% block widget_body %}
+    <form
+            id="{{ 'widget-post-it-form_' ~ widget.id }}"
+            method="POST"
+            action="{{ path("widget_save_config", { 'id': widget.id }) }}"
+            class="dashboard-widget-post-it"
+    >
+        <textarea
+                form="{{ 'widget-post-it-form_' ~ widget.id }}"
+                class="form-control"
+                rows="8"
+                name=form[message]"
+        >{{ widget.config.message ?? null }}</textarea>
+        <input class="btn btn-primary mt-2" type="submit" value="{{ 'action.validate' | trans(domain='LleDashboardBundle') }}">
+    </form>
+{% endblock %}

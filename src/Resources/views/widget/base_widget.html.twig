@@ -8,64 +8,39 @@
     gs-h="{{ widget.height }}"
 >
     <div class="card border-primary grid-stack-item-content">
-        <div class="card-header text-primary">
-            <div class="float-start">
-                <h5 class="card-title" data-widget-title-dblclick="true">
-                    {% block widget_title %}
-                        {{ widget.title|default(widget.name|trans) }}
-                    {% endblock widget_title %}
-                    {#
-                    <span class="fa fa-pen show-hover" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></span>
-                    #}
-                </h5>
-            </div>
+        {% block card_header %}
+            <div class="card-header text-primary">
+                <div class="float-start">
+                    <h5 class="card-title" data-widget-title-dblclick="true">
+                        {% block widget_title %}
+                            {{ widget.title | default(widget.name | trans) }}
+                        {% endblock widget_title %}
+                        {#
+                        <span class="fa fa-pen show-hover" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></span>
+                        #}
+                    </h5>
+                </div>
 
-            <div class="float-end">
-                {% block widget_buttons %}
-                    {% block widget_close_button %}
-                        <span
-                                id="widget_close_{{ widget.id }}"
-                                class="widget-close"
-                                data-widgetid="{{ widget.id }}">
-                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget'|trans(domain='LleDashboardBundle') }}"></span>
-                        </span>
-                    {% endblock %}
-                    <span class="float-end">&nbsp;&nbsp;</span>
-                    {% block widget_config_button %}
-                        <span
-                                class="fa fa-cog widget-config show-hover"
-                                id="config_{{ widget.id }}"
-                                title="{{ 'widget.configWidget' | trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name | trans ~ '"' }}">
-                        </span>
-                    {% endblock %}
-                {% endblock widget_buttons %}
+                <div class="float-end">
+                    {% block widget_buttons %}
+                        {{ include('@LleDashboard/widget/includes/_buttons.html.twig') }}
+                    {% endblock widget_buttons %}
+                </div>
             </div>
-        </div>
+        {% endblock card_header %}
 
-        <div class="card-body">
-            {% block widget_body %}{% endblock widget_body %}
-        </div>
+        {% block card_body %}
+            <div class="card-body">
+                {% block widget_body %}{% endblock widget_body %}
+            </div>
+        {% endblock card_body %}
 
         {% block widget_config %}
-            <div id="form_{{ widget.id }}" class="card-body d-none">
-                {% if form is defined and form %}
-                    {% set id = 'form_' ~ widget.id %}
-                    {{ form_start(form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
-                    {{ form_rest(form) }}
-                    <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">
-                        {{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}
-                    </button>
-                    {{ form_end(form) }}
-                {% endif %}
-
-                <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
-                    {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
-                </a>
-            </div>
+            {{ include('@LleDashboard/widget/includes/_config.html.twig') }}
         {% endblock widget_config %}
 
-        {% block widget_footer %}
+        {% block card_footer %}
             {# <div class="card-footer"></div> #}
-        {% endblock widget_footer %}
+        {% endblock card_footer %}
     </div>
 </div>

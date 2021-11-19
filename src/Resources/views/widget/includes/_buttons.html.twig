@@ -1,0 +1,18 @@
+{% block widget_close_button %}
+    <span
+            id="widget_close_{{ widget.id }}"
+            class="widget-close"
+            data-widgetid="{{ widget.id }}">
+                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget' | trans(domain='LleDashboardBundle') }}"></span>
+                        </span>
+{% endblock %}
+<span class="float-end">&nbsp;&nbsp;</span>
+{% block widget_config_button %}
+    {% if config_form is defined and config_form %}
+        <span
+                class="fa fa-cog widget-config show-hover"
+                id="config_{{ widget.id }}"
+                title="{{ 'widget.configWidget' | trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name | trans ~ '"' }}">
+                            </span>
+    {% endif %}
+{% endblock %}

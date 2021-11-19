@@ -1,35 +1,48 @@
-
 @import "~gridstack/dist/gridstack.min.css";
 
 .grid-stack > .grid-stack-item > .grid-stack-item-content {
-  overflow-y: hidden !important;
-
+    overflow-y: hidden !important;
 }
 
 .grid-stack .card {
-  box-shadow: 0 10px 10px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 10px 10px rgba(255, 255, 255, 0.25);
 }
 
 .show-hover {
-  display: none;
-  //max-height: 20px;
+    display: none;
 }
 
 .card-header:hover .show-hover {
-  display: inline-block;
+    display: inline-block;
 }
+
 .grid-stack-item-content {
-  height: 100%;
+    height: 100%;
 }
+
 .grid-stack-item {
-  margin-bottom: 5px;
-  height: calc(100% - 10px)
+    margin-bottom: 5px;
+    height: calc(100% - 10px)
 }
+
 .card-body {
-  height: calc(100% - 42px);
-  overflow-y: scroll;
+    height: calc(100% - 42px);
+    overflow-y: scroll;
 }
 
 .widget-close, .widget-config {
-  cursor: pointer;
+    cursor: pointer;
+}
+
+.dashboard-widget-post-it {
+    height: 80%;
+}
+.dashboard-widget-post-it textarea, .dashboard-widget-post-it textarea:focus {
+    font-family: "Comic Sans MS", "Indie Flower", sans-serif;
+    background-color: #FCFCAA;
+    height: 100%;
+    width: 100%;
+    font-size: large;
+    padding: 1em;
+    font-weight: bold;
 }

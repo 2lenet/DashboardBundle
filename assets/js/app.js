@@ -255,20 +255,13 @@ function initializeAddedHandler(grid) {
                 });
 
             // Handle widget config panel
-            document.querySelector(`#config_${ widget.id }`)
-                .addEventListener("click", () => {
+            let configBtn = document.querySelector(`#config_${ widget.id }`);
+
+            if (configBtn) {
+                configBtn.addEventListener("click", () => {
                     toggleConfigPanel(widget.id);
                 });
-
-            // Handle widget config form
-            /*
-            let editor = window[`editor${widget.id}`];
-            editor.addEventListener("change", function () {
-
-                // Save config in a field with the correct data because Symfony is screwing up some field values
-                document.querySelector(`#form_json_${widget.id}`)
-                    .value = JSON.stringify(editor.getValue());
-            });*/
+            }
         }
     });
 }

@@ -50,6 +50,14 @@
                 <source>reset_widgets</source>
                 <target>Default widgets</target>
             </trans-unit>
+            <trans-unit id="action.validate">
+                <source>action.validate</source>
+                <target>Validate</target>
+            </trans-unit>
+            <trans-unit id="widget.postit.title">
+                <source>widget.postit.title</source>
+                <target>Post-It</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

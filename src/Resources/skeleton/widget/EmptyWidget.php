@@ -1,34 +1,31 @@
 <?= "<?php" ?>
 
+
 namespace <?= $namespace ?>;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Twig\Environment;
 
 class <?= $classname ?> extends AbstractWidget
 {
-    private Environment $twig;
-    private $user;
+    private EntityManagerInterface $em;
 
-    public function __construct(Environment $twig, Security $security)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->twig = $twig;
-        $this->user = $security->getUser();
+        $this->em = $em;
     }
 
     public function render()
     {
-        $data = "Hello";
-        return $this->twig->render("widget/<?= $widgetname?>.html.twig", [
-            "widget" => $this,
+        $data = "world";
+
+        return $this->twig("widget/<?= strtolower($widgetname) ?>.html.twig", [
             "data" => $data,
         ]);
     }
 
     public function getName()
     {
-        return "widget.<?= $widgetname?>.title";
+        return "widget.<?= strtolower($widgetname) ?>.title";
     }
 }

@@ -7,7 +7,12 @@ use Symfony\Component\HttpFoundation\Response;
 interface WidgetTypeInterface
 {
     /**
-     * @return string return widgets HTML source
+     * @return mixed get unique ID
+     */
+    public function getId();
+
+    /**
+     * @return string return widget HTML source
      */
     public function render();
 

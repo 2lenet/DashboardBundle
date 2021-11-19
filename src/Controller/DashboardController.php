@@ -3,6 +3,7 @@
 namespace Lle\DashboardBundle\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
@@ -262,7 +263,7 @@ class DashboardController extends AbstractController
         return null;
     }
 
-    protected function serializeWidget(AbstractWidget $widget): array
+    protected function serializeWidget(WidgetTypeInterface $widget): array
     {
         return [
             "id" => $widget->getId(),

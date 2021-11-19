@@ -3,66 +3,38 @@
 namespace Lle\DashboardBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
+use Lle\DashboardBundle\Entity\Widget;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Lle\DashboardBundle\Entity\Widget;
-
-
-/**
- * Description of WidgetProvider.
- */
 class WidgetProvider
 {
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    protected $em;
+    protected EntityManagerInterface $em;
 
-    /**
-     * @var \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage
-     */
-    protected $security;
+    protected TokenStorageInterface $security;
 
-    /**
-     *
-     */
-    protected $widgetTypes;
-    
-    /**
-     * 
-     * @param \Doctrine\ORM\EntityManager $em
-     * @param Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface $security
-     */
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $security, iterable $widget_types)
+    protected ?array $widgetTypes;
+
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $security, iterable $widgetTypes)
     {
         $this->em = $em;
         $this->security = $security;
-        
-        foreach($widget_types[0] as $id => $w_service) {
-            $this->widgetTypes[$w_service->getType()] = $w_service;
+
+        /** @var WidgetTypeInterface $widgetType */
+        foreach ($widgetTypes as $widgetType) {
+            $this->widgetTypes[$widgetType->getType()] = $widgetType;
         }
     }
 
-
-
-    /**
-     * 
-     * @return \Doctrine\Common\Collections\ArrayCollection
-     */
-    public function getWidgetTypes()
+    public function getWidgetTypes(): ?array
     {
         return $this->widgetTypes;
     }
 
-    /**
-     * 
-     * @param string $widget_type
-     * @return Widget\WidgetTypeInterface
-     */
-    public function getWidgetType($widget_type)
+    public function getWidgetType($widgetType)
     {
-        if (array_key_exists($widget_type, $this->widgetTypes)) {
-            return clone $this->widgetTypes[$widget_type];
+        if (array_key_exists($widgetType, $this->widgetTypes)) {
+            return clone $this->widgetTypes[$widgetType];
         }
     }
 
@@ -79,10 +51,10 @@ class WidgetProvider
 
         // Get user's widgets.
         $myWidgets = $this->em->getRepository(Widget::class)
-                ->getMyWidgets($user)
-                ->getQuery()
-                ->getResult();
-        
+            ->getMyWidgets($user)
+            ->getQuery()
+            ->getResult();
+
         // Initialize actual widgets.
         return $this->initializeWidgets($myWidgets);
     }
@@ -109,14 +81,14 @@ class WidgetProvider
             if ($widgetType) {  // the widget could have been deleted
                 $return[] = $widgetType->setParams($widget);
             }
-            
+
         }
+
         return $return;
     }
 
     /**
-     * Sert à copier les widgets par défaut vers les widgets de l'utilisateur.
-     * Cela évite que l'utilisateur puisse modifier les widgets par défaut
+     * Initialize default widgets for an user, by copy
      */
     public function setDefaultWidgetsForUser($user_id)
     {

@@ -18,9 +18,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
 
-final class MakeWidget extends AbstractMaker
+class MakeWidget extends AbstractMaker
 {
-
     /** @var FileManager */
     private $fileManager;
 
@@ -29,11 +28,6 @@ final class MakeWidget extends AbstractMaker
 
     /** @var bool */
     private $withController;
-
-    public function __construct(
-    )
-    {
-    }
 
     public static function getCommandName(): string
     {
@@ -45,14 +39,14 @@ final class MakeWidget extends AbstractMaker
         $command
             ->setDescription('Creates a new widget class')
             ->addArgument(
-                'namespace-widget',
-                InputArgument::OPTIONAL,
-                sprintf('Namespace for widget App/Widget/[...]/MyWidget.php ?')
-            )
-            ->addArgument(
                 'widgetname',
                 InputArgument::OPTIONAL,
-                'The name of the widget'
+                'Name of the widget ?'
+            )
+            ->addArgument(
+                'namespace-widget',
+                InputArgument::OPTIONAL,
+                sprintf('Directory for widgets (src/[...]/MyWidget.php) ?')
             )
             ->setHelp((string)file_get_contents(__DIR__ . '/../Resources/help/make_widget.txt'));
 
@@ -80,7 +74,6 @@ final class MakeWidget extends AbstractMaker
 
     public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
-
         $io->text('Create the widget');
         try {
             $this->createWidget($input, $io, $generator);
@@ -95,8 +88,7 @@ final class MakeWidget extends AbstractMaker
         }
     }
 
-    public
-    function configureDependencies(DependencyBuilder $dependencies): void
+    public function configureDependencies(DependencyBuilder $dependencies): void
     {
         $dependencies->addClassDependency(
             Annotation::class,
@@ -116,23 +108,22 @@ final class MakeWidget extends AbstractMaker
         $template = 'EmptyWidget';
         $widgetClassNameDetails = $generator->createClassNameDetails(
             $widgetname,
-            $namespace,
-            'Widget'
+            $namespace
         );
         $generator->generateClass(
             $widgetClassNameDetails->getFullName(),
-            $this->getSkeletonTemplate( "widget/$template.php"),
+            $this->getSkeletonTemplate("widget/$template.php"),
             [
                 'namespace' => 'App',
                 'widgetname' => $widgetname,
-                'classname' => ucfirst($widgetname).'Widget'
+                'classname' => ucfirst($widgetname),
             ]
         );
         $generator->writeChanges();
         $this->writeSuccessMessage($io);
+
         return $widgetClassNameDetails->getFullName();
     }
-
 
     private function getSkeletonTemplate(string $templateName): string
     {
@@ -147,7 +138,7 @@ final class MakeWidget extends AbstractMaker
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
 
-        $generator->generateTemplate('widget/'.$widgetname.'.html.twig',
+        $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptywidget.tpl.php'),
             [
                 'widgetname' => $widgetname,
@@ -157,8 +148,7 @@ final class MakeWidget extends AbstractMaker
         $this->writeSuccessMessage($io);
     }
 
-    private
-    function getStringArgument(string $name, InputInterface $input): string
+    private function getStringArgument(string $name, InputInterface $input): string
     {
         if (is_string($input->getArgument($name)) || is_null($input->getArgument($name))) {
             return (string)$input->getArgument($name);
@@ -166,14 +156,11 @@ final class MakeWidget extends AbstractMaker
         throw new InvalidArgumentException($name . ' must be string type');
     }
 
-    private
-    function getBoolArgument(string $name, InputInterface $input): bool
+    private function getBoolArgument(string $name, InputInterface $input): bool
     {
         if (is_string($input->getArgument($name)) || is_bool($input->getArgument($name))) {
             return (bool)$input->getArgument($name);
         }
         throw new InvalidArgumentException($name . ' must be bool type');
     }
-
-
 }
