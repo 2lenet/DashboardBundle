@@ -1,20 +1,8 @@
 This bundle provides a dashboard with customizable widgets.
 
-## Install
-
-If using development version : inside `composer.json` :
-```
-"repositories": [
-    {
-        "url": "https://github.com/2lenet/DashboardBundle.git",
-        "type": "git"
-    }
-],
-```
+## Installation
 
 `composer require 2lenet/dashboard2-bundle`
-
-## Setting up the bundle
 
 Add this to routes.yaml
 ```yaml
@@ -22,77 +10,119 @@ dashboard_widgets:
     resource: "@LleDashboardBundle/Resources/config/routes.yaml"
 ```
 
-You also need to update your database to have widget table.
+You will also need to update your database to have the widgets table.
 ```
 php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
+> :warning: Do not forget to check your migration file !
 
-## Making widgets
-
-First, you need to declare your widgets. Do that by adding the tag "lle_dashboard.widget" in `services.yaml`.
-
-```yaml
-App\Widget\:
-    resource: '../src/Widget'
-    tags: ['lle_dashboard.widget']
-```
+## Creating widgets
 
 #### With the maker:
 
 `php bin/console make:widget`
 
-Juste provide a short name for your widget and the maker will generate the class and the template for you.
+Just provide a short name for your widget and the maker will generate the class and the template for you.
 
+#### If you prefer to do it yourself :
 
-#### If you prefer do it yourself:
+Create a class that extends `AbstractWidget` and fill in the methods.
 
-All your widget classes will lie in src/Widget/.
-
-They must extend AbstractWidget.
 ```php
 use Lle\DashboardBundle\Widgets\AbstractWidget;
 ```
 
-Existing methods that can be overriden:
-- __construct: the constructor for usual services injection. You need at least a Twig_Environment ($twig)
-- getName: must return general name of the widget
-- getJsonSchema: must return an array (that will be json encoded) that represents an Json Schema, for the widget configuration. (see also https://github.com/json-editor/json-editor)
-- getConfigForm: makes the configuration form. You shouldn't need to modify it, but it can happen in some cases (ex: bootstrap version)
-- support: returns true if widget is supported. If not, user won't be able to add such widget nor render it
-- supportsAjax: returns true if widget should be loaded asynchronously. If not, it will be loaded directly with the dashboard
-- transformResponse: takes Response representing the widget as argument and returns response. By default, it caches widgets for 300 seconds.
+| Method   | Description |
+| ---      | ---      |
+| render   | **Mandatory.** Return a string that will be the widget content. |
+| getName  | Get the widget title that will appear in the header. It will be translated by default. |
+| supports | If this method returns false, the users won't be able to see or add it. |
+| supportsAjax | NOT SUPPORTED YET |
 
-You *must* implement the render() method.
+# Recipes
 
-This method returns simple HTML. You can use $twig->render("template.html.twig", array(...)).
-Your templates should extend the base widget template, because it has some interactions. Otherwise, make sure you implement those interactions.
+## Templating
+
+A base template exists :
 ```twig
-{% extends '@TkuskaDashboard/widget/base_widget.html.twig' %}
+{% extends '@LleDashboard/widget/base_widget.html.twig' %}
 ```
 
-Note that base template uses Bootstrap panels, which means it is better to put your widget body in a ```<div class="panel-body">```.
+To easily render a template, you can use the twig() method. It will automatically add a "widget" variable that contains your type.
 
-If you use the widget configuration (getJsonSchema) you must pass the form to the template with getConfigForm as 'form'.
+Example :
+```php
+public function render()
+{
+    return $this->twig("widget/pasta_widget.html.twig", [
+        "data" => $data,
+    ]);
+}
+```
 
-This method renders the widget that is shown. All your logic should be in there.
+Note that base template uses Bootstrap 5 cards. Various blocks exists to override the base template.
 
+## Widget configuration
 
-# Widget cache
+Each widget is individually configurable. The property "config" in the widgets is a JSON field where you can put anything you like.
+By default, this field is used by the configuration form.
 
-The cache is enabled by default.
+If you want to add a configuration form, you can use the createForm() method, which works like the Controller one.
+Then, you need to pass the form as a variable named `config_form` to the template.
+
+Example:
+```php
+public function render()
+{
+    $form = $this->createForm(RecipeType::class, [
+        "label" => "field.recipe",
+    ]);
+    
+    return $this->twig("widget/cake_widget.html.twig", [
+        "data" => $data,
+        "config_form" => $form->createView()
+    ]);
+}
+```
+
+The result of the form will overwrite the config property, in a JSON format.
+
+To retrieve your form value in the widget : `$this->getConfig("label", "Default label");`
+
+## Widget cache
+
+Widgets are cached for 5 minutes, to avoid doing calculations everytime, especially for big charts.  
+The cache is based on a cache key, if the value of the key changes, the cache is refreshed, wether 5 minutes have passed or not.
+
 You can change the timeout and the cache key with the following :
 
 ```php
-public function getCacheKey():string{
-    return $this->getId() . "_".md5($this->config);
+public function getCacheKey(): string
+{
+    return $this->getId() . "_" .md5($this->config);
 }
 
-public function getCacheTimeout():int {
+public function getCacheTimeout(): int
+{
     return 300;
 }
 ```
 
-In the example above, the cache lasts 300 s (5 minutes) and is invalidated if widget configuration changes.
+If you want to disable the cache for a widget, just make sure that getCacheTimeout returns 0.
 
-If you want to disable the cache for a widget, make sure getCacheTimeout returns 0.
+## Widget roles
+Widgets have roles on them, generated from the name.  
+Example : PostItWidget => ROLE_DASHBOARD_POST_IT
+
+If you want to change this behaviour, simply override supports(), or add a voter.
+
+# Understand the data structure
+
+Widget Entity <--> Widget Type <--> DashboardController
+
+A WidgetType (eg. PostItWidget) is simply a *definition* that will be used by the controller.  
+When an user adds a widget, it will create a distinct entity.  
+A widget may have multiple entities for the same type. For example, an user may have multiple post-its with different contents.
+
+Some widgets do not have an user_id filled in. They are the default widgets, which may only be created by the super admin (using the buttons in the dashboard)

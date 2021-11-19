@@ -5,7 +5,7 @@ namespace Lle\DashboardBundle\Widgets;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class PostItWidget extends AbstractWidget
+class PostIt extends AbstractWidget
 {
     public function render()
     {
