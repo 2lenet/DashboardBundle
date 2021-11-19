@@ -145,7 +145,7 @@ If you want to disable the cache for a widget, just make sure that getCacheTimeo
 
 ## Widget roles
 Widgets have roles on them, generated from the name.  
-Example : PostItWidget => ROLE_DASHBOARD_POST_IT
+Example : PostIt => ROLE_DASHBOARD_POST_IT
 
 If you want to change this behaviour, simply override supports(), or add a voter.
 
