@@ -1,6 +1,16 @@
 This bundle provides a dashboard with customizable widgets.
 
-## Installation
+### Table of contents
+* [Installation](#installation)
+  * [Creating widgets](#creating-widgets)
+* [Recipes](#recipes)
+  * [Templating](#templating)
+  * [Widget configuration](#widget-configuration)
+  * [Widget cache](#widget-cache)
+  * [Widget roles](#widget-roles)
+* [Understand the data structure](#understand-the-data-structure)
+
+# Installation
 
 `composer require 2lenet/dashboard2-bundle`
 
@@ -19,13 +29,13 @@ php bin/console doctrine:migrations:migrate
 
 ## Creating widgets
 
-#### With the maker:
+### With the maker:
 
 `php bin/console make:widget`
 
 Just provide a short name for your widget and the maker will generate the class and the template for you.
 
-#### If you prefer to do it yourself :
+### If you prefer to do it yourself :
 
 Create a class that extends `AbstractWidget` and fill in the methods.
 
