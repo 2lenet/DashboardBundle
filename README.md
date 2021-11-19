@@ -125,7 +125,7 @@ To retrieve your form value in the widget : `$this->getConfig("label", "Default 
 ## Widget cache
 
 Widgets are cached for 5 minutes, to avoid doing calculations everytime, especially for big charts.  
-The cache is based on a cache key, if the value of the key changes, the cache is refreshed, wether 5 minutes have passed or not.
+The cache is based on a cache key, if the value of the key changes, the cache is refreshed, whether 5 minutes have passed or not.
 
 You can change the timeout and the cache key with the following :
 
