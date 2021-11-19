@@ -50,6 +50,14 @@
                 <source>dashboard.administration.delete_all</source>
                 <target>Réinitialiser tous les dashboards</target>
             </trans-unit>
+            <trans-unit id="action.validate">
+                <source>action.validate</source>
+                <target>Valider</target>
+            </trans-unit>
+            <trans-unit id="widget.postit.title">
+                <source>widget.postit.title</source>
+                <target>Post-It</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -2,11 +2,11 @@
 
 namespace Lle\DashboardBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
-use Lle\DashboardBundle\Widget\WidgetTypeInterface;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -23,9 +23,10 @@ class LleDashboardExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $container->registerForAutoconfiguration(WidgetTypeInterface::class)->addTag('Lle_dashboard.widget');
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
-    }
 
+        $container->registerForAutoconfiguration(WidgetTypeInterface::class)
+            ->addTag('lle_dashboard.widget');
+    }
 }

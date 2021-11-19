@@ -2,69 +2,60 @@
 
 namespace Lle\DashboardBundle\Widgets;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Twig_Environment as Environment;
-use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-
-use Lle\DashboardBundle\Form\Type\JsonType;
-use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
+use Lle\DashboardBundle\Entity\Widget;
+use Lle\DashboardBundle\Form\Type\JsonType;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 
-/**
- * Description of CalendarWidget.
- *
- */
 abstract class AbstractWidget implements WidgetTypeInterface
 {
     /**
      * @var int
      */
-    private $id;
+    private int $id;
 
     /**
-     * @var int x position 
+     * @var int x position
      */
-    protected $x = 0;
+    protected int $x = 0;
 
     /**
      * @var int y position
      */
-    protected $y = 0;
+    protected int $y = 0;
 
     /**
      * @var int widget width
      */
-    protected $width = 4;
+    protected int $width = 4;
 
     /**
      * @var int widget height
      */
-    protected $height = 5;
+    protected int $height = 5;
 
     /**
-     * @var string json config
+     * @var array json config
      */
-    private $config;
+    private ?array $config = null;
 
     /**
      * @var string widget title
      */
-    private $title;
-
-    private $security;
+    private ?string $title = null;
 
     /**
-     * @required
+     * @var Security
      */
-    public function setSecurity(AuthorizationCheckerInterface $security): void
-    {
-        $this->security = $security;
-    }
+    private AuthorizationCheckerInterface $security;
+    
+    private Environment $twig;
+    
+    private FormFactoryInterface $formFactory;
 
     public function getId()
     {
@@ -115,7 +106,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function render()
     {
-        return 'You should implement the render method in '. get_class($this);
+        return "You should implement the render method in " . get_class($this);
     }
 
     /**
@@ -123,7 +114,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function getType()
     {
-        return str_replace('\\','_', get_class($this)).'_widget';
+        return str_replace("\\", "_", get_class($this)) . "_widget";
     }
 
     /**
@@ -137,17 +128,16 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * Returns the configuration, can be a specific key or the entire configuration
      * @param $key the name of the configuration field
-     * @param $defaultValue default value when the key doesn't exist
+     * @param $default default value when the key doesn't exist
      * @return string a string representing the entire config or the value of the key
      */
-    public function getConfig($key=null, $defaultValue=null)
+    public function getConfig($key = null, $default = null)
     {
-        $config = json_decode($this->config, true);
-        
         if ($key) {
-            return $config[$key] ?? $defaultValue;
+            return $this->config[$key] ?? $default;
         }
-        return $config;
+
+        return $this->config;
     }
 
     /**
@@ -181,20 +171,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
 
     public function __toString()
     {
-        return $this->getName().'('.$this->getType().')';
+        return $this->getName() . "(" . $this->getType() . ")";
     }
 
-    public function getConfigForm()
+    public function getConfigForm(): ?FormInterface
     {
-        if ($this->getJsonSchema()) {
-            $formFactory = Forms::createFormFactory();
-            $form = $formFactory->create()
-                ->add('Configuration', JsonType::class, array('schema' => $this->getJsonSchema(), 'theme' => 'bootstrap3'))
-                ->add('json_form_'.$this->getId(), HiddenType::class)
-            ;
-            
-            return $form->createView();
-        }
         return null;
     }
 
@@ -225,7 +206,8 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function getCacheKey(): string
     {
         $uniqueKey = json_encode(array($this->config, $this->width, $this->height, $this->title, $this->x, $this->y));
-        return $this->getId()."_".md5($uniqueKey);
+
+        return $this->getId() . "_" . md5($uniqueKey);
     }
 
     /**
@@ -235,5 +217,56 @@ abstract class AbstractWidget implements WidgetTypeInterface
     {
         return 300;
     }
-    
+
+    /**
+     * Helper functions
+     */
+
+    public function createForm(string $type, $data = null, array $options = []): FormInterface
+    {
+        return $this->formFactory
+            ->create($type, $data, $options);
+    }
+
+    public function twig($template, array $context = []): string
+    {
+        return $this->twig
+            ->render($template, array_merge([
+                "widget" => $this,
+            ], $context));
+    }
+
+    /**
+     * Services injection
+     */
+
+    /**
+     * @required
+     */
+    public function setSecurity(AuthorizationCheckerInterface $security): self
+    {
+        $this->security = $security;
+
+        return $this;
+    }
+
+    /**
+     * @required
+     */
+    public function setTwig(Environment $twig): self
+    {
+        $this->twig = $twig;
+
+        return $this;
+    }
+
+    /**
+     * @required
+     */
+    public function setFormFactory(FormFactoryInterface $formFactory): self
+    {
+        $this->formFactory = $formFactory;
+
+        return $this;
+    }
 }

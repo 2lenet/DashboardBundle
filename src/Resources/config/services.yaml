@@ -9,9 +9,13 @@ services:
     Lle\DashboardBundle\Controller\:
         resource: '../../Controller'
 
-    Lle\DashboardBundle\Widgets\:
-        resource: '../../Widgets'
-        tags: ['lle_dashboard.widget']
+    Lle\DashboardBundle\Widgets\AbstractWidget:
+        autowire: false
+        autoconfigure: false
+        calls:
+            - setSecurity: ['@security.authorization_checker']
+            - setTwig: ['@twig']
+            - setFormFactory: ['@form.factory']
 
     Lle\DashboardBundle\Repository\:
         resource: '../../Repository/*'
@@ -22,11 +26,12 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@security.token_storage'
-            - [!tagged lle_dashboard.widget]
+            - !tagged_iterator lle_dashboard.widget
 
     Lle\DashboardBundle\Maker\MakeWidget:
         tags: [maker.command]
 
-    Lle\DashboardBundle\Widgets\AbstractWidget:
-        calls:
-            - setSecurity: ['@security.authorization_checker']
+    Lle\DashboardBundle\Widgets\:
+        resource: '../../Widgets'
+        tags: ['lle_dashboard.widget']
+        exclude: '../..Widgets/AbstractWidget.php'
