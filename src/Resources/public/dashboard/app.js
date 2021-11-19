@@ -4759,12 +4759,7 @@ onLoad(function () {
       {% endif %}
       {% endfor %}
   */
-
-  /**
-   * Initialisation
-   */
-  var grid = gridstack__WEBPACK_IMPORTED_MODULE_2__.GridStack.init({
-    width: 12,
+  var options = {
     animate: true,
     "float": true,
     // so we can only drag by clicking the title, so it won't drag if we select inside
@@ -4774,102 +4769,87 @@ onLoad(function () {
       // Don't put handles on the sizes so the user can still interact with scroll bars
       handles: "se, sw, ne, nw"
     }
-  });
-  grid.on("added", function (event, widgets) {
-    var _iterator = _createForOfIteratorHelper(widgets),
-        _step;
-
-    try {
-      var _loop = function _loop() {
-        var widget = _step.value;
-        // Create EventHandler for widget deletion
-        document.querySelector("#widget_close_".concat(widget.id)).addEventListener("click", function () {
-          toggleSpin();
-          var url = Routing.generate("remove_widget", {
-            id: widget.id
-          });
-          fetch(url).then(function () {
-            grid.removeWidget(widget.el);
-          })["finally"](function () {
-            toggleSpin();
-          });
-        });
-      };
-
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        _loop();
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
-  }); // save changes
-
-  grid.on("change", function (event, widgets) {
-    // Create EventHandler for widget update
-    var _iterator2 = _createForOfIteratorHelper(widgets),
-        _step2;
-
-    try {
-      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var widget = _step2.value;
-        var url = Routing.generate("update_widget", {
-          id: widget.id,
-          x: widget.x,
-          y: widget.y,
-          width: widget.w,
-          height: widget.h
-        });
-        fetch(url);
-      }
-    } catch (err) {
-      _iterator2.e(err);
-    } finally {
-      _iterator2.f();
-    }
-  });
+  };
   /**
-   * Chargement des widgets
+   * Initialize dashboard
+   */
+
+  var grid = gridstack__WEBPACK_IMPORTED_MODULE_2__.GridStack.init(options); // Update grid when user adds a new widget
+
+  initializeAddedHandler(grid); // Button to add a widget
+
+  initializeAddWidget(grid); // Save changes when a widget is moved or resized
+
+  initializeChangeHandler(grid);
+  /**
+   * Load widgets
    */
 
   var container = document.querySelector(".grid-stack");
   var items = JSON.parse(container.dataset.widgets);
-  grid.load(items);
-  container.removeAttribute("data-widgets"); // add widget button
 
-  var options = document.querySelectorAll(".add-widget");
-
-  var _iterator3 = _createForOfIteratorHelper(options),
-      _step3;
+  var _iterator = _createForOfIteratorHelper(items),
+      _step;
 
   try {
-    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-      var option = _step3.value;
-      option.addEventListener("click", function (e) {
-        toggleSpin();
-        var type = e.target.dataset.type;
-        var url = Routing.generate("add_widget", {
-          type: type
-        });
-        fetch(url).then(function (response) {
-          response.json().then(function (widget) {
-            grid.addWidget(widget);
-          });
-        })["finally"](function () {
-          toggleSpin();
-        });
-      });
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var item = _step.value;
+      grid.addWidget(createWidgetElement(item));
     }
-    /*
-    grid.disable();*/
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
+  }
+
+  var _iterator2 = _createForOfIteratorHelper(grid.getGridItems()),
+      _step2;
+
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var widget = _step2.value;
+      enableScripts(widget);
+    }
+    /**
+     * Clear useless stuff
+     */
 
   } catch (err) {
-    _iterator3.e(err);
+    _iterator2.e(err);
   } finally {
-    _iterator3.f();
+    _iterator2.f();
   }
-}); // Edit the title of a widget.
+
+  container.removeAttribute("data-widgets");
+  /*
+  grid.disable();*/
+});
+/**
+ * initialize DOM widget element
+ */
+
+function createWidgetElement(html) {
+  var el = document.createElement("template");
+  el.innerHTML = html.trim();
+  return el.content.firstChild;
+}
+/**
+ * @see https://stackoverflow.com/a/47614491
+ *
+ * enable scripts in widgets
+ */
+
+
+function enableScripts(widget) {
+  Array.from(widget.querySelectorAll("script")).forEach(function (oldScript) {
+    var newScript = document.createElement("script");
+    Array.from(oldScript.attributes).forEach(function (attr) {
+      return newScript.setAttribute(attr.name, attr.value);
+    });
+    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+    oldScript.parentNode.replaceChild(newScript, oldScript);
+  });
+} // Edit the title of a widget.
 // function editTitle(title) {
 //
 //     // SCENE
@@ -4906,19 +4886,124 @@ onLoad(function () {
 //     input.focus()[0].setSelectionRange(99999, 99999);
 // }
 
+
 function toggleSpin() {
   document.querySelector("#gs-spin").classList.toggle("fa-circle-notch");
-} // function toggleConfigPanel(cogButton, id) {
-//     cogButton.closest('.grid-stack-item').find(".panel-body:first").toggle();
-//     $("#form_" + id).toggle();
-// }
-//
+}
+
+function toggleConfigPanel(id) {
+  document.querySelector("#widget_".concat(id, " .card-body")).classList.toggle("d-none");
+  document.querySelector("#form_".concat(id)).classList.toggle("d-none");
+} //
 // function enableGridChanges() {
-//     // When a widget is moved or resized
-//
 //     grid = $('.grid-stack').data('gridstack');
 //     grid.enable();
 // }
+
+
+function initializeAddWidget(grid) {
+  var options = document.querySelectorAll(".add-widget");
+
+  var _iterator3 = _createForOfIteratorHelper(options),
+      _step3;
+
+  try {
+    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+      var option = _step3.value;
+      option.addEventListener("click", function (e) {
+        toggleSpin();
+        var type = e.target.dataset.type;
+        var url = Routing.generate("add_widget", {
+          type: type
+        });
+        fetch(url).then(function (response) {
+          response.text().then(function (html) {
+            var widget = createWidgetElement(html);
+            grid.addWidget(widget);
+            enableScripts(widget);
+          });
+        })["finally"](function () {
+          toggleSpin();
+        });
+      });
+    }
+  } catch (err) {
+    _iterator3.e(err);
+  } finally {
+    _iterator3.f();
+  }
+}
+
+function initializeChangeHandler(grid) {
+  grid.on("change", function (event, widgets) {
+    // Create EventHandler for widget update
+    var _iterator4 = _createForOfIteratorHelper(widgets),
+        _step4;
+
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var widget = _step4.value;
+        var url = Routing.generate("update_widget", {
+          id: widget.id,
+          x: widget.x,
+          y: widget.y,
+          width: widget.w,
+          height: widget.h
+        });
+        fetch(url);
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
+    }
+  });
+}
+
+function initializeAddedHandler(grid) {
+  grid.on("added", function (event, widgets) {
+    var _iterator5 = _createForOfIteratorHelper(widgets),
+        _step5;
+
+    try {
+      var _loop = function _loop() {
+        var widget = _step5.value;
+        // Handle widget deletion
+        document.querySelector("#widget_close_".concat(widget.id)).addEventListener("click", function () {
+          toggleSpin();
+          var url = Routing.generate("remove_widget", {
+            id: widget.id
+          });
+          fetch(url).then(function () {
+            grid.removeWidget(widget.el);
+          })["finally"](function () {
+            toggleSpin();
+          });
+        }); // Handle widget config panel
+
+        document.querySelector("#config_".concat(widget.id)).addEventListener("click", function () {
+          toggleConfigPanel(widget.id);
+        }); // Handle widget config form
+
+        /*
+        let editor = window[`editor${widget.id}`];
+        editor.addEventListener("change", function () {
+             // Save config in a field with the correct data because Symfony is screwing up some field values
+            document.querySelector(`#form_json_${widget.id}`)
+                .value = JSON.stringify(editor.getValue());
+        });*/
+      };
+
+      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+        _loop();
+      }
+    } catch (err) {
+      _iterator5.e(err);
+    } finally {
+      _iterator5.f();
+    }
+  });
+}
 })();
 
 /******/ })()
