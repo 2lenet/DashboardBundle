@@ -107,9 +107,7 @@ Example:
 ```php
 public function render()
 {
-    $form = $this->createForm(RecipeType::class, [
-        "label" => "field.recipe",
-    ]);
+    $form = $this->createForm(InterventionWidgetType::class);
     
     return $this->twig("widget/cake_widget.html.twig", [
         "data" => $data,
@@ -118,9 +116,30 @@ public function render()
 }
 ```
 
+```php
+class InterventionWidgetType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('etat', ChoiceType::class, [
+                'choices' => $yourChoices
+            ])
+        ;
+    }
+    
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            // Configure your form options here
+        ]);
+    }
+}
+```
+
 The result of the form will overwrite the config property, in a JSON format.
 
-To retrieve your form value in the widget : `$this->getConfig("label", "Default label");`
+To retrieve your form value in the widget : `$this->getConfig("etat");`
 
 ## Widget cache
 
