@@ -39,7 +39,7 @@ class DashboardController extends AbstractController
 
     /**
      * @Route("/dashboard/add_widget/{type}", options={"expose"=true}, name="add_widget")
-     */ 
+     */
     public function addWidgetAction(WidgetProvider $provider, $type)
     {
         $widgetType = $provider->getWidgetType($type);
@@ -140,13 +140,13 @@ class DashboardController extends AbstractController
     }
 
     /**
-     * @Route("/dashboard/widget_save_config/{id}", name="widget_save_config")
+     * @Route("/dashboard/widget_save_config/{id}/{form}", name="widget_save_config")
      */
-    public function saveConfig(Request $request, WidgetProvider $provider, $id)
+    public function saveConfig(Request $request, WidgetProvider $provider, $id, $form)
     {
-        $config = $request->request->get("form", null);
+        $config = $request->request->get($form, null);
         $widget = $this->em->getRepository(Widget::class)->find($id);
-        
+
         if ($widget) {
             $widget->setConfig($config);
             $this->em->flush();
@@ -185,7 +185,7 @@ class DashboardController extends AbstractController
 
         return $this->redirectToRoute("homepage");
     }
-    
+
     /**
      * @Route("/", name="homepage", methods="GET")
      */

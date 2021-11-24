@@ -1,6 +1,6 @@
 <div id="form_{{ widget.id }}" class="card-body d-none">
     {% if config_form is defined and config_form %}
-        {{ form_start(config_form, {'action': path('widget_save_config', parameters = {id: widget.id}), 'method': 'POST'}) }}
+        {{ form_start(config_form, {'action': path('widget_save_config', parameters = {id: widget.id, form: config_form.vars.id}), 'method': 'POST'}) }}
         {{ form_rest(config_form) }}
         <button id="submit_{{ widget.id }}" class="btn btn-primary" type="submit">
             {{ 'widget.saveConfig' | trans(domain='LleDashboardBundle') }}
@@ -8,7 +8,7 @@
         {{ form_end(config_form) }}
     {% endif %}
 
-    <a class="btn btn-default" href="{{ path('widget_reset_config', { id: widget.id }) }}">
+    <a class="btn btn-light mt-4" href="{{ path('widget_reset_config', { id: widget.id }) }}">
         {{ 'widget.defaultConfig' | trans(domain='LleDashboardBundle') }}
     </a>
 </div>
