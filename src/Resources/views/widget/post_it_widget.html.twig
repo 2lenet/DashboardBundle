@@ -4,18 +4,19 @@
     {{ widget.title | default(widget.name | trans(domain='LleDashboardBundle')) }}
 {% endblock widget_title %}
 
+{% set form_id = 'widget-post-it-form_' ~ widget.id %}
 {% block widget_body %}
     <form
-            id="{{ 'widget-post-it-form_' ~ widget.id }}"
+            id="{{ form_id }}"
             method="POST"
-            action="{{ path("widget_save_config", { 'id': widget.id, 'form': 'widget-post-it-form_' ~ widget.id }) }}"
+            action="{{ path("widget_save_config", { 'id': widget.id, 'form': form_id }) }}"
             class="dashboard-widget-post-it"
     >
         <textarea
-                form="{{ 'widget-post-it-form_' ~ widget.id }}"
+                form="{{ form_id }}"
                 class="form-control"
                 rows="8"
-                name=form[message]"
+                name="{{ form_id }}[message]"
         >{{ widget.config.message ?? null }}</textarea>
         <input class="btn btn-primary mt-2" type="submit" value="{{ 'action.validate' | trans(domain='LleDashboardBundle') }}">
     </form>
