@@ -8,7 +8,7 @@
     <form
             id="{{ 'widget-post-it-form_' ~ widget.id }}"
             method="POST"
-            action="{{ path("widget_save_config", { 'id': widget.id }) }}"
+            action="{{ path("widget_save_config", { 'id': widget.id, 'form': 'widget-post-it-form_' ~ widget.id }) }}"
             class="dashboard-widget-post-it"
     >
         <textarea
