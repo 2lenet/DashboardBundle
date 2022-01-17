@@ -1,7 +1,12 @@
 {% extends '@LleDashboard/widget/base_widget.html.twig' %}
 
 {% block widget_title %}
-    {{ widget.title | default(widget.name | trans(domain='LleDashboardBundle')) }}
+    <input
+            type="text"
+            value="{{ widget.title | default(widget.name | trans(domain='LleDashboardBundle')) }}"
+            class="lle-dashboard-input-title text-truncate w-100" readonly="readonly" id="lle-dashboard-input-{{ widget.id }}"
+            data-widgetid="{{ widget.id }}"
+    >
 {% endblock widget_title %}
 
 {% set form_id = 'widget-post-it-form_' ~ widget.id %}

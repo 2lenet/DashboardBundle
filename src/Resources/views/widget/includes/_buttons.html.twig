@@ -1,12 +1,11 @@
-{% block widget_close_button %}
-    <span
-            id="widget_close_{{ widget.id }}"
-            class="widget-close"
-            data-widgetid="{{ widget.id }}">
-                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget' | trans(domain='LleDashboardBundle') }}"></span>
-                        </span>
+{% block widget_edit_title_button %}
+    <i class="fa fa-pen lle-dashboard-widget-edit show-hover"
+       data-target="#lle-dashboard-input-{{ widget.id }}"
+       title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></i>
 {% endblock %}
+
 <span class="float-end">&nbsp;&nbsp;</span>
+
 {% block widget_config_button %}
     {% if config_form is defined and config_form %}
         <span
@@ -15,4 +14,15 @@
                 title="{{ 'widget.configWidget' | trans(domain='LleDashboardBundle') ~ ' "' ~ widget.name | trans ~ '"' }}">
                             </span>
     {% endif %}
+{% endblock %}
+
+<span class="float-end">&nbsp;&nbsp;</span>
+
+{% block widget_close_button %}
+    <span
+            id="widget_close_{{ widget.id }}"
+            class="widget-close"
+            data-widgetid="{{ widget.id }}">
+                            <span class="fa fa-trash show-hover" title="{{ 'widget.deleteWidget' | trans(domain='LleDashboardBundle') }}"></span>
+                        </span>
 {% endblock %}
