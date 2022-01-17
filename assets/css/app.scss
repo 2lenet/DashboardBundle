@@ -22,7 +22,11 @@
 
 .grid-stack-item {
     margin-bottom: 5px;
-    height: calc(100% - 10px)
+    height: calc(100% - 10px);
+
+    .card-header .float-start {
+        width: 80%;
+    }
 }
 
 .card-body {
@@ -30,7 +34,7 @@
     overflow-y: scroll;
 }
 
-.widget-close, .widget-config {
+.widget-close, .widget-config, .lle-dashboard-widget-edit {
     cursor: pointer;
 }
 
@@ -45,4 +49,18 @@
     font-size: large;
     padding: 1em;
     font-weight: bold;
+}
+
+input.lle-dashboard-input-title {
+    border: none;
+    outline: none;
+    background-color: inherit;
+
+    &[readonly=readonly], &:read-only {
+        color: inherit;
+    }
+
+    &--active {
+        border-bottom: 1px solid;
+    }
 }

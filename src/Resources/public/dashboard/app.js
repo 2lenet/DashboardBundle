@@ -4712,53 +4712,6 @@ var onLoad = function onLoad(callback) {
 };
 
 onLoad(function () {
-  /*
-      var widgetsRendered = 0;
-      {% for widget in widgets %}
-      {% if widget.support() %}
-      {% if widget.supportsAjax() %}
-       {# Dynamically load the widget. #}
-      $(function () {
-        var grid = $('.grid-stack').data('gridstack');
-       var emptyWidget = $("{{ include('@LleDashboard/widget/empty_widget.html.twig', { widget: widget}) | escape("js") }}");
-      grid.addWidget(emptyWidget);
-       $.ajax({
-      url: Routing.generate('render_widget', {id: {{ widget.id }}}),
-      success: function (response) {
-       // Update the grid
-      grid.removeWidget(emptyWidget, true);
-      grid.addWidget(response);
-       addWidgetListeners({{ widget.id }});
-  },
-      complete: function (response) {
-      // When all widgets are rendered, enable ability for grid to change
-      // do this in 'complete' so if some widgets have an error, still allow grid editing
-      widgetsRendered++;
-      if (widgetsRendered == {{ widgets|length }}) {
-      enableGridChanges();
-  }
-  }
-  });
-  });
-      {% else %}
-      {# Directly load the widget #}
-      $(function () {
-      // Update the grid
-      var grid = $('.grid-stack').data('gridstack');
-      var widget = $("{{ widget.render() | escape("js") }}");
-      grid.addWidget(widget);
-       addWidgetListeners({{ widget.id }});
-      // When all widgets are rendered, enable ability for grid to change
-      // do this in 'complete' so if some widgets have an error, still allow grid editing
-      widgetsRendered++;
-      if (widgetsRendered == {{ widgets|length }}) {
-      enableGridChanges();
-  }
-  });
-      {% endif %}
-      {% endif %}
-      {% endfor %}
-  */
   var options = {
     animate: true,
     "float": true,
@@ -4780,7 +4733,9 @@ onLoad(function () {
 
   initializeAddWidget(grid); // Save changes when a widget is moved or resized
 
-  initializeChangeHandler(grid);
+  initializeChangeHandler(grid); // Allow editing widget titles
+
+  initializeTitleEdition(grid);
   /**
    * Load widgets
    */
@@ -4821,8 +4776,6 @@ onLoad(function () {
   }
 
   container.removeAttribute("data-widgets");
-  /*
-  grid.disable();*/
 });
 /**
  * initialize DOM widget element
@@ -4849,43 +4802,7 @@ function enableScripts(widget) {
     newScript.appendChild(document.createTextNode(oldScript.innerHTML));
     oldScript.parentNode.replaceChild(newScript, oldScript);
   });
-} // Edit the title of a widget.
-// function editTitle(title) {
-//
-//     // SCENE
-//     var container = title.closest('div');
-//     var newContainer = container.clone(true);
-//
-//     // FORM CONTROL
-//     var input = $('<input></input>')
-//         .attr('type', 'text')
-//         .attr('value', title.text().trim())
-//         .addClass('pull-left form-control')
-//         .css('width', '15%')
-//         .css('min-width', '150px');
-//     var form = $('<form></form>').append(input).attr('action', '#');
-//
-//     var id = $(title).closest('.grid-stack-item').data('widget-id');
-//
-//     // user presses enter
-//     form.submit(function () {
-//         $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-//         $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-//         form.replaceWith(newContainer);
-//     })
-//
-//     // user focuses out
-//     input.blur(function () {
-//         $(newContainer).find('span#widget_title').text(input.val()).append("&nbsp;");
-//         $.ajax(Routing.generate('update_title', {id: id, title: input.val()}));
-//         form.replaceWith(newContainer);
-//     })
-//
-//     // show input and focus
-//     container.replaceWith(form);
-//     input.focus()[0].setSelectionRange(99999, 99999);
-// }
-
+}
 
 function toggleSpin() {
   document.querySelector("#gs-spin").classList.toggle("fa-circle-notch");
@@ -4894,12 +4811,7 @@ function toggleSpin() {
 function toggleConfigPanel(id) {
   document.querySelector("#widget_".concat(id, " .card-body")).classList.toggle("d-none");
   document.querySelector("#form_".concat(id)).classList.toggle("d-none");
-} //
-// function enableGridChanges() {
-//     grid = $('.grid-stack').data('gridstack');
-//     grid.enable();
-// }
-
+}
 
 function initializeAddWidget(grid) {
   var options = document.querySelectorAll(".add-widget");
@@ -4936,7 +4848,12 @@ function initializeAddWidget(grid) {
 
 function initializeChangeHandler(grid) {
   grid.on("change", function (event, widgets) {
-    // Create EventHandler for widget update
+    if (event.target.classList.contains("lle-dashboard-input-title")) {
+      // it's the title edition, ignore it
+      return;
+    } // Create EventHandler for widget update
+
+
     var _iterator4 = _createForOfIteratorHelper(widgets),
         _step4;
 
@@ -4999,6 +4916,68 @@ function initializeAddedHandler(grid) {
       _iterator5.f();
     }
   });
+}
+
+function initializeTitleEdition(grid) {
+  document.addEventListener("dblclick", function (e) {
+    var input = e.target;
+
+    if (!input.classList.contains("lle-dashboard-input-title")) {
+      return;
+    } // user double clicks on the input, enable the input
+
+
+    enableTitleInput(grid, input);
+  });
+  document.addEventListener("click", function (e) {
+    // user clicks out of the input, disable the input
+    if (!e.target.classList.contains("lle-dashboard-input-title")) {
+      document.querySelectorAll(".lle-dashboard-input-title").forEach(function (i) {
+        if (!i.hasAttribute("readonly")) {
+          saveTitleInput(grid, i);
+        }
+      });
+    }
+
+    if (e.target.classList.contains("lle-dashboard-widget-edit")) {
+      var input = document.querySelector(e.target.dataset.target);
+      enableTitleInput(grid, input);
+    }
+  });
+  document.addEventListener("keypress", function (e) {
+    var input = document.activeElement;
+
+    if (input && input.classList.contains("lle-dashboard-input-title--active") && e.key === "Enter") {
+      saveTitleInput(grid, input);
+    }
+  });
+}
+
+function enableTitleInput(grid, input) {
+  grid.enableMove(false);
+  input.focus();
+  input.removeAttribute("readonly");
+  input.classList.add("lle-dashboard-input-title--active");
+  input.setSelectionRange(0, 99999);
+}
+
+function saveTitleInput(grid, input) {
+  // save edited value
+  toggleSpin();
+  var url = Routing.generate("update_title", {
+    id: input.dataset.widgetid,
+    title: input.value
+  });
+  fetch(url)["catch"](function () {
+    input.value = "#ERROR";
+  })["finally"](function () {
+    toggleSpin();
+  });
+  input.setAttribute("readonly", "readonly");
+  input.classList.remove("lle-dashboard-input-title--active");
+  input.setSelectionRange(0, 0); // it's still seletected on click, unselect it
+
+  grid.enableMove(true);
 }
 })();
 
