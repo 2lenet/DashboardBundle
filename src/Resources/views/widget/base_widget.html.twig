@@ -11,19 +11,19 @@
         {% block card_header %}
             <div class="card-header text-primary">
                 <div class="float-start">
-                    <h5 class="card-title" data-widget-title-dblclick="true">
+                    <h5 class="card-title w-100">
                         {% block widget_title %}
-                            {{ widget.title | default(widget.name | trans) }}
+                            <input
+                                    type="text" value="{{ widget.title | default(widget.name | trans) }}"
+                                    class="lle-dashboard-input-title text-truncate w-100" readonly="readonly"
+                                    data-widgetid="{{ widget.id }}" id="lle-dashboard-input-{{ widget.id }}">
                         {% endblock widget_title %}
-                        {#
-                        <span class="fa fa-pen show-hover" id="edit_{{ widget.id }}" title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"></span>
-                        #}
                     </h5>
                 </div>
 
                 <div class="float-end">
                     {% block widget_buttons %}
-                        {{ include('@LleDashboard/widget/includes/_buttons.html.twig') }}
+                        {% include('@LleDashboard/widget/includes/_buttons.html.twig') with {widget: widget} %}
                     {% endblock widget_buttons %}
                 </div>
             </div>
