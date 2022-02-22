@@ -145,7 +145,9 @@ class DashboardController extends AbstractController
      */
     public function saveConfig(Request $request, WidgetProvider $provider, $id, $form)
     {
-        $config = $request->request->get($form, null);
+        $params = $request->request->all();
+        $config = array_key_exists($form, $params) ? $params[$form] : null;
+        
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
