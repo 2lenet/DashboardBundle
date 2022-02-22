@@ -254,7 +254,7 @@ class DashboardController extends AbstractController
         return $this->redirectToRoute("homepage");
     }
 
-    protected function getUser()
+    protected function getUser(): ?UserInterface
     {
         if ($this->tokenStorage->getToken() && is_object($this->tokenStorage->getToken()->getUser())) {
             return $this->tokenStorage->getToken()->getUser();
