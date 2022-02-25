@@ -95,6 +95,13 @@ public function render()
 
 Note that base template uses Bootstrap 5 cards. Various blocks exists to override the base template.
 
+If you want to hide the header of a widget, and only show it on hover : you must add the following lines in the template of your widget :
+```twig
+{% block widget_class %}
+    card-simplified
+{% endblock %}
+```
+
 ## Widget configuration
 
 Each widget is individually configurable. The property "config" in the widgets is a JSON field where you can put anything you like.

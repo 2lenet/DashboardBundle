@@ -1,37 +1,61 @@
 @import "~gridstack/dist/gridstack.min.css";
 
-.grid-stack > .grid-stack-item > .grid-stack-item-content {
-    overflow-y: hidden !important;
-}
+.grid-stack {
+    > &-item {
+        margin-bottom: 5px;
+        height: calc(100% - 10px);
 
-.grid-stack .card {
-    box-shadow: 0 10px 10px rgba(255, 255, 255, 0.25);
+        > &-content {
+            height: calc(100% - 20px);
+            overflow-y: hidden !important;
+        }
+    }
+
+    .card {
+        box-shadow: 0 10px 10px rgba(255, 255, 255, 0.25);
+
+        &-header {
+            overflow: hidden;
+            &:hover {
+                .show-hover {
+                    display: inline-block;
+                }
+            }
+            .float-start {
+                width: 80%;
+            }
+            .card-title {
+                margin: 0.25rem 0;
+            }
+        }
+
+        &-body {
+            height: calc(100% - 42px);
+            overflow-y: scroll;
+        }
+
+        &-simplified {
+            border-color: transparent !important;
+            &:hover {
+                border-color: inherit !important;
+                .card-header {
+                    height: 50px;
+                    padding: 0.5rem 1rem;
+                    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+                }
+            }
+            .card-header {
+                height: 0;
+                padding: 0;
+                border: none;
+                transition: ease-out all 0.3s;
+            }
+        }
+    }
 }
 
 .show-hover {
     display: none;
-}
-
-.card-header:hover .show-hover {
-    display: inline-block;
-}
-
-.grid-stack-item-content {
-    height: 100%;
-}
-
-.grid-stack-item {
-    margin-bottom: 5px;
-    height: calc(100% - 10px);
-
-    .card-header .float-start {
-        width: 80%;
-    }
-}
-
-.card-body {
-    height: calc(100% - 42px);
-    overflow-y: scroll;
 }
 
 .widget-close, .widget-config, .lle-dashboard-widget-edit {

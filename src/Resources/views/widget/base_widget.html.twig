@@ -7,21 +7,22 @@
     gs-w="{{ widget.width }}"
     gs-h="{{ widget.height }}"
 >
-    <div class="card border-primary grid-stack-item-content">
+    <div class="card {% block widget_class %}{% endblock%} border-primary grid-stack-item-content">
         {% block card_header %}
             <div class="card-header text-primary">
                 <div class="float-start">
                     <h5 class="card-title w-100">
                         {% block widget_title %}
                             <input
+                                    id="lle-dashboard-input-{{ widget.id }}" class="lle-dashboard-input-title text-truncate w-100"
                                     type="text" value="{{ widget.title | default(widget.name | trans) }}"
-                                    class="lle-dashboard-input-title text-truncate w-100" readonly="readonly"
-                                    data-widgetid="{{ widget.id }}" id="lle-dashboard-input-{{ widget.id }}">
+                                    title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"
+                                    readonly="readonly" data-widgetid="{{ widget.id }}">
                         {% endblock widget_title %}
                     </h5>
                 </div>
 
-                <div class="float-end">
+                <div class="float-end my-1">
                     {% block widget_buttons %}
                         {% include('@LleDashboard/widget/includes/_buttons.html.twig') with {widget: widget} %}
                     {% endblock widget_buttons %}
