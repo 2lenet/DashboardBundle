@@ -31,6 +31,11 @@ services:
     Lle\DashboardBundle\Maker\MakeWidget:
         tags: [maker.command]
 
+    Lle\DashboardBundle\Maker\MakeWorkflowWidget:
+        tags: [maker.command]
+        arguments:
+            - '@maker.doctrine_helper'
+
     Lle\DashboardBundle\Widgets\:
         resource: '../../Widgets'
         tags: ['lle_dashboard.widget']
