@@ -36,6 +36,8 @@ php bin/console doctrine:migrations:migrate
 
 Just provide a short name for your widget and the maker will generate the class and the template for you.
 
+If you want a widget for your workflow, you should use this maker : `php bin/console make:workflow-widget`
+
 ### If you prefer to do it yourself :
 
 Create a class that extends `AbstractWidget` and fill in the methods.
