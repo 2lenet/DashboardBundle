@@ -63,16 +63,17 @@
 }
 
 .dashboard-widget-post-it {
-    height: 80%;
-}
-.dashboard-widget-post-it textarea, .dashboard-widget-post-it textarea:focus {
-    font-family: "Comic Sans MS", "Indie Flower", sans-serif;
-    background-color: #FCFCAA;
     height: 100%;
-    width: 100%;
-    font-size: large;
-    padding: 1em;
-    font-weight: bold;
+
+    textarea, textarea:focus {
+        width: 100%;
+        height: 100%;
+        padding: 1em;
+        background-color: #FCFCAA;
+        font-family: 'Comic Sans MS', 'Indie Flower', sans-serif;
+        font-size: large;
+        font-weight: bold;
+    }
 }
 
 input.lle-dashboard-input-title {
