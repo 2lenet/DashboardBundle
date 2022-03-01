@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -144,7 +145,9 @@ class DashboardController extends AbstractController
      */
     public function saveConfig(Request $request, WidgetProvider $provider, $id, $form)
     {
-        $config = $request->request->get($form, null);
+        $params = $request->request->all();
+        $config = array_key_exists($form, $params) ? $params[$form] : null;
+        
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
@@ -254,7 +257,7 @@ class DashboardController extends AbstractController
         return $this->redirectToRoute("homepage");
     }
 
-    protected function getUser()
+    protected function getUser(): ?UserInterface
     {
         if ($this->tokenStorage->getToken() && is_object($this->tokenStorage->getToken()->getUser())) {
             return $this->tokenStorage->getToken()->getUser();
