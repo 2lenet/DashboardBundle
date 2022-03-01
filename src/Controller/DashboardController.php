@@ -155,6 +155,9 @@ class DashboardController extends AbstractController
             $this->em->flush();
         }
 
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse("OK");
+        }
         return $this->redirectToRoute("homepage");
     }
 

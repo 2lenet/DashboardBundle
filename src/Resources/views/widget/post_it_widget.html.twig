@@ -3,26 +3,27 @@
 {% block widget_title %}
     <input
             type="text"
-            value="{{ widget.title | default(widget.name | trans(domain='LleDashboardBundle')) }}"
+            value="{{ widget.title | default(widget.name|trans(domain='LleDashboardBundle')) }}"
             class="lle-dashboard-input-title text-truncate w-100" readonly="readonly" id="lle-dashboard-input-{{ widget.id }}"
             data-widgetid="{{ widget.id }}"
     >
 {% endblock widget_title %}
 
 {% set form_id = 'widget-post-it-form_' ~ widget.id %}
-{% block widget_body %}
-    <form
-            id="{{ form_id }}"
-            method="POST"
-            action="{{ path("widget_save_config", { 'id': widget.id, 'form': form_id }) }}"
-            class="dashboard-widget-post-it"
-    >
-        <textarea
-                form="{{ form_id }}"
-                class="form-control"
-                rows="8"
-                name="{{ form_id }}[message]"
-        >{{ widget.config.message ?? null }}</textarea>
-        <input class="btn btn-primary mt-2" type="submit" value="{{ 'action.validate' | trans(domain='LleDashboardBundle') }}">
+{% block card_body %}
+    <form id="{{ form_id }}" class="dashboard-widget-post-it">
+        <textarea class="form-control" name="{{ form_id }}-message" rows="8">{{ widget.config.message ?? null }}</textarea>
     </form>
+
+    <script>
+        const postit_{{ widget.id }} = document.getElementById('{{ form_id }}');
+        if (postit_{{ widget.id }}) {
+            postit_{{ widget.id }}.querySelector('textarea').addEventListener('input', function () {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', "{{ path('widget_save_config', { 'id': widget.id, 'form': form_id }) }}", true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                xhr.send(new FormData(postit_{{ widget.id }}));
+            });
+        }
+    </script>
 {% endblock %}
