@@ -1,4 +1,5 @@
 @import "~gridstack/dist/gridstack.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
 
 .grid-stack {
     > &-item {
@@ -70,7 +71,7 @@
         height: 100%;
         padding: 1em;
         background-color: #FCFCAA;
-        font-family: 'Comic Sans MS', 'Indie Flower', sans-serif;
+        font-family: 'Indie Flower', cursive;
         font-size: large;
         font-weight: bold;
     }
