@@ -12,7 +12,7 @@
 {% set form_id = 'widget-post-it-form_' ~ widget.id %}
 {% block card_body %}
     <form id="{{ form_id }}" class="dashboard-widget-post-it">
-        <textarea class="form-control" name="{{ form_id }}-message" rows="8">{{ widget.config.message ?? null }}</textarea>
+        <textarea class="form-control" name="{{ form_id }}[message]" rows="8">{{ widget.config.message ?? null }}</textarea>
     </form>
 
     <script>
