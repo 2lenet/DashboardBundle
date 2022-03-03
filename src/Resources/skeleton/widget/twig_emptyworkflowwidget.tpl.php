@@ -5,7 +5,7 @@
         {% for state in states %}
             <div class="col text-center">
                 <h2>{{ state.count }}</h2>
-                {{ ('field.' ~ state.<?= $workflow ?>)|trans }}
+                {{ ('workflow.' ~ state.<?= $workflow ?>)|trans }}
             </div>
         {% endfor %}
     </div>
