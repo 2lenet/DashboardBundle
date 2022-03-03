@@ -31,7 +31,7 @@ class <?= $classname ?> extends AbstractWidget
         // Or custom states
         // $states = ['state1', 'state2', 'state3'];
 
-        $counts = $this->commandeRepository
+        $counts = $this-><?= strtolower($entity) ?>Repository
             ->createQueryBuilder('root')
             ->select('root.<?= $workflow ?>, COUNT(root.id) as count')
             ->groupBy('root.<?= $workflow ?>')
