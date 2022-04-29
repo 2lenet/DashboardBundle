@@ -47,7 +47,7 @@ interface WidgetTypeInterface
     public function getName();
 
     /**
-     * @return json schema for config
+     * @return array json schema for config
      */
     public function getJsonSchema();
 
