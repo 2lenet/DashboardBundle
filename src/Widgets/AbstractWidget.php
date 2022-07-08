@@ -225,7 +225,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function createForm(string $type, $data = null, array $options = []): FormInterface
     {
         return $this->formFactory
-            ->create($type, $data, $options);
+            ->createNamed("form_widget_" . $this->getId(), $type, $data, $options);
     }
 
     public function twig($template, array $context = []): string
