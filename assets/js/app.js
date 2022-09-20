@@ -2,7 +2,6 @@ import "../css/app.scss";
 
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack';
-import 'gridstack/dist/h5/gridstack-dd-native';
 
 let onLoad = (callback) => {
     if (document.readyState !== "loading") {
@@ -18,7 +17,7 @@ onLoad(() => {
         float: true,
         // so we can only drag by clicking the title, so it won't drag if we select inside
         handleClass: "card-header",
-        alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        alwaysShowResizeHandle: 'mobile',
         resizable: {
             // Don't put handles on the sizes so the user can still interact with scroll bars
             handles: "se, sw, ne, nw"
@@ -28,7 +27,7 @@ onLoad(() => {
     /**
      * Initialize dashboard
      */
-    let grid = GridStack.init(options);
+    const grid = GridStack.init(options);
 
     // Update grid when user adds a new widget
     initializeAddedHandler(grid);
@@ -120,27 +119,16 @@ function initializeAddWidget(grid) {
 }
 
 function initializeChangeHandler(grid) {
-    grid.on("change", function (event, widgets) {
+    window.addEventListener('resize', function () {
+        location.reload();
+    });
 
-        if (event.target.classList.contains("lle-dashboard-input-title")) {
-            // it's the title edition, ignore it
-            return;
-        }
+    grid.on('resize', function (event, widget) {
+        updateWidget(widget);
+    });
 
-        // Create EventHandler for widget update
-        for (let widget of widgets) {
-
-            let url = Routing.generate("update_widget", {
-                id: widget.id,
-                x: widget.x,
-                y: widget.y,
-                width: widget.w,
-                height: widget.h,
-            });
-
-            fetch(url);
-        }
-
+    grid.on('drag', function (event, widget) {
+        updateWidget(widget);
     });
 }
 
@@ -222,6 +210,18 @@ function enableTitleInput(grid, input) {
     input.removeAttribute("readonly");
     input.classList.add("lle-dashboard-input-title--active");
     input.setSelectionRange(0, 99999);
+}
+
+function updateWidget(widget) {
+    const url = Routing.generate('update_widget', {
+        id: widget.getAttribute('gs-id'),
+        x: widget.getAttribute('gs-x'),
+        y: widget.getAttribute('gs-y'),
+        width: widget.getAttribute('gs-w'),
+        height: widget.getAttribute('gs-h'),
+    });
+
+    fetch(url);
 }
 
 function saveTitleInput(grid, input) {

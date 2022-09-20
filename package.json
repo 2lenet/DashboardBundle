@@ -1,12 +1,4 @@
 {
-    "devDependencies": {
-        "@fortawesome/fontawesome-free": "^5.8.1",
-        "@symfony/webpack-encore": "^1.1.1",
-        "gridstack": "^4.2.3",
-        "node-sass": "^4.9.4",
-        "sass-loader": "^11.0.1",
-        "webpack-rtl-plugin": "^2.0.0"
-    },
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
@@ -15,5 +7,13 @@
         "watch": "encore dev --watch",
         "build": "encore production"
     },
-    "dependencies": {}
+    "dependencies": {},
+    "devDependencies": {
+        "@fortawesome/fontawesome-free": "^5.8.1",
+        "@symfony/webpack-encore": "^1.1.1",
+        "gridstack": "^6.0.1",
+        "node-sass": "^4.9.4",
+        "sass-loader": "^11.0.1",
+        "webpack-rtl-plugin": "^2.0.0"
+    }
 }
