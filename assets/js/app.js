@@ -96,7 +96,7 @@ function toggleConfigPanel(id) {
 }
 
 function initializeAddWidget(grid) {
-    let options = document.querySelectorAll(".add-widget");
+    const options = document.querySelectorAll(".add-widget");
     for (let option of options) {
         option.addEventListener("click", (e) => {
             toggleSpin();
@@ -113,6 +113,7 @@ function initializeAddWidget(grid) {
                 })
                 .finally(() => {
                     toggleSpin();
+                    location.reload();
                 });
         });
     }
