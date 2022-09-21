@@ -26,6 +26,7 @@
                 width: 80%;
             }
             .card-title {
+                width: 80%;
                 margin: 0.25rem 0;
             }
         }
@@ -59,7 +60,7 @@
     display: none;
 }
 
-.widget-close, .widget-config, .lle-dashboard-widget-edit {
+.widget-close, .widget-config, .lle-dashboard-widget-export, .lle-dashboard-widget-edit {
     cursor: pointer;
 }
 

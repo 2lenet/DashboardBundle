@@ -7,7 +7,9 @@
         "watch": "encore dev --watch",
         "build": "encore production"
     },
-    "dependencies": {},
+    "dependencies": {
+        "html2pdf.js": "^0.10.1"
+    },
     "devDependencies": {
         "@babel/core": "^7.19.1",
         "@babel/preset-env": "^7.19.1",

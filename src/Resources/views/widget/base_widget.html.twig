@@ -9,20 +9,18 @@
 >
     <div class="card {% block widget_class %}{% endblock%} border-primary grid-stack-item-content">
         {% block card_header %}
-            <div class="card-header text-primary">
-                <div class="float-start">
-                    <h5 class="card-title w-100">
-                        {% block widget_title %}
-                            <input
-                                    id="lle-dashboard-input-{{ widget.id }}" class="lle-dashboard-input-title text-truncate w-100"
-                                    type="text" value="{{ widget.title | default(widget.name | trans) }}"
-                                    title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"
-                                    readonly="readonly" data-widgetid="{{ widget.id }}">
-                        {% endblock widget_title %}
-                    </h5>
-                </div>
+            <div class="card-header d-flex justify-content-between text-primary">
+                <h5 class="card-title">
+                    {% block widget_title %}
+                        <input
+                                id="lle-dashboard-input-{{ widget.id }}" class="lle-dashboard-input-title text-truncate w-100"
+                                type="text" value="{{ widget.title | default(widget.name|trans) }}"
+                                title="{{ 'widget.editTitle'|trans(domain='LleDashboardBundle') }}"
+                                readonly="readonly" data-widgetid="{{ widget.id }}">
+                    {% endblock widget_title %}
+                </h5>
 
-                <div class="float-end my-1">
+                <div class="my-1" data-html2canvas-ignore="true">
                     {% block widget_buttons %}
                         {% include('@LleDashboard/widget/includes/_buttons.html.twig') with {widget: widget} %}
                     {% endblock widget_buttons %}
@@ -31,7 +29,7 @@
         {% endblock card_header %}
 
         {% block card_body %}
-            <div class="card-body">
+            <div id="widget_body_{{ widget.id }}" class="card-body">
                 {% block widget_body %}{% endblock widget_body %}
             </div>
         {% endblock card_body %}

@@ -2,6 +2,7 @@ import "../css/app.scss";
 
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack';
+import html2pdf from 'html2pdf.js';
 
 let onLoad = (callback) => {
     if (document.readyState !== "loading") {
@@ -40,6 +41,9 @@ onLoad(() => {
 
     // Allow editing widget titles
     initializeTitleEdition(grid);
+
+    // Allow to export widget as a PDF
+    initializeExportWidget();
 
     /**
      * Load widgets
@@ -247,4 +251,29 @@ function saveTitleInput(grid, input) {
     input.setSelectionRange(0, 0); // it's still seletected on click, unselect it
 
     grid.enableMove(true);
+}
+
+function initializeExportWidget() {
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('lle-dashboard-widget-export')) {
+            const widget = document.getElementById(event.target.dataset.export);
+            const widgetTitle = event.target.dataset.exportName;
+
+            html2pdf()
+                .set({
+                    margin: 10,
+                    filename: `${ widgetTitle }.pdf`,
+                    image: {
+                        type: 'jpg',
+                        quality: 1
+                    },
+                    html2canvas: {
+                        scale: 2
+                    }
+                })
+                .from(widget)
+                .save()
+            ;
+        }
+    });
 }
