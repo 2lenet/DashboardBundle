@@ -2,7 +2,7 @@ import "../css/app.scss";
 
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack';
-import 'gridstack/dist/h5/gridstack-dd-native';
+import html2pdf from 'html2pdf.js';
 
 let onLoad = (callback) => {
     if (document.readyState !== "loading") {
@@ -18,7 +18,7 @@ onLoad(() => {
         float: true,
         // so we can only drag by clicking the title, so it won't drag if we select inside
         handleClass: "card-header",
-        alwaysShowResizeHandle: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+        alwaysShowResizeHandle: 'mobile',
         resizable: {
             // Don't put handles on the sizes so the user can still interact with scroll bars
             handles: "se, sw, ne, nw"
@@ -28,7 +28,7 @@ onLoad(() => {
     /**
      * Initialize dashboard
      */
-    let grid = GridStack.init(options);
+    const grid = GridStack.init(options);
 
     // Update grid when user adds a new widget
     initializeAddedHandler(grid);
@@ -41,6 +41,9 @@ onLoad(() => {
 
     // Allow editing widget titles
     initializeTitleEdition(grid);
+
+    // Allow to export widget as a PDF
+    initializeExportWidget();
 
     /**
      * Load widgets
@@ -97,7 +100,7 @@ function toggleConfigPanel(id) {
 }
 
 function initializeAddWidget(grid) {
-    let options = document.querySelectorAll(".add-widget");
+    const options = document.querySelectorAll(".add-widget");
     for (let option of options) {
         option.addEventListener("click", (e) => {
             toggleSpin();
@@ -114,33 +117,23 @@ function initializeAddWidget(grid) {
                 })
                 .finally(() => {
                     toggleSpin();
+                    location.reload();
                 });
         });
     }
 }
 
 function initializeChangeHandler(grid) {
-    grid.on("change", function (event, widgets) {
+    window.addEventListener('resize', function () {
+        location.reload();
+    });
 
-        if (event.target.classList.contains("lle-dashboard-input-title")) {
-            // it's the title edition, ignore it
-            return;
-        }
+    grid.on('resize', function (event, widget) {
+        updateWidget(widget);
+    });
 
-        // Create EventHandler for widget update
-        for (let widget of widgets) {
-
-            let url = Routing.generate("update_widget", {
-                id: widget.id,
-                x: widget.x,
-                y: widget.y,
-                width: widget.w,
-                height: widget.h,
-            });
-
-            fetch(url);
-        }
-
+    grid.on('drag', function (event, widget) {
+        updateWidget(widget);
     });
 }
 
@@ -224,6 +217,18 @@ function enableTitleInput(grid, input) {
     input.setSelectionRange(0, 99999);
 }
 
+function updateWidget(widget) {
+    const url = Routing.generate('update_widget', {
+        id: widget.getAttribute('gs-id'),
+        x: widget.getAttribute('gs-x'),
+        y: widget.getAttribute('gs-y'),
+        width: widget.getAttribute('gs-w'),
+        height: widget.getAttribute('gs-h'),
+    });
+
+    fetch(url);
+}
+
 function saveTitleInput(grid, input) {
     // save edited value
     toggleSpin();
@@ -246,4 +251,29 @@ function saveTitleInput(grid, input) {
     input.setSelectionRange(0, 0); // it's still seletected on click, unselect it
 
     grid.enableMove(true);
+}
+
+function initializeExportWidget() {
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('lle-dashboard-widget-export')) {
+            const widget = document.getElementById(event.target.dataset.export);
+            const widgetTitle = event.target.dataset.exportName;
+
+            html2pdf()
+                .set({
+                    margin: 10,
+                    filename: `${ widgetTitle }.pdf`,
+                    image: {
+                        type: 'jpg',
+                        quality: 1
+                    },
+                    html2canvas: {
+                        scale: 2
+                    }
+                })
+                .from(widget)
+                .save()
+            ;
+        }
+    });
 }

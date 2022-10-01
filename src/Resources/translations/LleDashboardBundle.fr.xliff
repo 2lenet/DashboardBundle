@@ -58,6 +58,10 @@
                 <source>widget.postit.title</source>
                 <target>Post-It</target>
             </trans-unit>
+            <trans-unit id="widget.pdf_export">
+                <source>widget.pdf_export</source>
+                <target>Exporter</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

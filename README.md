@@ -104,6 +104,21 @@ If you want to hide the header of a widget, and only show it on hover : you must
 {% endblock %}
 ```
 
+
+You can add a export button to export to PDF a widget.
+
+Example :
+```php
+public function render()
+{
+    return $this->twig("widget/pasta_widget.html.twig", [
+        "data" => $data,
+        "exportable" => true
+    ]);
+}
+```
+
+
 ## Widget configuration
 
 Each widget is individually configurable. The property "config" in the widgets is a JSON field where you can put anything you like.

@@ -1,3 +1,14 @@
+{% block widget_export_button %}
+    {% if exportable is defined and exportable %}
+        <span
+                class="lle-dashboard-widget-export far fa-file show-hover"
+                data-export="widget_{{ widget.id }}"
+                data-export-name="{{ widget.title|default(widget.name|trans) }}"
+                title="{{ 'widget.pdf_export'|trans(domain='LleDashboardBundle') }}">
+        </span>
+    {% endif %}
+{% endblock %}
+
 {% block widget_edit_title_button %}
     <i class="fa fa-pen lle-dashboard-widget-edit show-hover"
             data-target="#lle-dashboard-input-{{ widget.id }}"
