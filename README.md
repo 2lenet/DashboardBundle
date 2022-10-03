@@ -105,7 +105,7 @@ If you want to hide the header of a widget, and only show it on hover : you must
 ```
 
 
-You can add a export button to export to PDF a widget.
+By default, there is a button to export a widget as PDF. You can remove this feature :
 
 Example :
 ```php
@@ -113,7 +113,7 @@ public function render()
 {
     return $this->twig("widget/pasta_widget.html.twig", [
         "data" => $data,
-        "exportable" => true
+        "exportable" => false
     ]);
 }
 ```
