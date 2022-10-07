@@ -258,6 +258,8 @@ function initializeExportWidget() {
         if (event.target.classList.contains('lle-dashboard-widget-export')) {
             const widget = document.getElementById(event.target.dataset.export);
             const widgetTitle = event.target.dataset.exportName;
+            let orientation = event.target.dataset.exportOrientation ?? 'portrait';
+            let format = event.target.dataset.exportFormat ?? 'a4';
 
             html2pdf()
                 .set({
@@ -269,6 +271,10 @@ function initializeExportWidget() {
                     },
                     html2canvas: {
                         scale: 2
+                    },
+                    jsPDF: {
+                        orientation,
+                        format
                     }
                 })
                 .from(widget)
