@@ -118,6 +118,22 @@ public function render()
 }
 ```
 
+You can define two parameters to configure your export : orientation (portrait or landscape) and format (a4, a3, a2, ...)
+
+Example :
+```php
+public function render()
+{
+    return $this->twig("widget/pasta_widget.html.twig", [
+        "data" => $data,
+        "exportable" => [
+            "orientation" => "landscape",
+            "format" => "a3"
+        ],
+    ]);
+}
+```
+
 
 ## Widget configuration
 

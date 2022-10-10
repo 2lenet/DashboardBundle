@@ -1,9 +1,11 @@
 {% block widget_export_button %}
-    {% if exportable is not defined or (exportable is defined and exportable) %}
+    {% if exportable is not defined or (exportable is defined and exportable != false) %}
         <span
                 class="lle-dashboard-widget-export far fa-file show-hover"
                 data-export="widget_{{ widget.id }}"
                 data-export-name="{{ widget.title|default(widget.name|trans) }}"
+                {% if exportable is defined and exportable.orientation is defined %}data-export-orientation="{{ exportable.orientation }}"{% endif %}
+                {% if exportable is defined and exportable.format is defined %}data-export-format="{{ exportable.format }}"{% endif %}
                 title="{{ 'widget.pdf_export'|trans(domain='LleDashboardBundle') }}">
         </span>
     {% endif %}
