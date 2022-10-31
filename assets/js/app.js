@@ -148,10 +148,7 @@ function initializeAddedHandler(grid) {
                     let url = Routing.generate("remove_widget", {id: widget.id});
                     fetch(url)
                         .then(() => {
-                            grid.removeWidget(widget.el);
-                        })
-                        .finally(() => {
-                            toggleSpin();
+                            location.reload();
                         });
                 });
 

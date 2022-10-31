@@ -5,8 +5,8 @@ namespace Lle\DashboardBundle\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Entity\Widget;
+use Lle\DashboardBundle\Service\WidgetCompacterService;
 use Lle\DashboardBundle\Service\WidgetProvider;
-use Lle\DashboardBundle\Widgets\AbstractWidget;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,25 +17,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-/**
- * Akcja controller.
- */
 class DashboardController extends AbstractController
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
+    private EntityManagerInterface $em;
+    private TokenStorageInterface $tokenStorage;
+    private WidgetCompacterService $widgetCompacter;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage)
+    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, WidgetCompacterService $widgetCompacter)
     {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
+        $this->widgetCompacter = $widgetCompacter;
     }
 
     /**
@@ -66,12 +58,16 @@ class DashboardController extends AbstractController
     /**
      * @Route("/dashboard/remove_widget/{id}", options={"expose"=true}, name="remove_widget")
      */
-    public function removeWidgetAction($id)
+    public function removeWidgetAction($id): JsonResponse
     {
-        $widget = $this->em->getRepository(Widget::class)->find($id);
+        $widgetRepository = $this->em->getRepository(Widget::class);
+        $widget = $widgetRepository->find($id);
 
         if ($widget) {
             $this->em->remove($widget);
+
+            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            $this->widgetCompacter->compactY($widgets);
             $this->em->flush();
         }
 
@@ -147,7 +143,7 @@ class DashboardController extends AbstractController
     {
         $params = $request->request->all();
         $config = array_key_exists($form, $params) ? $params[$form] : null;
-        
+
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {

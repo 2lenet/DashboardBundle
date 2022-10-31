@@ -39,6 +39,22 @@ class WidgetRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Get user's widgets ordered by y
+     */
+    public function getWidgetsOrderedByY(UserInterface $user): array
+    {
+        $userId = method_exists($user, 'getId') ? $user->getId() : null;
+
+        return $this->createQueryBuilder('w')
+            ->where('w.user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->addOrderBy('w.y', 'ASC')
+            ->addOrderBy('w.x', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function deleteMyWidgets($user_id)
     {
         $this->createQueryBuilder("w")

@@ -28,6 +28,12 @@ services:
             - '@security.token_storage'
             - !tagged_iterator lle_dashboard.widget
 
+    Lle\DashboardBundle\Service\WidgetCompacterService:
+        class: Lle\DashboardBundle\Service\WidgetCompacterService
+        public: true
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
     Lle\DashboardBundle\Maker\MakeWidget:
         tags: [maker.command]
 
