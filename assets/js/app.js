@@ -64,8 +64,7 @@ onLoad(() => {
 
             toggleSpin();
 
-            let id = widget.id.replace("widget_", "");
-            let url = Routing.generate("render_widget", {id: id});
+            let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
 
             fetch(url)
                 .then((response) => {
