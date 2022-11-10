@@ -213,7 +213,9 @@ class DashboardController extends AbstractController
 
         $widgets_view = [];
         foreach ($widgets as $widget) {
-            $widgets_view[] = $widget->render();
+            if ($widget->supports()) {
+                $widgets_view[] = $widget->render();
+            }
         }
 
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
