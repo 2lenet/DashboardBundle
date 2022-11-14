@@ -55,8 +55,42 @@ onLoad(() => {
         grid.addWidget(createWidgetElement(item));
     }
 
+    let loading = false;
+    let total = 0;
+
     for (let widget of grid.getGridItems()) {
-        enableScripts(widget);
+        if (widget.dataset.ajax) {
+            loading = true;
+
+            toggleSpin();
+
+            let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
+
+            fetch(url)
+                .then((response) => {
+                    response.text().then((html) => {
+                        let htmlContent = createWidgetElement(html).getElementsByClassName('grid-stack-item-content');
+
+                        grid.update(widget, {
+                            content: htmlContent[0].innerHTML
+                        });
+
+                        enableScripts(widget);
+                        total++;
+
+                        if (loading && total === grid.getGridItems().length) {
+                            toggleSpin();
+                        }
+                    });
+                });
+        } else {
+            enableScripts(widget);
+            total++;
+
+            if (loading && total === grid.getGridItems().length) {
+                toggleSpin();
+            }
+        }
     }
 
     /**
@@ -117,7 +151,6 @@ function initializeAddWidget(grid) {
                 })
                 .finally(() => {
                     toggleSpin();
-                    location.reload();
                 });
         });
     }

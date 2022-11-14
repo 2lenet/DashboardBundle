@@ -207,13 +207,20 @@ class DashboardController extends AbstractController
             $widgets = [];
         }
 
-        $widgets_view = [];
+        $widgetsView = [];
+        /** @var AbstractWidget $widget */
         foreach ($widgets as $widget) {
-            $widgets_view[] = $widget->render();
+            if ($widget->supportsAjax()) {
+                $widgetsView[] = $this->renderView("@LleDashboard/widget/empty_widget.html.twig", [
+                    "widget" => $widget,
+                ]);
+            } else {
+                $widgetsView[] = $widget->render();
+            }
         }
 
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
-            "widgets_data" => $widgets_view,
+            "widgets_data" => $widgetsView,
             "widgets" => $widgets,
             "widget_types" => $widgetTypes,
         ));
