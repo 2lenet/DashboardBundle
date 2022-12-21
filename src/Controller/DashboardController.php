@@ -210,13 +210,16 @@ class DashboardController extends AbstractController
         $widgetsView = [];
         /** @var AbstractWidget $widget */
         foreach ($widgets as $widget) {
-            if ($widget->supportsAjax()) {
-                $widgetsView[] = $this->renderView("@LleDashboard/widget/empty_widget.html.twig", [
-                    "widget" => $widget,
-                ]);
-            } else {
-                $widgetsView[] = $widget->render();
-            }
+            if ($widget->supports()) {
+                if ($widget->supportsAjax()) {
+                    $widgetsView[] = $this->renderView("@LleDashboard/widget/empty_widget.html.twig", [
+                        "widget" => $widget,
+                    ]);
+                } else {
+                    $widgetsView[] = $widget->render();
+                }
+             }
+
         }
 
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
