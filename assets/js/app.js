@@ -55,8 +55,42 @@ onLoad(() => {
         grid.addWidget(createWidgetElement(item));
     }
 
+    let loading = false;
+    let total = 0;
+
     for (let widget of grid.getGridItems()) {
-        enableScripts(widget);
+        if (widget.dataset.ajax) {
+            loading = true;
+
+            toggleSpin();
+
+            let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
+
+            fetch(url)
+                .then((response) => {
+                    response.text().then((html) => {
+                        let htmlContent = createWidgetElement(html).getElementsByClassName('grid-stack-item-content');
+
+                        grid.update(widget, {
+                            content: htmlContent[0].innerHTML
+                        });
+
+                        enableScripts(widget);
+                        total++;
+
+                        if (loading && total === grid.getGridItems().length) {
+                            toggleSpin();
+                        }
+                    });
+                });
+        } else {
+            enableScripts(widget);
+            total++;
+
+            if (loading && total === grid.getGridItems().length) {
+                toggleSpin();
+            }
+        }
     }
 
     /**
@@ -117,7 +151,6 @@ function initializeAddWidget(grid) {
                 })
                 .finally(() => {
                     toggleSpin();
-                    location.reload();
                 });
         });
     }
@@ -148,10 +181,7 @@ function initializeAddedHandler(grid) {
                     let url = Routing.generate("remove_widget", {id: widget.id});
                     fetch(url)
                         .then(() => {
-                            grid.removeWidget(widget.el);
-                        })
-                        .finally(() => {
-                            toggleSpin();
+                            location.reload();
                         });
                 });
 
@@ -258,6 +288,8 @@ function initializeExportWidget() {
         if (event.target.classList.contains('lle-dashboard-widget-export')) {
             const widget = document.getElementById(event.target.dataset.export);
             const widgetTitle = event.target.dataset.exportName;
+            let orientation = event.target.dataset.exportOrientation ?? 'portrait';
+            let format = event.target.dataset.exportFormat ?? 'a4';
 
             html2pdf()
                 .set({
@@ -269,6 +301,10 @@ function initializeExportWidget() {
                     },
                     html2canvas: {
                         scale: 2
+                    },
+                    jsPDF: {
+                        orientation,
+                        format
                     }
                 })
                 .from(widget)
