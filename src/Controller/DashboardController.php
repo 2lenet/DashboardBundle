@@ -73,6 +73,11 @@ class DashboardController extends AbstractController
         if ($widget) {
             $this->em->remove($widget);
             $this->em->flush();
+
+            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            $this->widgetCompacter->compactY($widgets);
+
+            $this->em->flush();
         }
 
         return new JsonResponse(true);
@@ -147,7 +152,7 @@ class DashboardController extends AbstractController
     {
         $params = $request->request->all();
         $config = array_key_exists($form, $params) ? $params[$form] : null;
-        
+
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
