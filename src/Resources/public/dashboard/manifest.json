@@ -1,4 +1,6 @@
 {
   "bundles/dashboard/app.css": "/app.css",
-  "bundles/dashboard/app.js": "/app.js"
+  "bundles/dashboard/app.js": "/app.js",
+  "bundles/dashboard/vendors-node_modules_dompurify_dist_purify_js.js": "/vendors-node_modules_dompurify_dist_purify_js.js",
+  "bundles/dashboard/vendors-node_modules_canvg_lib_index_es_js.js": "/vendors-node_modules_canvg_lib_index_es_js.js"
 }

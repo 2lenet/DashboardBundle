@@ -60,20 +60,20 @@ onLoad(() => {
 
     for (let widget of grid.getGridItems()) {
         if (widget.dataset.ajax) {
-            loading = true;
 
-            toggleSpin();
+            if (!loading) {
+                toggleSpin();
+            }
+
+            loading = true;
 
             let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
 
             fetch(url)
                 .then((response) => {
                     response.text().then((html) => {
-                        let htmlContent = createWidgetElement(html).getElementsByClassName('grid-stack-item-content');
-
-                        grid.update(widget, {
-                            content: htmlContent[0].innerHTML
-                        });
+                        grid.removeWidget(widget);
+                        grid.addWidget(createWidgetElement(html));
 
                         enableScripts(widget);
                         total++;
