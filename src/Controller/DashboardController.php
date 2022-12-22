@@ -85,6 +85,11 @@ class DashboardController extends AbstractController
             $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
             $this->widgetCompacter->compactY($widgets);
             $this->em->flush();
+
+            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            $this->widgetCompacter->compactY($widgets);
+
+            $this->em->flush();
         }
 
         return new JsonResponse(true);
