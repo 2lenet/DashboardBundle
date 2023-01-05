@@ -72,9 +72,16 @@ onLoad(() => {
             fetch(url)
                 .then((response) => {
                     response.text().then((html) => {
-                        grid.removeWidget(widget);
-                        grid.addWidget(createWidgetElement(html));
 
+                        let loadedWidget = createWidgetElement(html);
+
+                        grid.update(widget, {
+                            content: loadedWidget.children[0].innerHTML
+                        });
+
+                        initializeButtons({
+                            id: widget.id.replace("widget_", "")
+                        });
                         enableScripts(widget);
                         total++;
 
@@ -170,29 +177,32 @@ function initializeChangeHandler(grid) {
     });
 }
 
+function initializeButtons(widget) {
+    // Handle widget deletion
+    document.querySelector(`#widget_close_${ widget.id }`)
+        .addEventListener("click", () => {
+            toggleSpin();
+            let url = Routing.generate("remove_widget", {id: widget.id});
+            fetch(url)
+                .then(() => {
+                    location.reload();
+                });
+        });
+
+    // Handle widget config panel
+    let configBtn = document.querySelector(`#config_${ widget.id }`);
+
+    if (configBtn) {
+        configBtn.addEventListener("click", () => {
+            toggleConfigPanel(widget.id);
+        });
+    }
+}
+
 function initializeAddedHandler(grid) {
     grid.on("added", function (event, widgets) {
         for (let widget of widgets) {
-
-            // Handle widget deletion
-            document.querySelector(`#widget_close_${ widget.id }`)
-                .addEventListener("click", () => {
-                    toggleSpin();
-                    let url = Routing.generate("remove_widget", {id: widget.id});
-                    fetch(url)
-                        .then(() => {
-                            location.reload();
-                        });
-                });
-
-            // Handle widget config panel
-            let configBtn = document.querySelector(`#config_${ widget.id }`);
-
-            if (configBtn) {
-                configBtn.addEventListener("click", () => {
-                    toggleConfigPanel(widget.id);
-                });
-            }
+            initializeButtons(widget);
         }
     });
 }
