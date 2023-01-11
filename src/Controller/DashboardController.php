@@ -7,10 +7,12 @@ use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Service\WidgetCompacterService;
 use Lle\DashboardBundle\Service\WidgetProvider;
+use Lle\DashboardBundle\Widgets\AbstractWidget;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,14 +22,28 @@ use Symfony\Contracts\Cache\ItemInterface;
 class DashboardController extends AbstractController
 {
     private EntityManagerInterface $em;
+
     private TokenStorageInterface $tokenStorage;
+
     private WidgetCompacterService $widgetCompacter;
 
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorage, WidgetCompacterService $widgetCompacter)
+    protected CacheInterface $cache;
+
+    protected KernelInterface $kernel;
+
+    public function __construct(
+        EntityManagerInterface $em,
+        TokenStorageInterface $tokenStorage,
+        WidgetCompacterService $widgetCompacter,
+        CacheInterface $cache,
+        KernelInterface $kernel
+    )
     {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
         $this->widgetCompacter = $widgetCompacter;
+        $this->cache = $cache;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -52,7 +68,7 @@ class DashboardController extends AbstractController
         $this->em->persist($widget);
         $this->em->flush();
 
-        return $this->forward(self::class .'::renderWidget', ['id'=>$widget->getId()]);
+        return $this->forward(self::class . '::renderWidget', ['id' => $widget->getId()]);
     }
 
     /**
@@ -68,6 +84,11 @@ class DashboardController extends AbstractController
 
             $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
             $this->widgetCompacter->compactY($widgets);
+            $this->em->flush();
+
+            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            $this->widgetCompacter->compactY($widgets);
+
             $this->em->flush();
         }
 
@@ -86,8 +107,7 @@ class DashboardController extends AbstractController
                 ->setX($x)
                 ->setY($y)
                 ->setWidth($width)
-                ->setHeight($height)
-            ;
+                ->setHeight($height);
 
             $this->em->flush();
         }
@@ -113,22 +133,14 @@ class DashboardController extends AbstractController
     /**
      * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
      */
-    public function renderWidget(CacheInterface $cache ,WidgetProvider $provider, $id)
+    public function renderWidget(WidgetProvider $provider, $id)
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
             $widgetType = $provider->getWidgetType($widget->getType());
             $widgetType->setParams($widget);
-            if ($widgetType->getCacheTimeout()) {
-                $uniqueKey = "widget_cache_" . $widgetType->getCacheKey();
-                $content = $cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
-                    $item->expiresAfter($widgetType->getCacheTimeout());
-                    return $widgetType->render();
-                });
-            } else {
-                $content = $widgetType->render();
-            }
+            $content = $this->getWidgetContent($widgetType);
 
             return new Response($content);
         }
@@ -210,13 +222,16 @@ class DashboardController extends AbstractController
         $widgetsView = [];
         /** @var AbstractWidget $widget */
         foreach ($widgets as $widget) {
-            if ($widget->supportsAjax()) {
-                $widgetsView[] = $this->renderView("@LleDashboard/widget/empty_widget.html.twig", [
-                    "widget" => $widget,
-                ]);
-            } else {
-                $widgetsView[] = $widget->render();
+            if ($widget->supports()) {
+                if ($widget->supportsAjax()) {
+                    $widgetsView[] = $this->renderView("@LleDashboard/widget/empty_widget.html.twig", [
+                        "widget" => $widget,
+                    ]);
+                } else {
+                    $widgetsView[] = $this->getWidgetContent($widget);
+                }
             }
+
         }
 
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
@@ -282,5 +297,24 @@ class DashboardController extends AbstractController
             "h" => $widget->getHeight(),
             "content" => $widget->render(),
         ];
+    }
+
+    protected function getWidgetContent(?AbstractWidget $widgetType): string
+    {
+        $content = "";
+        if ($widgetType) {
+            if ($widgetType->getCacheTimeout() && !$this->kernel->isDebug()) {
+                $uniqueKey = "widget_cache_" . $widgetType->getCacheKey();
+                $content = $this->cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
+                    $item->expiresAfter($widgetType->getCacheTimeout());
+
+                    return $widgetType->render();
+                });
+            } else {
+                $content = $widgetType->render();
+            }
+        }
+
+        return $content;
     }
 }

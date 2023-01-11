@@ -60,21 +60,28 @@ onLoad(() => {
 
     for (let widget of grid.getGridItems()) {
         if (widget.dataset.ajax) {
-            loading = true;
 
-            toggleSpin();
+            if (!loading) {
+                toggleSpin();
+            }
+
+            loading = true;
 
             let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
 
             fetch(url)
                 .then((response) => {
                     response.text().then((html) => {
-                        let htmlContent = createWidgetElement(html).getElementsByClassName('grid-stack-item-content');
+
+                        let loadedWidget = createWidgetElement(html);
 
                         grid.update(widget, {
-                            content: htmlContent[0].innerHTML
+                            content: loadedWidget.children[0].innerHTML
                         });
 
+                        initializeButtons({
+                            id: widget.id.replace("widget_", "")
+                        });
                         enableScripts(widget);
                         total++;
 
@@ -170,29 +177,32 @@ function initializeChangeHandler(grid) {
     });
 }
 
+function initializeButtons(widget) {
+    // Handle widget deletion
+    document.querySelector(`#widget_close_${ widget.id }`)
+        .addEventListener("click", () => {
+            toggleSpin();
+            let url = Routing.generate("remove_widget", {id: widget.id});
+            fetch(url)
+                .then(() => {
+                    location.reload();
+                });
+        });
+
+    // Handle widget config panel
+    let configBtn = document.querySelector(`#config_${ widget.id }`);
+
+    if (configBtn) {
+        configBtn.addEventListener("click", () => {
+            toggleConfigPanel(widget.id);
+        });
+    }
+}
+
 function initializeAddedHandler(grid) {
     grid.on("added", function (event, widgets) {
         for (let widget of widgets) {
-
-            // Handle widget deletion
-            document.querySelector(`#widget_close_${ widget.id }`)
-                .addEventListener("click", () => {
-                    toggleSpin();
-                    let url = Routing.generate("remove_widget", {id: widget.id});
-                    fetch(url)
-                        .then(() => {
-                            location.reload();
-                        });
-                });
-
-            // Handle widget config panel
-            let configBtn = document.querySelector(`#config_${ widget.id }`);
-
-            if (configBtn) {
-                configBtn.addEventListener("click", () => {
-                    toggleConfigPanel(widget.id);
-                });
-            }
+            initializeButtons(widget);
         }
     });
 }
