@@ -7,7 +7,6 @@ use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Form\Type\JsonType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 use Twig\Environment;
 
@@ -16,7 +15,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var int
      */
-    private int $id;
+    protected int $id;
 
     /**
      * @var int x position
@@ -41,21 +40,21 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var array json config
      */
-    private ?array $config = null;
+    protected ?array $config = null;
 
     /**
      * @var string widget title
      */
-    private ?string $title = null;
+    protected ?string $title = null;
 
     /**
      * @var Security
      */
-    private AuthorizationCheckerInterface $security;
+    protected Security $security;
 
-    private Environment $twig;
+    protected Environment $twig;
 
-    private FormFactoryInterface $formFactory;
+    protected FormFactoryInterface $formFactory;
 
     public function getId()
     {
@@ -148,11 +147,6 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this->title;
     }
 
-    public function getJsonSchema()
-    {
-        return null;
-    }
-
     /**
      * @inheritdoc
      */
@@ -243,7 +237,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @required
      */
-    public function setSecurity(AuthorizationCheckerInterface $security): self
+    public function setSecurity(Security $security): self
     {
         $this->security = $security;
 

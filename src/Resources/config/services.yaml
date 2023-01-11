@@ -13,7 +13,7 @@ services:
         autowire: false
         autoconfigure: false
         calls:
-            - setSecurity: ['@security.authorization_checker']
+            - setSecurity: ['@Symfony\Component\Security\Core\Security']
             - setTwig: ['@twig']
             - setFormFactory: ['@form.factory']
 
