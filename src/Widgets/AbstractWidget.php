@@ -16,7 +16,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var int
      */
-    private int $id;
+    protected int $id;
 
     /**
      * @var int x position
@@ -41,21 +41,21 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @var array json config
      */
-    private ?array $config = null;
+    protected ?array $config = null;
 
     /**
      * @var string widget title
      */
-    private ?string $title = null;
+    protected ?string $title = null;
 
     /**
      * @var Security
      */
-    private AuthorizationCheckerInterface $security;
+    protected AuthorizationCheckerInterface $security;
 
-    private Environment $twig;
+    protected Environment $twig;
 
-    private FormFactoryInterface $formFactory;
+    protected FormFactoryInterface $formFactory;
 
     public function getId()
     {
