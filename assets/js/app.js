@@ -29,6 +29,7 @@ onLoad(() => {
      * Initialize dashboard
      */
     const grid = GridStack.init(options);
+    grid.disable();
 
     // Update grid when user adds a new widget
     initializeAddedHandler(grid);
@@ -73,20 +74,26 @@ onLoad(() => {
                 .then((response) => {
                     response.text().then((html) => {
 
-                        let loadedWidget = createWidgetElement(html);
+                        if (!response.ok) {
+                            let htmlError = "<div>Error loading wigdet</div>";
+                            document.getElementById("widget_body_" + widget.getAttribute("gs-id")).innerHTML = htmlError;
+                        } else {
+                            let loadedWidget = createWidgetElement(html);
 
-                        grid.update(widget, {
-                            content: loadedWidget.children[0].innerHTML
-                        });
+                            grid.update(widget, {
+                                content: loadedWidget.children[0].innerHTML
+                            });
 
-                        initializeButtons({
-                            id: widget.id.replace("widget_", "")
-                        });
-                        enableScripts(widget);
+                            initializeButtons({
+                                id: widget.id.replace("widget_", "")
+                            });
+                            enableScripts(widget);
+                        }
                         total++;
 
                         if (loading && total === grid.getGridItems().length) {
                             toggleSpin();
+                            grid.enable();
                         }
                     });
                 });
@@ -96,6 +103,7 @@ onLoad(() => {
 
             if (loading && total === grid.getGridItems().length) {
                 toggleSpin();
+                grid.enable();
             }
         }
     }
