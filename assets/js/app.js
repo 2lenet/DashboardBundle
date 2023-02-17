@@ -91,7 +91,7 @@ onLoad(() => {
                         }
                         total++;
 
-                        if (loading && total === grid.getGridItems().length) {
+                        if (total === grid.getGridItems().length) {
                             toggleSpin();
                             grid.enable();
                         }
@@ -101,7 +101,7 @@ onLoad(() => {
             enableScripts(widget);
             total++;
 
-            if (loading && total === grid.getGridItems().length) {
+            if (total === grid.getGridItems().length) {
                 toggleSpin();
                 grid.enable();
             }
