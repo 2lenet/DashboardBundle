@@ -64,9 +64,8 @@ onLoad(() => {
 
             if (!loading) {
                 toggleSpin();
+                loading = true;
             }
-
-            loading = true;
 
             let url = Routing.generate("render_widget", {id: widget.getAttribute('gs-id')});
 
@@ -90,9 +89,10 @@ onLoad(() => {
                             enableScripts(widget);
                         }
                         total++;
-
                         if (total === grid.getGridItems().length) {
-                            toggleSpin();
+                            if (loading) {
+                                toggleSpin();
+                            }
                             grid.enable();
                         }
                     });
@@ -100,9 +100,10 @@ onLoad(() => {
         } else {
             enableScripts(widget);
             total++;
-
             if (total === grid.getGridItems().length) {
-                toggleSpin();
+                if (loading) {
+                    toggleSpin();
+                }
                 grid.enable();
             }
         }
