@@ -21274,9 +21274,9 @@ onLoad(function () {
       if (widget.dataset.ajax) {
         if (!loading) {
           toggleSpin();
+          loading = true;
         }
 
-        loading = true;
         var url = Routing.generate("render_widget", {
           id: widget.getAttribute('gs-id')
         });
@@ -21299,7 +21299,10 @@ onLoad(function () {
             total++;
 
             if (total === grid.getGridItems().length) {
-              toggleSpin();
+              if (loading) {
+                toggleSpin();
+              }
+
               grid.enable();
             }
           });
@@ -21309,7 +21312,10 @@ onLoad(function () {
         total++;
 
         if (total === grid.getGridItems().length) {
-          toggleSpin();
+          if (loading) {
+            toggleSpin();
+          }
+
           grid.enable();
         }
       }
