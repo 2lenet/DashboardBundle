@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lle\DashboardBundle\Maker;
 
 use Doctrine\Common\Annotations\Annotation;
+use Lle\CruditBundle\LleCruditBundle;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
@@ -156,11 +157,14 @@ class MakeWorkflowWidget extends AbstractMaker
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
         $workflow = $this->getStringArgument('workflow', $input);
+        $entity = $this->getStringArgument('entity', $input);
 
         $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptyworkflowwidget.tpl.php'),
             [
                 'widgetname' => $widgetname,
+                'entity' => $entity,
+                'withLink' => 'withLink' => class_exists(LleCruditBundle::class),
                 'workflow' => $workflow
             ]
         );
