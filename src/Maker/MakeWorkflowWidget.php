@@ -164,7 +164,7 @@ class MakeWorkflowWidget extends AbstractMaker
             [
                 'widgetname' => $widgetname,
                 'entity' => $entity,
-                'withLink' => 'withLink' => class_exists(LleCruditBundle::class),
+                'withLink' => class_exists(LleCruditBundle::class),
                 'workflow' => $workflow
             ]
         );
