@@ -7,7 +7,6 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Persistence\ManagerRegistry;
-
 use Lle\DashboardBundle\Entity\Widget;
 
 /**
@@ -28,7 +27,7 @@ class WidgetRepository extends ServiceEntityRepository
      * @param \Symfony\Component\Security\Core\User\UserInterface $user
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getMyWidgets(UserInterface $user)
+    public function getMyWidgets(UserInterface $user): QueryBuilder
     {
         $userId = method_exists($user, 'getId') ? $user->getId() : null;
 
@@ -55,7 +54,7 @@ class WidgetRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function deleteMyWidgets($user_id)
+    public function deleteMyWidgets(int $user_id): void
     {
         $this->createQueryBuilder("w")
             ->delete()
@@ -73,10 +72,9 @@ class WidgetRepository extends ServiceEntityRepository
      * @throws \Doctrine\ORM\NonUniqueResultException
      * Obtenir le widget le plus bas de la grille
      */
-    public function getBottomWidget($user_id)
+    public function getBottomWidget(int $user_id): ?Widget
     {
         return $this->createQueryBuilder("w")
-            ->select("")
             ->where("w.user_id = :user_id")
             ->setParameter("user_id", $user_id)
             ->addOrderBy("w.y", "DESC")

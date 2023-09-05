@@ -8,8 +8,6 @@ use Doctrine\Common\Annotations\Annotation;
 use Lle\CruditBundle\LleCruditBundle;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
-use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
-use Symfony\Bundle\MakerBundle\FileManager;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -21,15 +19,6 @@ use Symfony\Component\Console\Question\Question;
 
 class MakeWorkflowWidget extends AbstractMaker
 {
-    private FileManager $fileManager;
-    private DoctrineHelper $entityHelper;
-    private bool $withController;
-
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
     public static function getCommandName(): string
     {
         return 'make:workflow-widget';

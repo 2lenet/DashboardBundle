@@ -31,17 +31,19 @@ class WidgetProvider
         return $this->widgetTypes;
     }
 
-    public function getWidgetType($widgetType)
+    public function getWidgetType(?string $widgetType): ?WidgetTypeInterface
     {
         if (array_key_exists($widgetType, $this->widgetTypes)) {
             return clone $this->widgetTypes[$widgetType];
         }
+
+        return null;
     }
 
     /**
      * Returns current user's widgets
      */
-    public function getMyWidgets()
+    public function getMyWidgets(): array
     {
         // Get user.
         $user = $this->security->getToken()->getUser();
@@ -62,7 +64,7 @@ class WidgetProvider
     /**
      * Returns default widgets.
      */
-    public function getDefaultWidgets()
+    public function getDefaultWidgets(): array
     {
         $defaultWidgets = $this->em->getRepository(Widget::class)->getDefaultWidgets();
 
@@ -72,7 +74,7 @@ class WidgetProvider
     /**
      * Convert Widgets entites into actual Widgets (widget types)
      */
-    private function initializeWidgets($widgets)
+    private function initializeWidgets($widgets): array
     {
         $return = [];
         foreach ($widgets as $widget) {
@@ -90,7 +92,7 @@ class WidgetProvider
     /**
      * Initialize default widgets for an user, by copy
      */
-    public function setDefaultWidgetsForUser($user_id)
+    public function setDefaultWidgetsForUser($user_id): void
     {
         if ($user_id) {
             $sql = "

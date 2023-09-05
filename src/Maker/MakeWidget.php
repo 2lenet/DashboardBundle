@@ -7,8 +7,6 @@ namespace Lle\DashboardBundle\Maker;
 use Doctrine\Common\Annotations\Annotation;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
-use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
-use Symfony\Bundle\MakerBundle\FileManager;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -20,15 +18,6 @@ use Symfony\Component\Console\Question\Question;
 
 class MakeWidget extends AbstractMaker
 {
-    /** @var FileManager */
-    private $fileManager;
-
-    /** @var DoctrineHelper */
-    private $entityHelper;
-
-    /** @var bool */
-    private $withController;
-
     public static function getCommandName(): string
     {
         return 'make:widget';
@@ -96,11 +85,7 @@ class MakeWidget extends AbstractMaker
         );
     }
 
-    private function createWidget(
-        InputInterface $input,
-        ConsoleStyle   $io,
-        Generator      $generator
-    ): string
+    private function createWidget(InputInterface $input, ConsoleStyle $io, Generator $generator): string
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
         $namespace = $this->getStringArgument('namespace-widget', $input);
@@ -130,11 +115,7 @@ class MakeWidget extends AbstractMaker
         return __DIR__ . '/../Resources/skeleton/' . $templateName;
     }
 
-    private function createTemplate(
-        InputInterface $input,
-        ConsoleStyle   $io,
-        Generator      $generator
-    ): void
+    private function createTemplate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
 

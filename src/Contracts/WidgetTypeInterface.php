@@ -2,8 +2,6 @@
 
 namespace Lle\DashboardBundle\Contracts;
 
-use Symfony\Component\HttpFoundation\Response;
-
 interface WidgetTypeInterface
 {
     /**

@@ -2,17 +2,14 @@
 
 namespace Lle\DashboardBundle\Widgets;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-
 class PostIt extends AbstractWidget
 {
-    public function render()
+    public function render(): string
     {
         return $this->twig("@LleDashboard/widget/post_it_widget.html.twig");
     }
 
-    public function getName()
+    public function getName(): string
     {
         return "widget.postit.title";
     }

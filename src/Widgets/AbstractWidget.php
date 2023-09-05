@@ -5,9 +5,9 @@ namespace Lle\DashboardBundle\Widgets;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Form\Type\JsonType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\Security;
 use Twig\Environment;
 
 abstract class AbstractWidget implements WidgetTypeInterface
@@ -56,12 +56,12 @@ abstract class AbstractWidget implements WidgetTypeInterface
 
     protected FormFactoryInterface $formFactory;
 
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId(?string $id): self
     {
         $this->id = $id;
 
@@ -71,7 +71,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         return $this->width;
     }
@@ -79,7 +79,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         return $this->height;
     }
@@ -87,7 +87,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getX()
+    public function getX(): ?int
     {
         return $this->x;
     }
@@ -95,7 +95,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getY()
+    public function getY(): ?int
     {
         return $this->y;
     }
@@ -103,7 +103,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function render()
+    public function render(): string
     {
         return "You should implement the render method in " . get_class($this);
     }
@@ -111,7 +111,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getType()
+    public function getType(): string
     {
         return str_replace("\\", "_", get_class($this)) . "_widget";
     }
@@ -119,7 +119,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getName(): string
     {
         return get_class($this);
     }
@@ -130,7 +130,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * @param $default default value when the key doesn't exist
      * @return string a string representing the entire config or the value of the key
      */
-    public function getConfig($key = null, $default = null)
+    public function getConfig(mixed $key = null, mixed $default = null): mixed
     {
         if ($key) {
             return $this->config[$key] ?? $default;
@@ -142,7 +142,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -150,7 +150,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * @inheritdoc
      */
-    public function setParams(Widget $widget)
+    public function setParams(Widget $widget): self
     {
         $this->id = $widget->getId();
         $this->x = $widget->getX();
@@ -163,7 +163,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getName() . "(" . $this->getType() . ")";
     }
