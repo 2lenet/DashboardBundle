@@ -128,7 +128,6 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * Returns the configuration, can be a specific key or the entire configuration
      * @param $key the name of the configuration field
      * @param $default default value when the key doesn't exist
-     * @return string a string representing the entire config or the value of the key
      */
     public function getConfig(mixed $key = null, mixed $default = null): mixed
     {

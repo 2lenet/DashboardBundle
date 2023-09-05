@@ -2,6 +2,8 @@
 
 namespace Lle\DashboardBundle\Contracts;
 
+use Symfony\Component\Form\FormInterface;
+
 interface WidgetTypeInterface
 {
     /**
@@ -81,4 +83,11 @@ interface WidgetTypeInterface
      * In seconds, how long should the cache last.
      */
     public function getCacheTimeout(): int;
+
+    /**
+     * @return FormInterface|null
+     *
+     * Return the form config.
+     */
+    public function getConfigForm(): ?FormInterface;
 }
