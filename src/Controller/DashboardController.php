@@ -133,7 +133,7 @@ class DashboardController extends AbstractController
     /**
      * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
      */
-    public function renderWidget(WidgetProvider $provider, $id)
+    public function renderWidgetAction(WidgetProvider $provider, $id)
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -151,7 +151,7 @@ class DashboardController extends AbstractController
     /**
      * @Route("/dashboard/widget_save_config/{id}/{form}", name="widget_save_config")
      */
-    public function saveConfig(Request $request, WidgetProvider $provider, $id, $form)
+    public function saveConfigAction(Request $request, WidgetProvider $provider, $id, $form)
     {
         $params = $request->request->all();
         $config = array_key_exists($form, $params) ? $params[$form] : null;
@@ -173,7 +173,7 @@ class DashboardController extends AbstractController
      * Reset config and title of widget.
      * @Route("/dashboard/widget_reset_config/{id}", name="widget_reset_config")
      */
-    public function resetConfig($id)
+    public function resetConfigAction($id)
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -190,7 +190,7 @@ class DashboardController extends AbstractController
      * Delete current user's widgets.
      * @Route("/dashboard/delete_my_widgets", name="delete_my_widgets")
      */
-    public function deleteMyWidgets()
+    public function deleteMyWidgetsAction()
     {
         $user = $this->getUser();
         if ($user) {
@@ -267,7 +267,7 @@ class DashboardController extends AbstractController
      *
      * Delete all dashboards (not the default one)
      */
-    public function deleteAllUserDashboards()
+    public function deleteAllUserDashboardsAction()
     {
         $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
 
