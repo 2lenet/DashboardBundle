@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Lle\DashboardBundle\Maker;
 
-use Doctrine\Common\Annotations\Annotation;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
-use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -18,6 +16,8 @@ use Symfony\Component\Console\Question\Question;
 
 class MakeWidget extends AbstractMaker
 {
+    use MakerTrait;
+
     public static function getCommandName(): string
     {
         return 'make:widget';
@@ -59,30 +59,6 @@ class MakeWidget extends AbstractMaker
             $value = $io->askQuestion($question);
             $input->setArgument('widgetname', $value);
         }
-    }
-
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
-    {
-        $io->text('Create the widget');
-        try {
-            $this->createWidget($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-
-        try {
-            $this->createTemplate($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-    }
-
-    public function configureDependencies(DependencyBuilder $dependencies): void
-    {
-        $dependencies->addClassDependency(
-            Annotation::class,
-            'annotations'
-        );
     }
 
     private function createWidget(InputInterface $input, ConsoleStyle $io, Generator $generator): string
@@ -135,13 +111,5 @@ class MakeWidget extends AbstractMaker
             return (string)$input->getArgument($name);
         }
         throw new InvalidArgumentException($name . ' must be string type');
-    }
-
-    private function getBoolArgument(string $name, InputInterface $input): bool
-    {
-        if (is_string($input->getArgument($name)) || is_bool($input->getArgument($name))) {
-            return (bool)$input->getArgument($name);
-        }
-        throw new InvalidArgumentException($name . ' must be bool type');
     }
 }
