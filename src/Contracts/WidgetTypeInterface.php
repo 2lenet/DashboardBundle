@@ -2,59 +2,59 @@
 
 namespace Lle\DashboardBundle\Contracts;
 
-use Symfony\Component\Form\FormInterface;
+use Lle\DashboardBundle\Entity\Widget;
 
 interface WidgetTypeInterface
 {
     /**
      * @return mixed get unique ID
      */
-    public function getId();
+    public function getId(): mixed;
 
     /**
      * @return string return widget HTML source
      */
-    public function render();
+    public function render(): string;
 
     /**
      * @return integer returns widget height
      */
-    public function getHeight();
+    public function getHeight(): int;
 
     /**
      * @return integer returns widget width
      */
-    public function getWidth();
+    public function getWidth(): int;
 
     /**
      * @return integer returns widget X position
      */
-    public function getX();
+    public function getX(): int;
 
     /**
      * @return integer returns widget Y position
      */
-    public function getY();
+    public function getY(): int;
     
     /**
      * @return string returns widget type
      */
-    public function getType();
+    public function getType(): string;
     
     /**
      * @return string returns widget name
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @return string returns widget title
      */
-    public function getTitle();
+    public function getTitle(): string;
     
     /**
-     * @param \Lle\DashboardBundle\Entity\Widget $widget
+     * @param Widget $widget
      */
-    public function setParams(\Lle\DashboardBundle\Entity\Widget $widget);
+    public function setParams(Widget $widget): WidgetTypeInterface;
 
     /**
      * @return bool
@@ -83,11 +83,4 @@ interface WidgetTypeInterface
      * In seconds, how long should the cache last.
      */
     public function getCacheTimeout(): int;
-
-    /**
-     * @return FormInterface|null
-     *
-     * Return the form config.
-     */
-    public function getConfigForm(): ?FormInterface;
 }
