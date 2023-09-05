@@ -215,18 +215,20 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * Helper functions
      */
 
-    public function createForm(string $type, $data = null, array $options = []): FormInterface
+    public function createForm(string $type, mixed $data = null, array $options = []): FormInterface
     {
         return $this->formFactory
             ->createNamed("form_widget_" . $this->getId(), $type, $data, $options);
     }
 
-    public function twig($template, array $context = []): string
+    public function twig(string $template, array $context = []): string
     {
-        return $this->twig
-            ->render($template, array_merge([
+        return $this->twig->render($template, array_merge(
+            [
                 "widget" => $this,
-            ], $context));
+            ],
+            $context
+        ));
     }
 
     /**

@@ -74,7 +74,7 @@ class WidgetProvider
     /**
      * Convert Widgets entites into actual Widgets (widget types)
      */
-    private function initializeWidgets($widgets): array
+    private function initializeWidgets(array $widgets): array
     {
         $return = [];
         foreach ($widgets as $widget) {
@@ -92,7 +92,7 @@ class WidgetProvider
     /**
      * Initialize default widgets for an user, by copy
      */
-    public function setDefaultWidgetsForUser($user_id): void
+    public function setDefaultWidgetsForUser(int $user_id): void
     {
         if ($user_id) {
             $sql = "

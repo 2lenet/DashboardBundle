@@ -99,7 +99,7 @@ class WidgetRepository extends ServiceEntityRepository
      *
      * Set user's widgets as default widgets
      */
-    public function setDashboardAsDefault($userId): QueryBuilder
+    public function setDashboardAsDefault(int $userId): QueryBuilder
     {
         return $this->createQueryBuilder("w")
             ->update()
