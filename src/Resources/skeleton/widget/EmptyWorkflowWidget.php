@@ -11,7 +11,7 @@ use Twig\Environment;
 
 class <?= $classname ?> extends AbstractWidget
 {
-    private Environment $twig;
+    protected Environment $twig;
     private <?= $entity ?>Repository $<?= strtolower($entity) ?>Repository;
     private Registry $workflows;
 
