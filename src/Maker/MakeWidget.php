@@ -51,7 +51,6 @@ class MakeWidget extends AbstractMaker
 
         $inputConfig->setArgumentAsNonInteractive('namespace-widget');
         $inputConfig->setArgumentAsNonInteractive('widgetname');
-
     }
 
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
@@ -107,7 +106,8 @@ class MakeWidget extends AbstractMaker
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
 
-        $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
+        $generator->generateTemplate(
+            'widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptywidget.tpl.php'),
             [
                 'widgetname' => $widgetname,

@@ -3,7 +3,6 @@
 namespace Lle\DashboardBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 
 /**
@@ -38,16 +37,16 @@ class Widget
      * @ORM\Column(name="height", type="integer", nullable=true)
      */
     protected ?int $height = null;
-    
+
     /**
      * @ORM\Column(name="type", type="string", length=100, nullable=true)
      */
     private ?string $type = null;
-    
+
     /**
      * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
-    private ?int $user_id = null;
+    private ?int $userId = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -69,7 +68,7 @@ class Widget
         $this->height = $widgetType->getHeight();
         $this->x = $widgetType->getX();
         $this->y = $widgetType->getY();
-        
+
         return $this;
     }
 
@@ -140,12 +139,12 @@ class Widget
 
     public function getUserId(): ?int
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
-    public function setUserId(?int $user_id): self
+    public function setUserId(?int $userId): self
     {
-        $this->user_id = $user_id;
+        $this->userId = $userId;
 
         return $this;
     }

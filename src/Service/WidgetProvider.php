@@ -68,12 +68,10 @@ class WidgetProvider
     {
         $return = [];
         foreach ($widgets as $widget) {
-
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
                 $return[] = $widgetType->setParams($widget);
             }
-
         }
 
         return $return;
@@ -82,9 +80,9 @@ class WidgetProvider
     /**
      * Initialize default widgets for an user, by copy
      */
-    public function setDefaultWidgetsForUser(int $user_id): void
+    public function setDefaultWidgetsForUser(int $userId): void
     {
-        if ($user_id) {
+        if ($userId) {
             $sql = "
                 INSERT INTO widgets
                 SELECT
@@ -94,7 +92,7 @@ class WidgetProvider
                     width,
                     height,
                     type,
-                    " . $user_id . " AS user_id,
+                    " . $userId . " AS user_id,
                     NULL AS config,
                     NULL AS title
                 FROM widgets

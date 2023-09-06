@@ -4,7 +4,6 @@ namespace Lle\DashboardBundle\Widgets;
 
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Entity\Widget;
-use Lle\DashboardBundle\Form\Type\JsonType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;

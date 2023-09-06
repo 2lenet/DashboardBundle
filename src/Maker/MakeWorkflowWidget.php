@@ -142,7 +142,8 @@ class MakeWorkflowWidget extends AbstractMaker
         $workflow = $this->getStringArgument('workflow', $input);
         $entity = $this->getStringArgument('entity', $input);
 
-        $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
+        $generator->generateTemplate(
+            'widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptyworkflowwidget.tpl.php'),
             [
                 'widgetname' => $widgetname,
