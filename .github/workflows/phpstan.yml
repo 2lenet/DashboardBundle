@@ -1,0 +1,23 @@
+name: PHPStan
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    phpstan:
+        name: "PHPStan ${{ matrix.php-version }}"
+
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                php_version: [8.1]
+
+        steps:
+            -   name: 'PHPStan Static Analysis'
+                uses: php-actions/phpstan@v2
+                with:
+                    configuration: tests/phpstan.neon
+                    memory_limit: 256M

@@ -6,6 +6,7 @@ namespace Lle\DashboardBundle\Maker;
 
 use Lle\CruditBundle\LleCruditBundle;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
+use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -16,6 +17,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+/**
+ * @property DoctrineHelper $doctrineHelper
+ */
 class MakeWorkflowWidget extends AbstractMaker
 {
     use MakerTrait;

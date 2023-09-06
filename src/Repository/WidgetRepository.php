@@ -67,7 +67,6 @@ class WidgetRepository extends ServiceEntityRepository
 
     /**
      * @param $user_id
-     * @return mixed
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * Obtenir le widget le plus bas de la grille

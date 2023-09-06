@@ -193,7 +193,8 @@ class DashboardController extends AbstractController
     public function deleteMyWidgetsAction(): Response
     {
         $user = $this->getUser();
-        if ($user) {
+
+        if ($user && method_exists($user, 'getId')) {
             $this->em->getRepository(Widget::class)->deleteMyWidgets($user->getId());
         }
 
@@ -211,7 +212,7 @@ class DashboardController extends AbstractController
             $widgets = $provider->getMyWidgets();
 
             // l'utilisateur n'a pas de widgets, on met ceux par défaut.
-            if (!$widgets) {
+            if (!$widgets && method_exists($user, 'getId')) {
                 $provider->setDefaultWidgetsForUser($user->getId());
                 $widgets = $provider->getMyWidgets();
             }
@@ -231,7 +232,6 @@ class DashboardController extends AbstractController
                     $widgetsView[] = $this->getWidgetContent($widget);
                 }
             }
-
         }
 
         return $this->render("@LleDashboard/dashboard/dashboard.html.twig", array(
@@ -252,7 +252,7 @@ class DashboardController extends AbstractController
 
         $user = $this->getUser();
 
-        if ($user) {
+        if ($user && method_exists($user, 'getId')) {
             $repo = $this->em->getRepository(Widget::class);
 
             $repo->deleteDefaultDashboard()->getQuery()->execute();
@@ -299,7 +299,7 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getWidgetContent(?AbstractWidget $widgetType): string
+    protected function getWidgetContent(?WidgetTypeInterface $widgetType): string
     {
         $content = "";
         if ($widgetType) {

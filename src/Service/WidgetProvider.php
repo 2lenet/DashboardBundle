@@ -62,16 +62,6 @@ class WidgetProvider
     }
 
     /**
-     * Returns default widgets.
-     */
-    public function getDefaultWidgets(): array
-    {
-        $defaultWidgets = $this->em->getRepository(Widget::class)->getDefaultWidgets();
-
-        return $this->initializeWidgets($defaultWidgets);
-    }
-
-    /**
      * Convert Widgets entites into actual Widgets (widget types)
      */
     private function initializeWidgets(array $widgets): array
@@ -112,7 +102,7 @@ class WidgetProvider
             ";
 
             $stmt = $this->em->getConnection()->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
     }
 }
