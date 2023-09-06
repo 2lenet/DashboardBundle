@@ -6,81 +6,31 @@ use Lle\DashboardBundle\Entity\Widget;
 
 interface WidgetTypeInterface
 {
-    /**
-     * @return mixed get unique ID
-     */
-    public function getId(): mixed;
+    public function getId(): ?int;
 
-    /**
-     * @return string return widget HTML source
-     */
-    public function render(): string;
+    public function render(): ?string;
 
-    /**
-     * @return integer returns widget height
-     */
-    public function getHeight(): int;
+    public function getHeight(): ?int;
 
-    /**
-     * @return integer returns widget width
-     */
-    public function getWidth(): int;
+    public function getWidth(): ?int;
 
-    /**
-     * @return integer returns widget X position
-     */
-    public function getX(): int;
+    public function getX(): ?int;
 
-    /**
-     * @return integer returns widget Y position
-     */
-    public function getY(): int;
-    
-    /**
-     * @return string returns widget type
-     */
-    public function getType(): string;
-    
-    /**
-     * @return string returns widget name
-     */
-    public function getName(): string;
+    public function getY(): ?int;
 
-    /**
-     * @return string returns widget title
-     */
-    public function getTitle(): string;
-    
-    /**
-     * @param Widget $widget
-     */
+    public function getType(): ?string;
+
+    public function getName(): ?string;
+
+    public function getTitle(): ?string;
+
     public function setParams(Widget $widget): WidgetTypeInterface;
 
-    /**
-     * @return bool
-     *
-     * Is the widget supported ?
-     */
-    public function supports(): bool;
+    public function supports(): ?bool;
 
-    /**
-     * @return bool
-     *
-     * Should the widget be asynchronously loaded ?
-     */
-    public function supportsAjax(): bool;
+    public function supportsAjax(): ?bool;
 
-    /**
-     * @return string
-     *
-     * Returns the widget's cache key. It should be based on widget's properties.
-     */
-    public function getCacheKey(): string;
+    public function getCacheKey(): ?string;
 
-    /**
-     * @return int
-     *
-     * In seconds, how long should the cache last.
-     */
-    public function getCacheTimeout(): int;
+    public function getCacheTimeout(): ?int;
 }

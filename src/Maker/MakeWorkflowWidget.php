@@ -14,10 +14,18 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class MakeWorkflowWidget extends AbstractMaker
 {
     use MakerTrait;
+
+    private KernelInterface $kernel;
+
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
 
     public static function getCommandName(): string
     {
@@ -26,6 +34,8 @@ class MakeWorkflowWidget extends AbstractMaker
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
         $command
             ->setDescription('Creates a new workflow widget class')
             ->addArgument(
@@ -48,7 +58,7 @@ class MakeWorkflowWidget extends AbstractMaker
                 InputArgument::OPTIONAL,
                 'Name of the workflow ?'
             )
-            ->setHelp((string)file_get_contents(__DIR__ . '/../Resources/help/make_widget.txt'));
+            ->setHelp((string)file_get_contents($bundleDir . '/Resources/help/make_widget.txt'));
 
         $inputConfig->setArgumentAsNonInteractive('widgetname');
         $inputConfig->setArgumentAsNonInteractive('namespace-widget');
@@ -115,7 +125,9 @@ class MakeWorkflowWidget extends AbstractMaker
 
     private function getSkeletonTemplate(string $templateName): string
     {
-        return __DIR__ . '/../Resources/skeleton/' . $templateName;
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
+        return $bundleDir . '/Resources/skeleton/' . $templateName;
     }
 
     private function createTemplate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
