@@ -17,18 +17,20 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-/**
- * @property DoctrineHelper $doctrineHelper
- */
 class MakeWorkflowWidget extends AbstractMaker
 {
     use MakerTrait;
 
     private KernelInterface $kernel;
 
-    public function __construct(KernelInterface $kernel)
-    {
+    private DoctrineHelper $doctrineHelper;
+
+    public function __construct(
+        KernelInterface $kernel,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->kernel = $kernel;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     public static function getCommandName(): string
