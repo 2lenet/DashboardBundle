@@ -4,10 +4,8 @@ namespace Lle\DashboardBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Persistence\ManagerRegistry;
-
 use Lle\DashboardBundle\Entity\Widget;
 
 /**
@@ -28,7 +26,7 @@ class WidgetRepository extends ServiceEntityRepository
      * @param \Symfony\Component\Security\Core\User\UserInterface $user
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getMyWidgets(UserInterface $user)
+    public function getMyWidgets(UserInterface $user): QueryBuilder
     {
         $userId = method_exists($user, 'getId') ? $user->getId() : null;
 
@@ -55,12 +53,12 @@ class WidgetRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function deleteMyWidgets($user_id)
+    public function deleteMyWidgets(int $userId): void
     {
         $this->createQueryBuilder("w")
             ->delete()
             ->where("w.user_id = :user_id")
-            ->setParameter("user_id", $user_id)
+            ->setParameter("user_id", $userId)
             ->getQuery()
             ->execute()
         ;
@@ -68,17 +66,15 @@ class WidgetRepository extends ServiceEntityRepository
 
     /**
      * @param $user_id
-     * @return mixed
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * Obtenir le widget le plus bas de la grille
      */
-    public function getBottomWidget($user_id)
+    public function getBottomWidget(int $userId): ?Widget
     {
         return $this->createQueryBuilder("w")
-            ->select("")
             ->where("w.user_id = :user_id")
-            ->setParameter("user_id", $user_id)
+            ->setParameter("user_id", $userId)
             ->addOrderBy("w.y", "DESC")
             ->addOrderBy("w.height", "DESC")
             ->setMaxResults(1)
@@ -101,7 +97,7 @@ class WidgetRepository extends ServiceEntityRepository
      *
      * Set user's widgets as default widgets
      */
-    public function setDashboardAsDefault($userId): QueryBuilder
+    public function setDashboardAsDefault(int $userId): QueryBuilder
     {
         return $this->createQueryBuilder("w")
             ->update()

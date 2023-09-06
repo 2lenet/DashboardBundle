@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Lle\DashboardBundle\Maker;
 
-use Doctrine\Common\Annotations\Annotation;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
-use Symfony\Bundle\MakerBundle\DependencyBuilder;
-use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
-use Symfony\Bundle\MakerBundle\FileManager;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -17,17 +13,18 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class MakeWidget extends AbstractMaker
 {
-    /** @var FileManager */
-    private $fileManager;
+    use MakerTrait;
 
-    /** @var DoctrineHelper */
-    private $entityHelper;
+    private KernelInterface $kernel;
 
-    /** @var bool */
-    private $withController;
+    public function __construct(KernelInterface $kernel)
+    {
+        $this->kernel = $kernel;
+    }
 
     public static function getCommandName(): string
     {
@@ -36,6 +33,8 @@ class MakeWidget extends AbstractMaker
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
         $command
             ->setDescription('Creates a new widget class')
             ->addArgument(
@@ -48,11 +47,10 @@ class MakeWidget extends AbstractMaker
                 InputArgument::OPTIONAL,
                 sprintf('Directory for widgets (src/[...]/MyWidget.php) ?')
             )
-            ->setHelp((string)file_get_contents(__DIR__ . '/../Resources/help/make_widget.txt'));
+            ->setHelp((string)file_get_contents($bundleDir . '/Resources/help/make_widget.txt'));
 
         $inputConfig->setArgumentAsNonInteractive('namespace-widget');
         $inputConfig->setArgumentAsNonInteractive('widgetname');
-
     }
 
     public function interact(InputInterface $input, ConsoleStyle $io, Command $command): void
@@ -72,35 +70,7 @@ class MakeWidget extends AbstractMaker
         }
     }
 
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
-    {
-        $io->text('Create the widget');
-        try {
-            $this->createWidget($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-
-        try {
-            $this->createTemplate($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-    }
-
-    public function configureDependencies(DependencyBuilder $dependencies): void
-    {
-        $dependencies->addClassDependency(
-            Annotation::class,
-            'annotations'
-        );
-    }
-
-    private function createWidget(
-        InputInterface $input,
-        ConsoleStyle   $io,
-        Generator      $generator
-    ): string
+    private function createWidget(InputInterface $input, ConsoleStyle $io, Generator $generator): string
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
         $namespace = $this->getStringArgument('namespace-widget', $input);
@@ -127,18 +97,17 @@ class MakeWidget extends AbstractMaker
 
     private function getSkeletonTemplate(string $templateName): string
     {
-        return __DIR__ . '/../Resources/skeleton/' . $templateName;
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
+        return $bundleDir . '/Resources/skeleton/' . $templateName;
     }
 
-    private function createTemplate(
-        InputInterface $input,
-        ConsoleStyle   $io,
-        Generator      $generator
-    ): void
+    private function createTemplate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
     {
         $widgetname = $this->getStringArgument('widgetname', $input);
 
-        $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
+        $generator->generateTemplate(
+            'widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptywidget.tpl.php'),
             [
                 'widgetname' => $widgetname,
@@ -154,13 +123,5 @@ class MakeWidget extends AbstractMaker
             return (string)$input->getArgument($name);
         }
         throw new InvalidArgumentException($name . ' must be string type');
-    }
-
-    private function getBoolArgument(string $name, InputInterface $input): bool
-    {
-        if (is_string($input->getArgument($name)) || is_bool($input->getArgument($name))) {
-            return (bool)$input->getArgument($name);
-        }
-        throw new InvalidArgumentException($name . ' must be bool type');
     }
 }

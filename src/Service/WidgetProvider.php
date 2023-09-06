@@ -31,17 +31,19 @@ class WidgetProvider
         return $this->widgetTypes;
     }
 
-    public function getWidgetType($widgetType)
+    public function getWidgetType(?string $widgetType): ?WidgetTypeInterface
     {
         if (array_key_exists($widgetType, $this->widgetTypes)) {
             return clone $this->widgetTypes[$widgetType];
         }
+
+        return null;
     }
 
     /**
      * Returns current user's widgets
      */
-    public function getMyWidgets()
+    public function getMyWidgets(): array
     {
         // Get user.
         $user = $this->security->getToken()->getUser();
@@ -60,28 +62,16 @@ class WidgetProvider
     }
 
     /**
-     * Returns default widgets.
-     */
-    public function getDefaultWidgets()
-    {
-        $defaultWidgets = $this->em->getRepository(Widget::class)->getDefaultWidgets();
-
-        return $this->initializeWidgets($defaultWidgets);
-    }
-
-    /**
      * Convert Widgets entites into actual Widgets (widget types)
      */
-    private function initializeWidgets($widgets)
+    private function initializeWidgets(array $widgets): array
     {
         $return = [];
         foreach ($widgets as $widget) {
-
             $widgetType = $this->getWidgetType($widget->getType());
             if ($widgetType) {  // the widget could have been deleted
                 $return[] = $widgetType->setParams($widget);
             }
-
         }
 
         return $return;
@@ -90,9 +80,9 @@ class WidgetProvider
     /**
      * Initialize default widgets for an user, by copy
      */
-    public function setDefaultWidgetsForUser($user_id)
+    public function setDefaultWidgetsForUser(int $userId): void
     {
-        if ($user_id) {
+        if ($userId) {
             $sql = "
                 INSERT INTO widgets
                 SELECT
@@ -102,7 +92,7 @@ class WidgetProvider
                     width,
                     height,
                     type,
-                    " . $user_id . " AS user_id,
+                    " . $userId . " AS user_id,
                     NULL AS config,
                     NULL AS title
                 FROM widgets
@@ -110,7 +100,7 @@ class WidgetProvider
             ";
 
             $stmt = $this->em->getConnection()->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
     }
 }

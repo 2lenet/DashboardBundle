@@ -2,85 +2,35 @@
 
 namespace Lle\DashboardBundle\Contracts;
 
-use Symfony\Component\HttpFoundation\Response;
+use Lle\DashboardBundle\Entity\Widget;
 
 interface WidgetTypeInterface
 {
-    /**
-     * @return mixed get unique ID
-     */
-    public function getId();
+    public function getId(): ?int;
 
-    /**
-     * @return string return widget HTML source
-     */
-    public function render();
+    public function render(): ?string;
 
-    /**
-     * @return integer returns widget height
-     */
-    public function getHeight();
+    public function getHeight(): ?int;
 
-    /**
-     * @return integer returns widget width
-     */
-    public function getWidth();
+    public function getWidth(): ?int;
 
-    /**
-     * @return integer returns widget X position
-     */
-    public function getX();
+    public function getX(): ?int;
 
-    /**
-     * @return integer returns widget Y position
-     */
-    public function getY();
-    
-    /**
-     * @return string returns widget type
-     */
-    public function getType();
-    
-    /**
-     * @return string returns widget name
-     */
-    public function getName();
+    public function getY(): ?int;
 
-    /**
-     * @return string returns widget title
-     */
-    public function getTitle();
-    
-    /**
-     * @param \Lle\DashboardBundle\Entity\Widget $widget
-     */
-    public function setParams(\Lle\DashboardBundle\Entity\Widget $widget);
+    public function getType(): ?string;
 
-    /**
-     * @return bool
-     *
-     * Is the widget supported ?
-     */
-    public function supports(): bool;
+    public function getName(): ?string;
 
-    /**
-     * @return bool
-     *
-     * Should the widget be asynchronously loaded ?
-     */
-    public function supportsAjax(): bool;
+    public function getTitle(): ?string;
 
-    /**
-     * @return string
-     *
-     * Returns the widget's cache key. It should be based on widget's properties.
-     */
-    public function getCacheKey(): string;
+    public function setParams(Widget $widget): WidgetTypeInterface;
 
-    /**
-     * @return int
-     *
-     * In seconds, how long should the cache last.
-     */
-    public function getCacheTimeout(): int;
+    public function supports(): ?bool;
+
+    public function supportsAjax(): ?bool;
+
+    public function getCacheKey(): ?string;
+
+    public function getCacheTimeout(): ?int;
 }

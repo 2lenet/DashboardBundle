@@ -107,7 +107,6 @@ for (var i = 0; i < 32768; ++i) {
 }
 // create huffman tree from u8 "map": index -> code length for code index
 // mb (max bits) must be at most 15
-// TODO: optimize/split up?
 var hMap = (function (cd, mb, r) {
     var s = cd.length;
     // index
@@ -432,7 +431,6 @@ var hTree = function (d, mb) {
     var mbt = ln(t[i1 - 1], tr, 0);
     if (mbt > mb) {
         // more algorithms from UZIP.js
-        // TODO: find out how this code works (debt)
         //  ind    debt
         var i = 0, dt = 0;
         //    left            cost
@@ -2109,10 +2107,8 @@ class DDDraggable extends dd_base_impl_1.DDBaseImplement {
     /** @internal set the fix position of the dragged item */
     _setupHelperStyle(e) {
         this.helper.classList.add('ui-draggable-dragging');
-        // TODO: set all at once with style.cssText += ... ? https://stackoverflow.com/questions/3968593
         const style = this.helper.style;
         style.pointerEvents = 'none'; // needed for over items to get enter/leave
-        // style.cursor = 'move'; //  TODO: can't set with pointerEvents=none ! (done in CSS as well)
         style['min-width'] = 0; // since we no longer relative to our parent and we don't resize anyway (normally 100/#column %)
         style.width = this.dragOffset.width + 'px';
         style.height = this.dragOffset.height + 'px';
@@ -2188,7 +2184,6 @@ class DDDraggable extends dd_base_impl_1.DDBaseImplement {
             parent.removeChild(testEl);
             xformOffsetX = testElPosition.left;
             xformOffsetY = testElPosition.top;
-            // TODO: scale ?
         }
         const targetOffset = el.getBoundingClientRect();
         return {
@@ -2826,7 +2821,7 @@ gridstack_1.GridStack.prototype._setupAcceptWidget = function () {
         utils_1.Utils.copyPos(node, this._readAttr(this.placeholder)); // placeholder values as moving VERY fast can throw things off #1578
         utils_1.Utils.removePositioningStyles(el); // @ts-ignore
         this._writeAttr(el, node);
-        this.el.appendChild(el); // @ts-ignore // TODO: now would be ideal time to _removeHelperStyle() overriding floating styles (native only)
+        this.el.appendChild(el); // @ts-ignore
         this._updateContainerHeight();
         this.engine.addedNodes.push(node); // @ts-ignore
         this._triggerAddEvent(); // @ts-ignore
@@ -3422,7 +3417,7 @@ class DDResizable extends dd_base_impl_1.DDBaseImplement {
                 }
                 /* Gridstack ONLY needs position set above... keep around in case.
                 element: [this.el], // The object representing the element to be resized
-                helper: [], // TODO: not support yet - The object representing the helper that's being resized
+                helper: [],
                 originalElement: [this.el],// we don't wrap here, so simplify as this.el //The object representing the original element before it is wrapped
                 originalPosition: { // The position represented as { left, top } before the resizable is resized
                   left: this.originalRect.left - containmentRect.left,
@@ -4619,7 +4614,6 @@ class GridStackEngine {
                     if (!n)
                         return; // no cache for new nodes. Will use those values.
                     // Y changed, push down same amount
-                    // TODO: detect doing item 'swaps' will help instead of move (especially in 1 column mode)
                     if (node.y !== node._orig.y) {
                         n.y += (node.y - node._orig.y);
                     }
@@ -5296,7 +5290,7 @@ class GridStack {
                 if (w.subGrid && w.subGrid.children) { // update any sub grid as well
                     let sub = item.el.querySelector('.grid-stack');
                     if (sub && sub.gridstack) {
-                        sub.gridstack.load(w.subGrid.children); // TODO: support updating grid options ?
+                        sub.gridstack.load(w.subGrid.children);
                         this._insertNotAppend = true; // got reset by above call
                     }
                 }
@@ -6421,7 +6415,7 @@ class Utils {
         style.setAttribute('type', 'text/css');
         style.setAttribute('gs-style-id', id);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (style.styleSheet) { // TODO: only CSSImportRule have that and different beast ??
+        if (style.styleSheet) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             style.styleSheet.cssText = '';
         }
@@ -8409,7 +8403,7 @@ exports.Utils = Utils;
             switch (token.unit) {
                 case 'rem':
                 case 'em':
-                    return 16 * token.number; // TODO use correct font-size
+                    return 16 * token.number;
                 case 'px':
                 default:
                     return token.number;
@@ -13219,7 +13213,6 @@ exports.Utils = Utils;
             if (!hasIntrinsicProportion && !hasIntrinsicDimensions) {
                 return [bounds.width, bounds.height];
             }
-            // TODO If the image has no intrinsic dimensions but has intrinsic proportions, it's rendered as if contain had been specified instead.
             // If the image has only one intrinsic dimension and has intrinsic proportions, it's rendered at the size corresponding to that one dimension.
             // The other dimension is computed using the specified dimension and the intrinsic proportions.
             if (hasIntrinsicDimensions && hasIntrinsicProportion) {
@@ -13542,7 +13535,6 @@ exports.Utils = Utils;
                                             switch (textDecorationLine) {
                                                 case 1 /* UNDERLINE */:
                                                     // Draws a line at the baseline of the font
-                                                    // TODO As some browsers display the line as more than 1px if the font-size is big,
                                                     // need to take that into account both in position and size
                                                     _this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top + baseline), text.bounds.width, 1);
                                                     break;
@@ -13550,7 +13542,6 @@ exports.Utils = Utils;
                                                     _this.ctx.fillRect(text.bounds.left, Math.round(text.bounds.top), text.bounds.width, 1);
                                                     break;
                                                 case 3 /* LINE_THROUGH */:
-                                                    // TODO try and find exact position for line-through
                                                     _this.ctx.fillRect(text.bounds.left, Math.ceil(text.bounds.top + middle), text.bounds.width, 1);
                                                     break;
                                             }
@@ -14984,9 +14975,7 @@ _worker_js__WEBPACK_IMPORTED_MODULE_5__.default.prototype.toContainer = function
       }; // Add rules for css mode.
 
       if (mode.css) {
-        // TODO: Check if this is valid with iFrames.
-        var style = window.getComputedStyle(el); // TODO: Handle 'left' and 'right' correctly.
-        // TODO: Add support for 'avoid' on breakBefore/After.
+        var style = window.getComputedStyle(el);
 
         var breakOpt = ['always', 'page', 'left', 'right'];
         var avoidOpt = ['avoid', 'avoid-page'];
@@ -15001,7 +14990,6 @@ _worker_js__WEBPACK_IMPORTED_MODULE_5__.default.prototype.toContainer = function
       Object.keys(rules).forEach(function (key) {
         rules[key] = rules[key] || select[key].indexOf(el) !== -1;
       }); // Get element position on the screen.
-      // TODO: Subtract the top of the container from clientRect.top/bottom?
 
       var clientRect = el.getBoundingClientRect(); // Avoid: Check if a break happens mid-element.
 
@@ -15521,7 +15509,6 @@ Worker.prototype.save = function save(filename) {
 
 
 Worker.prototype.set = function set(opt) {
-  // TODO: Implement ordered pairs?
   // Silently ignore invalid or empty input.
   if ((0,_utils_js__WEBPACK_IMPORTED_MODULE_10__.objType)(opt) !== 'object') {
     return this;

@@ -3,14 +3,12 @@
 namespace Lle\DashboardBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 
 /**
  * @ORM\Table(name="widgets")
  * @ORM\Entity(repositoryClass="Lle\DashboardBundle\Repository\WidgetRepository")
  */
-
 class Widget
 {
     /**
@@ -18,59 +16,59 @@ class Widget
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @ORM\Column(name="x", type="integer", nullable=true)
      */
-    protected $x = 0;
+    protected ?int $x = 0;
 
     /**
      * @ORM\Column(name="y", type="integer", nullable=true)
      */
-    protected $y = 0;
+    protected ?int $y = 0;
 
     /**
      * @ORM\Column(name="width", type="integer", nullable=true)
      */
-    protected $width;
+    protected ?int $width = null;
 
     /**
      * @ORM\Column(name="height", type="integer", nullable=true)
      */
-    protected $height;
-    
+    protected ?int $height = null;
+
     /**
      * @ORM\Column(name="type", type="string", length=100, nullable=true)
      */
-    private $type;
-    
+    private ?string $type = null;
+
     /**
      * @ORM\Column(name="user_id", type="integer", nullable=true)
      */
-    private $user_id;
+    private ?int $userId = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
      */
-    private $config;
+    private ?array $config = null;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      */
-    private $title;
+    private ?string $title = null;
 
     /**
      * Import config.
      */
-    public function importConfig(WidgetTypeInterface $widgetType)
+    public function importConfig(WidgetTypeInterface $widgetType): self
     {
         $this->type = $widgetType->getType();
         $this->width = $widgetType->getWidth();
         $this->height = $widgetType->getHeight();
         $this->x = $widgetType->getX();
         $this->y = $widgetType->getY();
-        
+
         return $this;
     }
 
@@ -141,22 +139,22 @@ class Widget
 
     public function getUserId(): ?int
     {
-        return $this->user_id;
+        return $this->userId;
     }
 
-    public function setUserId(?int $user_id): self
+    public function setUserId(?int $userId): self
     {
-        $this->user_id = $user_id;
+        $this->userId = $userId;
 
         return $this;
     }
 
-    public function getConfig()
+    public function getConfig(): ?array
     {
         return $this->config;
     }
 
-    public function setConfig($config): self
+    public function setConfig(?array $config): self
     {
         $this->config = $config;
 

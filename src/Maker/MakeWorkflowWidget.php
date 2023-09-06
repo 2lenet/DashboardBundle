@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Lle\DashboardBundle\Maker;
 
-use Doctrine\Common\Annotations\Annotation;
 use Lle\CruditBundle\LleCruditBundle;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
-use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper;
-use Symfony\Bundle\MakerBundle\FileManager;
 use Symfony\Bundle\MakerBundle\Generator;
 use Symfony\Bundle\MakerBundle\InputConfiguration;
 use Symfony\Bundle\MakerBundle\Maker\AbstractMaker;
@@ -18,15 +15,21 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class MakeWorkflowWidget extends AbstractMaker
 {
-    private FileManager $fileManager;
-    private DoctrineHelper $entityHelper;
-    private bool $withController;
+    use MakerTrait;
 
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
+    private KernelInterface $kernel;
+
+    private DoctrineHelper $doctrineHelper;
+
+    public function __construct(
+        KernelInterface $kernel,
+        DoctrineHelper $doctrineHelper
+    ) {
+        $this->kernel = $kernel;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -37,6 +40,8 @@ class MakeWorkflowWidget extends AbstractMaker
 
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
         $command
             ->setDescription('Creates a new workflow widget class')
             ->addArgument(
@@ -59,7 +64,7 @@ class MakeWorkflowWidget extends AbstractMaker
                 InputArgument::OPTIONAL,
                 'Name of the workflow ?'
             )
-            ->setHelp((string)file_get_contents(__DIR__ . '/../Resources/help/make_widget.txt'));
+            ->setHelp((string)file_get_contents($bundleDir . '/Resources/help/make_widget.txt'));
 
         $inputConfig->setArgumentAsNonInteractive('widgetname');
         $inputConfig->setArgumentAsNonInteractive('namespace-widget');
@@ -99,30 +104,6 @@ class MakeWorkflowWidget extends AbstractMaker
         }
     }
 
-    public function generate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
-    {
-        $io->text('Create the widget');
-        try {
-            $this->createWidget($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-
-        try {
-            $this->createTemplate($input, $io, $generator);
-        } catch (\Exception $e) {
-            $io->error($e->getMessage());
-        }
-    }
-
-    public function configureDependencies(DependencyBuilder $dependencies): void
-    {
-        $dependencies->addClassDependency(
-            Annotation::class,
-            'annotations'
-        );
-    }
-
     private function createWidget(InputInterface $input, ConsoleStyle $io, Generator $generator): string
     {
         $widgetName = $this->getStringArgument('widgetname', $input);
@@ -150,7 +131,9 @@ class MakeWorkflowWidget extends AbstractMaker
 
     private function getSkeletonTemplate(string $templateName): string
     {
-        return __DIR__ . '/../Resources/skeleton/' . $templateName;
+        $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();
+
+        return $bundleDir . '/Resources/skeleton/' . $templateName;
     }
 
     private function createTemplate(InputInterface $input, ConsoleStyle $io, Generator $generator): void
@@ -159,7 +142,8 @@ class MakeWorkflowWidget extends AbstractMaker
         $workflow = $this->getStringArgument('workflow', $input);
         $entity = $this->getStringArgument('entity', $input);
 
-        $generator->generateTemplate('widget/' . strtolower($widgetname) . '.html.twig',
+        $generator->generateTemplate(
+            'widget/' . strtolower($widgetname) . '.html.twig',
             $this->getSkeletonTemplate('widget/twig_emptyworkflowwidget.tpl.php'),
             [
                 'widgetname' => $widgetname,
@@ -178,13 +162,5 @@ class MakeWorkflowWidget extends AbstractMaker
             return (string)$input->getArgument($name);
         }
         throw new InvalidArgumentException($name . ' must be string type');
-    }
-
-    private function getBoolArgument(string $name, InputInterface $input): bool
-    {
-        if (is_string($input->getArgument($name)) || is_bool($input->getArgument($name))) {
-            return (bool)$input->getArgument($name);
-        }
-        throw new InvalidArgumentException($name . ' must be bool type');
     }
 }

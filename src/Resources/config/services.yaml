@@ -33,12 +33,15 @@ services:
             - '@doctrine.orm.entity_manager'
 
     Lle\DashboardBundle\Maker\MakeWidget:
+        arguments:
+            - '@kernel'
         tags: [maker.command]
 
     Lle\DashboardBundle\Maker\MakeWorkflowWidget:
         tags: [maker.command]
         arguments:
             - '@maker.doctrine_helper'
+            - '@kernel'
 
     Lle\DashboardBundle\Widgets\:
         resource: '../../Widgets'
