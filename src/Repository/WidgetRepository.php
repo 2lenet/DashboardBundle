@@ -32,7 +32,7 @@ class WidgetRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder("w")
             ->select('w')
-            ->where('w.user_id = :user_id')
+            ->where('w.userId = :user_id')
             ->setParameter('user_id', $userId)
         ;
     }
@@ -45,7 +45,7 @@ class WidgetRepository extends ServiceEntityRepository
         $userId = method_exists($user, 'getId') ? $user->getId() : null;
 
         return $this->createQueryBuilder('w')
-            ->where('w.user_id = :userId')
+            ->where('w.userId = :userId')
             ->setParameter('userId', $userId)
             ->addOrderBy('w.y', 'ASC')
             ->addOrderBy('w.x', 'ASC')
@@ -57,7 +57,7 @@ class WidgetRepository extends ServiceEntityRepository
     {
         $this->createQueryBuilder("w")
             ->delete()
-            ->where("w.user_id = :user_id")
+            ->where("w.userId = :user_id")
             ->setParameter("user_id", $userId)
             ->getQuery()
             ->execute()
@@ -65,7 +65,7 @@ class WidgetRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param $user_id
+     * @param $userId
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * Obtenir le widget le plus bas de la grille
@@ -73,7 +73,7 @@ class WidgetRepository extends ServiceEntityRepository
     public function getBottomWidget(int $userId): ?Widget
     {
         return $this->createQueryBuilder("w")
-            ->where("w.user_id = :user_id")
+            ->where("w.userId = :user_id")
             ->setParameter("user_id", $userId)
             ->addOrderBy("w.y", "DESC")
             ->addOrderBy("w.height", "DESC")
@@ -89,7 +89,7 @@ class WidgetRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder("w")
             ->delete()
-            ->andWhere("w.user_id IS NULL");
+            ->andWhere("w.userId IS NULL");
     }
 
     /**
@@ -101,8 +101,8 @@ class WidgetRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder("w")
             ->update()
-            ->set("w.user_id", "NULL")
-            ->andWhere("w.user_id = :userId")
+            ->set("w.userId", "NULL")
+            ->andWhere("w.userId = :userId")
             ->setParameter("userId", $userId);
     }
 
@@ -113,6 +113,6 @@ class WidgetRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder("w")
             ->delete()
-            ->andWhere("w.user_id IS NOT NULL");
+            ->andWhere("w.userId IS NOT NULL");
     }
 }
