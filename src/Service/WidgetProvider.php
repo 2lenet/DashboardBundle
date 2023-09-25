@@ -9,10 +9,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class WidgetProvider
 {
+    protected ?array $widgetTypes;
+
     public function __construct(
         protected EntityManagerInterface $em,
         protected TokenStorageInterface $security,
-        protected ?array $widgetTypes
+        iterable $widgetTypes
     ) {
         /** @var WidgetTypeInterface $widgetType */
         foreach ($widgetTypes as $widgetType) {
