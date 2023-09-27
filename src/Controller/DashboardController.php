@@ -179,9 +179,8 @@ class DashboardController extends AbstractController
         $user = $this->getUser();
         $widgetTypes = $provider->getWidgetTypes();
         if ($user) {
-            $widgets = $provider->getMyWidgets();
-
             // l'utilisateur n'a pas de widgets, on met ceux par défaut.
+            $widgets = $provider->getMyWidgets();
             if (!$widgets && method_exists($user, 'getId')) {
                 $provider->setDefaultWidgetsForUser($user->getId());
                 $widgets = $provider->getMyWidgets();
