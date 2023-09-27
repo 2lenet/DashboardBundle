@@ -176,8 +176,9 @@ class DashboardController extends AbstractController
     #[Route('/', name: 'homepage', methods: ['GET'])]
     public function dashboardAction(WidgetProvider $provider): Response
     {
-        $user = $this->getUser();
+        $widgets = [];
         $widgetTypes = $provider->getWidgetTypes();
+        $user = $this->getUser();
         if ($user) {
             // l'utilisateur n'a pas de widgets, on met ceux par défaut.
             $widgets = $provider->getMyWidgets();
@@ -185,8 +186,6 @@ class DashboardController extends AbstractController
                 $provider->setDefaultWidgetsForUser($user->getId());
                 $widgets = $provider->getMyWidgets();
             }
-        } else {
-            $widgets = [];
         }
 
         $widgetsView = [];
