@@ -31,7 +31,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/add_widget/{type}', name: 'add_widget', options: ['expose' => true])]
-    public function addWidgetAction(WidgetProvider $provider, mixed $type): Response
+    public function addWidget(WidgetProvider $provider, mixed $type): Response
     {
         $widgetType = $provider->getWidgetType($type);
 
@@ -54,7 +54,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/remove_widget/{id}', name: 'remove_widget', options: ['expose' => true])]
-    public function removeWidgetAction(int $id): JsonResponse
+    public function removeWidget(int $id): JsonResponse
     {
         $widgetRepository = $this->em->getRepository(Widget::class);
         $widget = $widgetRepository->find($id);
@@ -76,7 +76,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}', name: 'update_widget', options: ['expose' => true])]
-    public function updateWidgetAction(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
+    public function updateWidget(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -94,7 +94,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/update_title/{id}/{title}', name: 'update_title', options: ['expose' => true])]
-    public function updateWidgetTitleAction(int $id, ?string $title): JsonResponse
+    public function updateWidgetTitle(int $id, ?string $title): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -107,7 +107,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/render_widget/{id}', name: 'render_widget', options: ['expose' => true])]
-    public function renderWidgetAction(WidgetProvider $provider, int $id): Response
+    public function renderWidget(WidgetProvider $provider, int $id): Response
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -123,7 +123,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/widget_save_config/{id}/{form}', name: 'widget_save_config')]
-    public function saveConfigAction(Request $request, int $id, mixed $form): Response
+    public function saveConfig(Request $request, int $id, mixed $form): Response
     {
         $params = $request->request->all();
         $config = array_key_exists($form, $params) ? $params[$form] : null;
@@ -145,7 +145,7 @@ class DashboardController extends AbstractController
      * Reset config and title of widget.
      */
     #[Route('/dashboard/widget_reset_config/{id}', name: 'widget_reset_config')]
-    public function resetConfigAction(int $id): Response
+    public function resetConfig(int $id): Response
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -162,7 +162,7 @@ class DashboardController extends AbstractController
      * Delete current user's widgets.
      */
     #[Route('/dashboard/delete_my_widgets', name: 'delete_my_widgets')]
-    public function deleteMyWidgetsAction(): Response
+    public function deleteMyWidgets(): Response
     {
         $user = $this->getUser();
 
@@ -174,7 +174,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/', name: 'homepage', methods: ['GET'])]
-    public function dashboardAction(WidgetProvider $provider): Response
+    public function dashboard(WidgetProvider $provider): Response
     {
         $user = $this->getUser();
         $widgetTypes = $provider->getWidgetTypes();
@@ -235,7 +235,7 @@ class DashboardController extends AbstractController
      * Delete all dashboards (not the default one)
      */
     #[Route('/dashboard/admin/reset-all')]
-    public function deleteAllUserDashboardsAction(): Response
+    public function deleteAllUserDashboards(): Response
     {
         $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
 
