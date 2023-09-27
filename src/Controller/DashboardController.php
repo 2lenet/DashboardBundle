@@ -31,7 +31,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/add_widget/{type}', name: 'add_widget', options: ['expose' => true])]
-    public function addWidget(WidgetProvider $provider, mixed $type): Response
+    public function addWidgetAction(WidgetProvider $provider, mixed $type): Response
     {
         $widgetType = $provider->getWidgetType($type);
 
@@ -54,7 +54,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/remove_widget/{id}', name: 'remove_widget', options: ['expose' => true])]
-    public function removeWidget(int $id): JsonResponse
+    public function removeWidgetAction(int $id): JsonResponse
     {
         $widgetRepository = $this->em->getRepository(Widget::class);
         $widget = $widgetRepository->find($id);
@@ -76,7 +76,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}', name: 'update_widget', options: ['expose' => true])]
-    public function updateWidget(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
+    public function updateWidgetAction(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -94,7 +94,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/dashboard/update_title/{id}/{title}', name: 'update_title', options: ['expose' => true])]
-    public function updateWidgetTitle(int $id, ?string $title): JsonResponse
+    public function updateWidgetTitleAction(int $id, ?string $title): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -174,7 +174,7 @@ class DashboardController extends AbstractController
     }
 
     #[Route('/', name: 'homepage', methods: ['GET'])]
-    public function dashboard(WidgetProvider $provider): Response
+    public function dashboardAction(WidgetProvider $provider): Response
     {
         $user = $this->getUser();
         $widgetTypes = $provider->getWidgetTypes();
