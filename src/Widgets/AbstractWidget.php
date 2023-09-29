@@ -11,44 +11,26 @@ use Twig\Environment;
 
 abstract class AbstractWidget implements WidgetTypeInterface
 {
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var int x position
-     */
+    // x position
     protected int $x = 0;
 
-    /**
-     * @var int y position
-     */
+    // y position
     protected int $y = 0;
 
-    /**
-     * @var int widget width
-     */
+    // widget width
     protected int $width = 4;
 
-    /**
-     * @var int widget height
-     */
+    // widget height
     protected int $height = 5;
 
-    /**
-     * @var array json config
-     */
+    // json config
     protected ?array $config = null;
 
-    /**
-     * @var string widget title
-     */
+    // widget title
     protected ?string $title = null;
 
-    /**
-     * @var Security
-     */
     protected Security $security;
 
     protected Environment $twig;

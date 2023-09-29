@@ -21,35 +21,17 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class DashboardController extends AbstractController
 {
-    private EntityManagerInterface $em;
-
-    private TokenStorageInterface $tokenStorage;
-
-    private WidgetCompacterService $widgetCompacter;
-
-    protected CacheInterface $cache;
-
-    protected KernelInterface $kernel;
-
     public function __construct(
-        EntityManagerInterface $em,
-        TokenStorageInterface $tokenStorage,
-        WidgetCompacterService $widgetCompacter,
-        CacheInterface $cache,
-        KernelInterface $kernel
-    )
-    {
-        $this->em = $em;
-        $this->tokenStorage = $tokenStorage;
-        $this->widgetCompacter = $widgetCompacter;
-        $this->cache = $cache;
-        $this->kernel = $kernel;
+        private EntityManagerInterface $em,
+        private TokenStorageInterface $tokenStorage,
+        private WidgetCompacterService $widgetCompacter,
+        protected CacheInterface $cache,
+        protected KernelInterface $kernel
+    ) {
     }
 
-    /**
-     * @Route("/dashboard/add_widget/{type}", options={"expose"=true}, name="add_widget")
-     */
-    public function addWidgetAction(WidgetProvider $provider, mixed $type): Response
+    #[Route('/dashboard/add_widget/{type}', name: 'add_widget', options: ['expose' => true])]
+    public function addWidget(WidgetProvider $provider, mixed $type): Response
     {
         $widgetType = $provider->getWidgetType($type);
 
@@ -71,10 +53,8 @@ class DashboardController extends AbstractController
         return $this->forward(self::class . '::renderWidget', ['id' => $widget->getId()]);
     }
 
-    /**
-     * @Route("/dashboard/remove_widget/{id}", options={"expose"=true}, name="remove_widget")
-     */
-    public function removeWidgetAction(int $id): JsonResponse
+    #[Route('/dashboard/remove_widget/{id}', name: 'remove_widget', options: ['expose' => true])]
+    public function removeWidget(int $id): JsonResponse
     {
         $widgetRepository = $this->em->getRepository(Widget::class);
         $widget = $widgetRepository->find($id);
@@ -95,10 +75,8 @@ class DashboardController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}", options={"expose"=true}, name="update_widget")
-     */
-    public function updateWidgetAction(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
+    #[Route('/dashboard/update_widget/{id}/{x}/{y}/{width}/{height}', name: 'update_widget', options: ['expose' => true])]
+    public function updateWidget(int $id, ?int $x, ?int $y, ?int $width, ?int $height): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -115,10 +93,8 @@ class DashboardController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/dashboard/update_title/{id}/{title}", options={"expose"=true}, name="update_title")
-     */
-    public function updateWidgetTitleAction(int $id, ?string $title): JsonResponse
+    #[Route('/dashboard/update_title/{id}/{title}', name: 'update_title', options: ['expose' => true])]
+    public function updateWidgetTitle(int $id, ?string $title): JsonResponse
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -130,10 +106,8 @@ class DashboardController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/dashboard/render_widget/{id}", options={"expose"=true}, name="render_widget")
-     */
-    public function renderWidgetAction(WidgetProvider $provider, int $id): Response
+    #[Route('/dashboard/render_widget/{id}', name: 'render_widget', options: ['expose' => true])]
+    public function renderWidget(WidgetProvider $provider, int $id): Response
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -148,10 +122,8 @@ class DashboardController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-    /**
-     * @Route("/dashboard/widget_save_config/{id}/{form}", name="widget_save_config")
-     */
-    public function saveConfigAction(Request $request, int $id, mixed $form): Response
+    #[Route('/dashboard/widget_save_config/{id}/{form}', name: 'widget_save_config')]
+    public function saveConfig(Request $request, int $id, mixed $form): Response
     {
         $params = $request->request->all();
         $config = array_key_exists($form, $params) ? $params[$form] : null;
@@ -171,9 +143,9 @@ class DashboardController extends AbstractController
 
     /**
      * Reset config and title of widget.
-     * @Route("/dashboard/widget_reset_config/{id}", name="widget_reset_config")
      */
-    public function resetConfigAction(int $id): Response
+    #[Route('/dashboard/widget_reset_config/{id}', name: 'widget_reset_config')]
+    public function resetConfig(int $id): Response
     {
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
@@ -188,9 +160,9 @@ class DashboardController extends AbstractController
 
     /**
      * Delete current user's widgets.
-     * @Route("/dashboard/delete_my_widgets", name="delete_my_widgets")
      */
-    public function deleteMyWidgetsAction(): Response
+    #[Route('/dashboard/delete_my_widgets', name: 'delete_my_widgets')]
+    public function deleteMyWidgets(): Response
     {
         $user = $this->getUser();
 
@@ -201,23 +173,20 @@ class DashboardController extends AbstractController
         return $this->redirectToRoute("homepage");
     }
 
-    /**
-     * @Route("/", name="homepage", methods="GET")
-     */
-    public function dashboardAction(WidgetProvider $provider): Response
+    #[Route('/', name: 'homepage', methods: ['GET'])]
+    public function dashboard(WidgetProvider $provider): Response
     {
-        $user = $this->getUser();
+        $widgets = [];
         $widgetTypes = $provider->getWidgetTypes();
-        if ($user) {
-            $widgets = $provider->getMyWidgets();
 
+        $user = $this->getUser();
+        if ($user) {
             // l'utilisateur n'a pas de widgets, on met ceux par défaut.
+            $widgets = $provider->getMyWidgets();
             if (!$widgets && method_exists($user, 'getId')) {
                 $provider->setDefaultWidgetsForUser($user->getId());
                 $widgets = $provider->getMyWidgets();
             }
-        } else {
-            $widgets = [];
         }
 
         $widgetsView = [];
@@ -242,10 +211,9 @@ class DashboardController extends AbstractController
     }
 
     /**
-     * @Route("/dashboard/admin/default")
-     *
      * Sets the current user's dashboard as default dashboard
      */
+    #[Route('/dashboard/admin/default')]
     public function setMyDashboardAsDefault(): Response
     {
         $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
@@ -263,11 +231,10 @@ class DashboardController extends AbstractController
     }
 
     /**
-     * @Route("/dashboard/admin/reset-all")
-     *
      * Delete all dashboards (not the default one)
      */
-    public function deleteAllUserDashboardsAction(): Response
+    #[Route('/dashboard/admin/reset-all')]
+    public function deleteAllUserDashboards(): Response
     {
         $this->denyAccessUnlessGranted("ROLE_SUPER_ADMIN");
 

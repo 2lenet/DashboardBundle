@@ -40,8 +40,8 @@ services:
     Lle\DashboardBundle\Maker\MakeWorkflowWidget:
         tags: [maker.command]
         arguments:
-            - '@maker.doctrine_helper'
             - '@kernel'
+            - '@maker.doctrine_helper'
 
     Lle\DashboardBundle\Widgets\:
         resource: '../../Widgets'

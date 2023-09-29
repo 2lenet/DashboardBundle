@@ -4,63 +4,41 @@ namespace Lle\DashboardBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
+use Lle\DashboardBundle\Repository\WidgetRepository;
 
-/**
- * @ORM\Table(name="widgets")
- * @ORM\Entity(repositoryClass="Lle\DashboardBundle\Repository\WidgetRepository")
- */
+#[ORM\Table(name: 'widgets')]
+#[ORM\Entity(repositoryClass: WidgetRepository::class)]
 class Widget
 {
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     protected ?int $id = null;
 
-    /**
-     * @ORM\Column(name="x", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'x', type: 'integer', nullable: true)]
     protected ?int $x = 0;
 
-    /**
-     * @ORM\Column(name="y", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'y', type: 'integer', nullable: true)]
     protected ?int $y = 0;
 
-    /**
-     * @ORM\Column(name="width", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'width', type: 'integer', nullable: true)]
     protected ?int $width = null;
 
-    /**
-     * @ORM\Column(name="height", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'height', type: 'integer', nullable: true)]
     protected ?int $height = null;
 
-    /**
-     * @ORM\Column(name="type", type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(name: 'type', type: 'string', length: 100, nullable: true)]
     private ?string $type = null;
 
-    /**
-     * @ORM\Column(name="user_id", type="integer", nullable=true)
-     */
+    #[ORM\Column(name: 'user_id', type: 'integer', nullable: true)]
     private ?int $userId = null;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(name: 'config', type: 'json', nullable: true)]
     private ?array $config = null;
 
-    /**
-     * @ORM\Column(type="string", nullable=true)
-     */
+    #[ORM\Column(name: 'title', type: 'string', nullable: true)]
     private ?string $title = null;
 
-    /**
-     * Import config.
-     */
     public function importConfig(WidgetTypeInterface $widgetType): self
     {
         $this->type = $widgetType->getType();
