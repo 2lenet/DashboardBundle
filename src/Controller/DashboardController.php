@@ -33,9 +33,12 @@ class DashboardController extends AbstractController
     #[Route('/dashboard/add_widget/{type}', name: 'add_widget', options: ['expose' => true])]
     public function addWidget(WidgetProvider $provider, mixed $type): Response
     {
+        /** @var WidgetTypeInterface $widgetType */
         $widgetType = $provider->getWidgetType($type);
 
-        $userId = method_exists($this->getUser(), 'getId') ? $this->getUser()->getId() : null;
+        /** @var object $user */
+        $user = $this->getUser();
+        $userId = method_exists($user, 'getId') ? $user->getId() : null;
 
         $widget = new Widget();
         $widget->importConfig($widgetType);
@@ -62,11 +65,14 @@ class DashboardController extends AbstractController
         if ($widget) {
             $this->em->remove($widget);
 
-            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            /** @var UserInterface $user */
+            $user = $this->getUser();
+
+            $widgets = $widgetRepository->getWidgetsOrderedByY($user);
             $this->widgetCompacter->compactY($widgets);
             $this->em->flush();
 
-            $widgets = $widgetRepository->getWidgetsOrderedByY($this->getUser());
+            $widgets = $widgetRepository->getWidgetsOrderedByY($user);
             $this->widgetCompacter->compactY($widgets);
 
             $this->em->flush();
@@ -112,7 +118,8 @@ class DashboardController extends AbstractController
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
-            $widgetType = $provider->getWidgetType($widget->getType());
+            /** @var WidgetTypeInterface $widgetType */
+            $widgetType = $provider->getWidgetType((string)$widget->getType());
             $widgetType->setParams($widget);
             $content = $this->getWidgetContent($widgetType);
 
@@ -126,6 +133,7 @@ class DashboardController extends AbstractController
     public function saveConfig(Request $request, int $id, mixed $form): Response
     {
         $params = $request->request->all();
+        /** @var array|null $config */
         $config = array_key_exists($form, $params) ? $params[$form] : null;
 
         $widget = $this->em->getRepository(Widget::class)->find($id);
@@ -275,13 +283,13 @@ class DashboardController extends AbstractController
                 $content = $this->cache->get($uniqueKey, function (ItemInterface $item) use ($widgetType) {
                     $item->expiresAfter($widgetType->getCacheTimeout());
 
-                    return $widgetType->render();
+                    return (string)$widgetType->render();
                 });
             } else {
                 $content = $widgetType->render();
             }
         }
 
-        return $content;
+        return (string)$content;
     }
 }
