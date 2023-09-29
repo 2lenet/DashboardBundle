@@ -27,10 +27,13 @@ class WidgetProvider
         return $this->widgetTypes;
     }
 
-    public function getWidgetType(?string $widgetType): ?WidgetTypeInterface
+    public function getWidgetType(string $widgetType): ?WidgetTypeInterface
     {
-        if (array_key_exists($widgetType, $this->widgetTypes)) {
-            return clone $this->widgetTypes[$widgetType];
+        /** @var array $widgetTypes */
+        $widgetTypes = $this->widgetTypes;
+
+        if (array_key_exists($widgetType, $widgetTypes)) {
+            return clone $widgetTypes[$widgetType];
         }
 
         return null;
@@ -42,7 +45,7 @@ class WidgetProvider
     public function getMyWidgets(): array
     {
         // Get user.
-        $user = $this->security->getToken()->getUser();
+        $user = $this->security->getToken()?->getUser();
         if (!is_object($user)) {
             return [];
         }

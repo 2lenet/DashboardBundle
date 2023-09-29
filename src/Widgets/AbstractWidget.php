@@ -7,23 +7,24 @@ use Lle\DashboardBundle\Entity\Widget;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Twig\Environment;
 
 abstract class AbstractWidget implements WidgetTypeInterface
 {
-    protected int $id;
+    protected ?int $id;
 
     // x position
-    protected int $x = 0;
+    protected ?int $x = 0;
 
     // y position
-    protected int $y = 0;
+    protected ?int $y = 0;
 
     // widget width
-    protected int $width = 4;
+    protected ?int $width = 4;
 
     // widget height
-    protected int $height = 5;
+    protected ?int $height = 5;
 
     // json config
     protected ?array $config = null;
@@ -159,6 +160,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
     public function supports(): bool
     {
         $widgetName = (new \ReflectionClass($this))->getShortName();
+        /** @var string $widgetName */
         $widgetName = preg_replace("/(?<!\ )[A-Z]/", "_$0", $widgetName);
         $widgetName = strtoupper($widgetName);
         $role = "ROLE_DASHBOARD" . $widgetName;
@@ -179,6 +181,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function getCacheKey(): string
     {
+        /** @var string $uniqueKey */
         $uniqueKey = json_encode(array($this->config, $this->width, $this->height, $this->title, $this->x, $this->y));
 
         return $this->getId() . "_" . md5($uniqueKey);
@@ -195,11 +198,12 @@ abstract class AbstractWidget implements WidgetTypeInterface
     /**
      * Helper functions
      */
-
     public function createForm(string $type, mixed $data = null, array $options = []): FormInterface
     {
-        return $this->formFactory
-            ->createNamed("form_widget_" . $this->getId(), $type, $data, $options);
+        // say thank you to PHPStan
+        /** @var class-string<FormTypeInterface<mixed>> $type */
+
+        return $this->formFactory->createNamed("form_widget_" . $this->getId(), $type, $data, $options);
     }
 
     public function twig(string $template, array $context = []): string
