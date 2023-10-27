@@ -28,6 +28,8 @@ interface WidgetTypeInterface
 
     public function supports(): ?bool;
 
+    public function getRole(): string;
+
     public function supportsAjax(): ?bool;
 
     public function getCacheKey(): ?string;

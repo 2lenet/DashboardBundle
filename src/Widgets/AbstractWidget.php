@@ -159,11 +159,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function supports(): bool
     {
-        $widgetName = (new \ReflectionClass($this))->getShortName();
-        /** @var string $widgetName */
-        $widgetName = preg_replace("/(?<!\ )[A-Z]/", "_$0", $widgetName);
-        $widgetName = strtoupper($widgetName);
-        $role = "ROLE_DASHBOARD" . $widgetName;
+        $role = $this->getRole();
 
         return $this->security->isGranted($role);
     }
@@ -248,5 +244,19 @@ abstract class AbstractWidget implements WidgetTypeInterface
         $this->formFactory = $formFactory;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole(): string
+    {
+        $widgetName = (new \ReflectionClass($this))->getShortName();
+        /** @var string $widgetName */
+        $widgetName = preg_replace("/(?<!\ )[A-Z]/", "_$0", $widgetName);
+        $widgetName = strtoupper($widgetName);
+        $role = "ROLE_DASHBOARD" . $widgetName;
+
+        return $role;
     }
 }
