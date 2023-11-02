@@ -62,6 +62,10 @@
                 <source>widget.pdf_export</source>
                 <target>Exporter</target>
             </trans-unit>
+            <trans-unit id="stats_widgets">
+                <source>stats_widgets</source>
+                <target>Ajouter un widget de statistiques</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

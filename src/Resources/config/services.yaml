@@ -47,3 +47,7 @@ services:
         resource: '../../Widgets'
         tags: ['lle_dashboard.widget']
         exclude: '../..Widgets/AbstractWidget.php'
+
+    Lle\DashboardBundle\Widgets\Stats:
+        arguments:
+            - !tagged_iterator lle_dashboard.data_provider
