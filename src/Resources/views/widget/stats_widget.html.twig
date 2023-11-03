@@ -2,6 +2,12 @@
 
 {% block card_body %}
     <div id="widget_body_{{ widget.id }}" class="card-body">
-        {% block widget_body %}{% endblock widget_body %}
+        {% block widget_body %}
+            {% if not data %}
+                {{ 'text.config_stats'|trans(domain='LleDashboardBundle') }}
+            {% else %}
+                {{ dump(data) }}
+            {% endif %}
+        {% endblock widget_body %}
     </div>
 {% endblock card_body %}

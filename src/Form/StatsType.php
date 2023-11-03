@@ -15,41 +15,18 @@ class StatsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('dataProvider', ChoiceType::class, [
-            'choices' => $options['providers'],
-            'choice_label' => function ($choice, $key, $value) {
-                $repositoryParts = explode('\\', $value);
-                $repositoryClass = end($repositoryParts);
-                $entity = str_replace('Repository', '', $repositoryClass);
-
-                return $entity;
-            },
+        $builder->add('conf', ChoiceType::class, [
+            'choices' => $options['confs'],
+            'data' => $options['conf'],
+            'required' => false,
         ]);
-
-        foreach ($options['confs'] as $key => $conf) {
-            $repositoryKey = strtolower(str_replace('\\', '_', $key));
-
-            $builder->add($repositoryKey . '_value', ChoiceType::class, [
-                'choices' => $conf['valueSpec'],
-                'choice_label' => function ($choice, $key, $value) {
-                    return $value;
-                },
-            ]);
-            $builder->add($repositoryKey . '_groupBy', ChoiceType::class, [
-                'choices' => $conf['groupSpec'],
-                'choice_label' => function ($choice, $key, $value) {
-                    return $value;
-                },
-            ]);
-            $builder->add($repositoryKey . '_nb', NumberType::class);
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'providers' => null,
-            'confs' => null,
+            'confs' => [],
+            'conf' => '',
         ]);
     }
 }

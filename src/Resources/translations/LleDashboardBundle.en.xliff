@@ -62,9 +62,13 @@
                 <source>widget.pdf_export</source>
                 <target>PDF export</target>
             </trans-unit>
-            <trans-unit id="stats_widgets">
-                <source>stats_widgets</source>
-                <target>Add a statistics widget</target>
+            <trans-unit id="widget.stats.title">
+                <source>widget.stats.title</source>
+                <target>Statistics (configurable)</target>
+            </trans-unit>
+            <trans-unit id="text.config_stats">
+                <source>text.config_stats</source>
+                <target>Configure the widget to obtain statistics</target>
             </trans-unit>
         </body>
     </file>
