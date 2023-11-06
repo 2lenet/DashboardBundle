@@ -34,7 +34,7 @@ class Stats extends AbstractWidget
                 $params = explode('-', $conf);
                 $repository = $this->container->get($params[0]);
 
-                if ($repository) {
+                if ($repository && method_exists($repository, 'getData')) {
                     $data = $repository->getData($params[1], $params[2], $params[3]);
                 }
             }
