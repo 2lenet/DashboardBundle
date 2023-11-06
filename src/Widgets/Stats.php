@@ -9,6 +9,7 @@ use Lle\DashboardBundle\Form\StatsType;
 use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Stats extends AbstractWidget
 {
@@ -24,27 +25,23 @@ class Stats extends AbstractWidget
         $datasources = [];
         $datasources[''] = '';
         foreach ($this->dataProvider as $provider) {
-            $repositoryParts = explode('\\', get_class($provider));
-            $repositoryClass = end($repositoryParts);
-
             foreach ($provider->getDataConf() as $key => $conf) {
-                $datasources[$conf] = $repositoryClass . '_' . $conf;
+                $datasources[$conf] = get_class($provider) . '-' . $conf;
             }
         }
 
+        $form = $this->createForm(StatsType::class, null, ['configs' => $datasources, 'config' => $conf]);
+
         $data = [];
-        $conf = $this->getConfig('conf', '');
+        $conf = $this->getConfig('config', '');
         if ($conf) {
-            $confParts = explode('_', $conf);
-            $repositoryClass = 'App\\Repository\\' . $confParts[0];
-            $repository = $this->container->get($repositoryClass);
+            if (substr_count($conf, '-') === 3) {
+                $params = explode('-', $conf);
+                $repository = $this->container->get($params[0]);
 
-            $params = explode('-', $confParts[1]);
-
-            $data = $repository->getData($params[0], $params[1], $params[2]);
+                $data = $repository->getData($params[1], $params[2], $params[3]);
+            }
         }
-
-        $form = $this->createForm(StatsType::class, null, ['confs' => $datasources, 'conf' => $conf]);
 
         return $this->twig('@LleDashboard/widget/stats_widget.html.twig', [
             'widget' => $this,
