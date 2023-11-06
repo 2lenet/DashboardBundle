@@ -8,6 +8,7 @@ use Lle\DashboardBundle\Entity\Widget;
 use Lle\DashboardBundle\Service\WidgetCompacterService;
 use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
+use Lle\DashboardBundle\Widgets\Stats;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
