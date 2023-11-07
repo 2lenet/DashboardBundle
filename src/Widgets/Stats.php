@@ -15,23 +15,15 @@ class Stats extends AbstractWidget
 
     public function render(): string
     {
-        $datasources = [];
-        $datasources[''] = '';
-
         $data = [];
-        $conf = $this->getConfig('config', '');
+        $dataSources = [];
+        // Add this for a blank choice
+        $dataSources[''] = '';
 
-        foreach ($this->dataProvider as $provider) {
-            foreach ($provider->getDataConf() as $key => $conf) {
-                $datasources[$conf] = get_class($provider) . '-' . $conf;
-            }
-        }
-
-        $form = $this->createForm(StatsType::class, null, ['configs' => $datasources, 'config' => $conf]);
-
-        if ($conf) {
-            if (substr_count($conf, '-') === 3) {
-                $params = explode('-', $conf);
+        $config = $this->getConfig('dataSource', '');
+        if ($config) {
+            if (substr_count($config, '-') === 3) {
+                $params = explode('-', $config);
                 $repository = $this->container->get($params[0]);
 
                 if ($repository && method_exists($repository, 'getData')) {
@@ -39,6 +31,14 @@ class Stats extends AbstractWidget
                 }
             }
         }
+
+        foreach ($this->dataProvider as $provider) {
+            foreach ($provider->getDataConf() as $key => $dataConf) {
+                $dataSources[$dataConf] = get_class($provider) . '-' . $dataConf;
+            }
+        }
+
+        $form = $this->createForm(StatsType::class, null, ['config' => $config, 'dataSources' => $dataSources]);
 
         return $this->twig('@LleDashboard/widget/stats_widget.html.twig', [
             'widget' => $this,

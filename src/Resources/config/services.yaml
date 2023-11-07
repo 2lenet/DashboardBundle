@@ -51,5 +51,4 @@ services:
     Lle\DashboardBundle\Widgets\Stats:
         arguments:
             - !tagged_iterator lle_dashboard.data_provider
-            - '@doctrine.orm.entity_manager'
             - '@service_container'

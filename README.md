@@ -208,6 +208,89 @@ Example : PostIt => ROLE_DASHBOARD_POST_IT
 
 If you want to change this behaviour, simply override supports(), or add a voter.
 
+## Add/configure a statistics widget
+Once configured, this widget allows the user to obtain a histogram based on the selected configuration.
+To do this, you need to create the different possible configurations and generate the data accordingly.
+
+First, implements the DataProviderInterface on your class (Repository, Service, ...).
+Then add the `getData` and `getDataConf` methods.
+
+The `getDataConf` method is used to configure the various configurations options for the widget and the `getData` method manages the histogram data according to the chosen configuration.
+
+#### `getDataConf`:
+This method return an array with the differents configurations. Each of them will contain 3 data separate with the "-" caracter : value, groupBy, number.
+```php
+public function getDataConf(): array
+{
+    return [
+        'COUNTSOMETHING-DAY-30',
+        'COUNTSOMETHING-DAY-60',
+        'COUNTSOMETHING-MONTH-12',
+        'COUNTSOMETHING-MONTH-24',
+        'SUMSOMETHING-DAY-30',
+        'SUMSOMETHING-DAY-60',
+        'SUMSOMETHING-MONTH-12',
+        'SUMSOMETHING-YEAR-1'
+    ];
+}
+```
+
+#### `getData`:
+For this method, you will receive 3 parameters corresponding to the 3 configuration data.
+So first you need to use these three parameters to obtain your data in the right way.
+
+Next, you need to create/return a array with 3 keys for the histogram
+- dataXAxis : contains an array of values on the x-axis of the histogram
+- dataYAxis : contains an array of values on the y-axis of the histogram
+- labelYAxis : contains a string for the legend
+
+A full example of this method:
+```php
+public function getData(string $valueSpec, string $groupSpec, ?int $number): array
+{
+    $result = ['dataXAxis' => [], 'dataYAxis' => [], 'labelYAxis' => 'count'];
+    $qb = $this->createQueryBuilder('entity');
+
+    switch($valueSpec) {
+        case 'COUNTBOOKING':
+            $qb->select('COUNT(entity) as value');
+            break;
+        case 'SUMSOLDE':
+            $qb->select('SUM(entity.yourproperty) as value');
+            break;
+        // ...
+    }
+
+    switch($groupSpec) {
+        case 'DAY':
+            $qb
+                ->addSelect("DATE_FORMAT(entity.date, '%d/%m/%Y') as date")
+                ->groupBy('date');
+            break;
+        case 'MONTH':
+            $qb
+                ->addSelect("CONCAT(MONTH(entity.date), '-', YEAR(entity.date)) as date")
+                ->groupBy('date');
+            break;
+        // ...
+    }
+    
+    // Do the same with the number parameter
+
+    $data = $qb->getQuery()->getResult();
+
+    foreach ($data as $d) {
+        $result['dataXAxis'][] = $d['date'];
+        $result['dataYAxis'][] = $d['value'];
+    }
+
+    return $result;
+}
+```
+
+> :warning: Your class (Repository, Service, ...) MUST BE public in order to be accessible from the container
+
+
 # Understand the data structure
 
 Widget Entity <--> Widget Type <--> DashboardController

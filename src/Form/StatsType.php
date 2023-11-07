@@ -11,8 +11,8 @@ class StatsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('config', ChoiceType::class, [
-            'choices' => $options['configs'],
+        $builder->add('dataSource', ChoiceType::class, [
+            'choices' => $options['dataSources'],
             'data' => $options['config'],
             'required' => false,
         ]);
@@ -21,8 +21,8 @@ class StatsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'configs' => [],
             'config' => '',
+            'dataSources' => [],
         ]);
     }
 }
