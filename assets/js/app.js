@@ -3,6 +3,9 @@ import "../css/app.scss";
 import 'gridstack/dist/gridstack.min.css';
 import { GridStack } from 'gridstack';
 import html2pdf from 'html2pdf.js';
+import Chart from 'chart.js/auto';
+
+global.Chart = Chart;
 
 let onLoad = (callback) => {
     if (document.readyState !== "loading") {

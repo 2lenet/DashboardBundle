@@ -2,6 +2,7 @@
 
 namespace Lle\DashboardBundle\DependencyInjection;
 
+use Lle\DashboardBundle\Contracts\DataProviderInterface;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -28,5 +29,7 @@ class LleDashboardExtension extends Extension
 
         $container->registerForAutoconfiguration(WidgetTypeInterface::class)
             ->addTag('lle_dashboard.widget');
+        $container->registerForAutoconfiguration(DataProviderInterface::class)
+            ->addTag('lle_dashboard.data_provider');
     }
 }

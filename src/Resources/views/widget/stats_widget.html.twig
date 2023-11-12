@@ -1,0 +1,37 @@
+{% extends '@LleDashboard/widget/base_widget.html.twig' %}
+
+{% block card_body %}
+    <div id="widget_body_{{ widget.id }}" class="card-body">
+        {% block widget_body %}
+            {% if not data %}
+                {{ 'text.config_stats'|trans(domain='LleDashboardBundle') }}
+            {% else %}
+                <div>
+                    <canvas id="widget_canvas_{{ widget.id }}" data-widgets="{{ data|json_encode()|e('html_attr') }}"></canvas>
+                </div>
+
+                <script>
+                    let datas = JSON.parse(document.getElementById('widget_canvas_{{ widget.id }}').dataset.widgets);
+
+                    const data = {
+                        labels: datas.dataXAxis,
+                        datasets: [{
+                            data: datas.dataYAxis,
+                            label: datas.labelYAxis,
+                        }],
+                    };
+
+                    const config = {
+                        type: 'bar',
+                        data: data,
+                    };
+
+                    const widget = new Chart(
+                        document.getElementById('widget_canvas_{{ widget.id }}'),
+                        config,
+                    );
+                </script>
+            {% endif %}
+        {% endblock widget_body %}
+    </div>
+{% endblock card_body %}
