@@ -24,10 +24,11 @@ class Stats extends AbstractWidget
         if ($config) {
             if (substr_count($config, '-') === 3) {
                 $params = explode('-', $config);
-                $repository = $this->container->get($params[0]);
 
-                if ($repository && method_exists($repository, 'getData')) {
-                    $data = $repository->getData($params[1], $params[2], $params[3]);
+                foreach ($this->dataProvider as $provider) {
+                    if (get_class($provider) === $params[0]) {
+                        $data = $provider->getData($params[1], $params[2], $params[3]);
+                    }
                 }
             }
         }
