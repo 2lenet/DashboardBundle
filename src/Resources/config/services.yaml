@@ -51,4 +51,3 @@ services:
     Lle\DashboardBundle\Widgets\Stats:
         arguments:
             - !tagged_iterator lle_dashboard.data_provider
-            - '@service_container'

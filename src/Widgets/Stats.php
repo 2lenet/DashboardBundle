@@ -3,13 +3,11 @@
 namespace Lle\DashboardBundle\Widgets;
 
 use Lle\DashboardBundle\Form\StatsType;
-use Symfony\Component\DependencyInjection\Container;
 
 class Stats extends AbstractWidget
 {
     public function __construct(
         private iterable $dataProvider,
-        private Container $container,
     ) {
     }
 
