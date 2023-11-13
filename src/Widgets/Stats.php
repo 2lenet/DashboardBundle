@@ -3,18 +3,20 @@
 namespace Lle\DashboardBundle\Widgets;
 
 use Lle\DashboardBundle\Form\StatsType;
-use Symfony\Component\DependencyInjection\Container;
 
 class Stats extends AbstractWidget
 {
     public function __construct(
         private iterable $dataProvider,
-        private Container $container,
     ) {
     }
 
     public function render(): string
     {
+        $dataProvider = $this->dataProvider instanceof \Traversable ? iterator_to_array(
+            $this->dataProvider
+        ) : $this->dataProvider;
+
         $data = [];
         $dataSources = [];
         // Add this for a blank choice
@@ -23,18 +25,16 @@ class Stats extends AbstractWidget
         $config = $this->getConfig('dataSource', '');
         if ($config) {
             if (substr_count($config, '-') === 3) {
-                $params = explode('-', $config);
-                $repository = $this->container->get($params[0]);
+                list($serviceId, $valueSpec, $groupSpec, $number) = explode('-', $config);
 
-                if ($repository && method_exists($repository, 'getData')) {
-                    $data = $repository->getData($params[1], $params[2], $params[3]);
-                }
+                $provider = $dataProvider[$serviceId];
+                $data = $provider->getData($valueSpec, $groupSpec, $number);
             }
         }
 
-        foreach ($this->dataProvider as $provider) {
-            foreach ($provider->getDataConf() as $key => $dataConf) {
-                $dataSources[$dataConf] = get_class($provider) . '-' . $dataConf;
+        foreach ($dataProvider as $key => $provider) {
+            foreach ($provider->getDataConf() as $dataConf) {
+                $dataSources[$dataConf] = $key . '-' . $dataConf;
             }
         }
 
