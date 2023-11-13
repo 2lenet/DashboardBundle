@@ -49,5 +49,4 @@ services:
         exclude: '../..Widgets/AbstractWidget.php'
 
     Lle\DashboardBundle\Widgets\Stats:
-        arguments:
-            - !tagged_iterator lle_dashboard.data_provider
+        arguments: [!tagged_iterator { tag: 'lle_dashboard.data_provider', index_by: 'key' }]

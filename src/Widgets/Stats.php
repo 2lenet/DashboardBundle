@@ -13,6 +13,10 @@ class Stats extends AbstractWidget
 
     public function render(): string
     {
+        $dataProvider = $this->dataProvider instanceof \Traversable ? iterator_to_array(
+            $this->dataProvider
+        ) : $this->dataProvider;
+
         $data = [];
         $dataSources = [];
         // Add this for a blank choice
@@ -21,19 +25,16 @@ class Stats extends AbstractWidget
         $config = $this->getConfig('dataSource', '');
         if ($config) {
             if (substr_count($config, '-') === 3) {
-                $params = explode('-', $config);
+                list($serviceId, $valueSpec, $groupSpec, $number) = explode('-', $config);
 
-                foreach ($this->dataProvider as $provider) {
-                    if (get_class($provider) === $params[0]) {
-                        $data = $provider->getData($params[1], $params[2], $params[3]);
-                    }
-                }
+                $provider = $dataProvider[$serviceId];
+                $data = $provider->getData($valueSpec, $groupSpec, $number);
             }
         }
 
-        foreach ($this->dataProvider as $provider) {
-            foreach ($provider->getDataConf() as $key => $dataConf) {
-                $dataSources[$dataConf] = get_class($provider) . '-' . $dataConf;
+        foreach ($dataProvider as $key => $provider) {
+            foreach ($provider->getDataConf() as $dataConf) {
+                $dataSources[$dataConf] = $key . '-' . $dataConf;
             }
         }
 
