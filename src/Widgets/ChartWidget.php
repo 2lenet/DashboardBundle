@@ -36,7 +36,7 @@ class ChartWidget extends AbstractWidget
             }
         }
 
-        $form = $this->createForm(ChartWidgetType::class, null, ['config' => $config, 'dataSources' => $chartList]);
+        $form = $this->createForm(ChartWidgetType::class, null, ['config' => $config, 'chartList' => $chartList]);
 
         return $this->twig('@LleDashboard/widget/chart_widget.html.twig', [
             'widget' => $this,
@@ -47,6 +47,6 @@ class ChartWidget extends AbstractWidget
 
     public function getName(): string
     {
-        return 'widget.charts.title';
+        return 'widget.chartsfffffff.title';
     }
 }

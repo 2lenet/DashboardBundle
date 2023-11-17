@@ -208,19 +208,20 @@ Example : PostIt => ROLE_DASHBOARD_POST_IT
 
 If you want to change this behaviour, simply override supports(), or add a voter.
 
-## Add/configure a statistics widget
-Once configured, this widget allows the user to obtain a histogram based on the selected configuration.
+## Add/configure a chartJS widget
+Once configured, this widget allows the user to obtain a chart based on the application provided charts configuration.
 To do this, you need to create the different possible configurations and generate the data accordingly.
 
-First, implements the DataProviderInterface on your class (Repository, Service, ...).
-Then add the `getData` and `getDataConf` methods.
+First, implements the ChartProviderInterface on your class (Repository, Service, ...).
+Then add the `getChart` and `getChartList` methods.
 
-The `getDataConf` method is used to configure the various configurations options for the widget and the `getData` method manages the histogram data according to the chosen configuration.
+The `getChartList` method is used to list the provided charts configurations usable by the widget
+The `getChart` method return a ChartModel ( from symfonyUx Chart bundle ).
 
 #### `getDataConf`:
-This method return an array with the differents configurations. Each of them will contain 3 data separate with the "-" caracter : value, groupBy, number.
+This method return an array with the differents configurations.
 ```php
-public function getDataConf(): array
+public function getChartList(): array
 {
     return [
         'COUNTSOMETHING-DAY-30',
@@ -235,60 +236,72 @@ public function getDataConf(): array
 }
 ```
 
-#### `getData`:
-For this method, you will receive 3 parameters corresponding to the 3 configuration data.
-So first you need to use these three parameters to obtain your data in the right way.
+#### `getChart`:
+For this method, you will receive selected chart key.
 
-Next, you need to create/return a array with 3 keys for the histogram
-- dataXAxis : contains an array of values on the x-axis of the histogram
-- dataYAxis : contains an array of values on the y-axis of the histogram
-- labelYAxis : contains a string for the legend
+Next, you need to create/return a chart model (  \Symfony\UX\Chartjs\Model\Chart )
 
-A full example of this method:
+
+A full example with a table KPI and KPI Value to graph arbitrary datas:
 ```php
-public function getData(string $valueSpec, string $groupSpec, ?int $number): array
-{
-    $result = ['dataXAxis' => [], 'dataYAxis' => [], 'labelYAxis' => 'count'];
-    $qb = $this->createQueryBuilder('entity');
+    public function getChartList(): array
+    {
+        $qb = $this->createQueryBuilder('kv');
+        $qb->join("kv.kpi", "k");
+        $qb->distinct();
+        $qb->select('k.code');
+        $codes = [];
 
-    switch($valueSpec) {
-        case 'COUNTBOOKING':
-            $qb->select('COUNT(entity) as value');
-            break;
-        case 'SUMSOLDE':
-            $qb->select('SUM(entity.yourproperty) as value');
-            break;
-        // ...
+        foreach ($qb->getQuery()->execute() as $code) {
+            $codes[] = $code["code"];
+        }
+
+        return $codes;
+    }
+    public function getChart(string $confKey): Chart
+    {
+        $labels = [];
+        $values = [];
+        foreach ($this->getData($confKey) as $row) {
+            $labels[] = $row['date'];
+            $values[] = $row['value'];
+        }
+
+        $chart = $this->chartBuilder->createChart(Chart::TYPE_BAR);
+        $chart->setData([
+            'labels' => $labels,
+            'datasets' => [
+                [
+                    'label' => $confKey,
+                    'backgroundColor' => 'rgb(255, 99, 132, .4)',
+                    'borderColor' => 'rgb(255, 99, 132)',
+                    'data' => $values,
+                    'tension' => 0.4,
+                ],
+            ],
+        ]);
+        $chart->setOptions([
+            'maintainAspectRatio' => false,
+        ]);
+
+        return $chart;
     }
 
-    switch($groupSpec) {
-        case 'DAY':
-            $qb
-                ->addSelect("DATE_FORMAT(entity.date, '%d/%m/%Y') as date")
-                ->groupBy('date');
-            break;
-        case 'MONTH':
-            $qb
-                ->addSelect("CONCAT(MONTH(entity.date), '-', YEAR(entity.date)) as date")
-                ->groupBy('date');
-            break;
-        // ...
+    public function getData(string $confKey): array
+    {
+        $qb = $this->createQueryBuilder('kv');
+        $qb->join("kv.kpi", "k");
+        $qb->select('SUM(kv.value) as value');
+        $qb->where("k.code = :kpi");
+        $qb->setParameter("kpi", $confKey);
+
+        $qb
+            ->addSelect("CONCAT(WEEK(kv.date), '-', YEAR(kv.date)) as date")
+            ->groupBy('date');
+
+        return $qb->getQuery()->getResult();
     }
-    
-    // Do the same with the number parameter
-
-    $data = $qb->getQuery()->getResult();
-
-    foreach ($data as $d) {
-        $result['dataXAxis'][] = $d['date'];
-        $result['dataYAxis'][] = $d['value'];
-    }
-
-    return $result;
-}
 ```
-
-> :warning: Your class (Repository, Service, ...) MUST BE public in order to be accessible from the container
 
 
 # Understand the data structure

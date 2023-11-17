@@ -3,13 +3,13 @@
 {% block card_body %}
     <div id="widget_body_{{ widget.id }}" class="card-body">
         {% block widget_body %}
-            {% if not data %}
+            {% if not chart %}
                 {{ 'text.config_stats'|trans(domain='LleDashboardBundle') }}
             {% else %}
                 <div>
                     {% block body %}
                         <div style="height: 300px;">
-                            {{ render_chart(data.chart) }}
+                            {{ render_chart(chart) }}
                         </div>
                     {% endblock %}
                 </div>

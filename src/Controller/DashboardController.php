@@ -70,10 +70,6 @@ class DashboardController extends AbstractController
 
             $widgets = $widgetRepository->getWidgetsOrderedByY($user);
             $this->widgetCompacter->compactY($widgets);
-            $this->em->flush();
-
-            $widgets = $widgetRepository->getWidgetsOrderedByY($user);
-            $this->widgetCompacter->compactY($widgets);
 
             $this->em->flush();
         }
