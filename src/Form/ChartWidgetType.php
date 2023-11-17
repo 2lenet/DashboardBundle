@@ -7,12 +7,12 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class StatsType extends AbstractType
+class ChartWidgetType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('dataSource', ChoiceType::class, [
-            'choices' => $options['dataSources'],
+        $builder->add('chart', ChoiceType::class, [
+            'choices' => $options['chartList'],
             'data' => $options['config'],
             'required' => false,
         ]);
@@ -22,7 +22,7 @@ class StatsType extends AbstractType
     {
         $resolver->setDefaults([
             'config' => '',
-            'dataSources' => [],
+            'chartList' => [],
         ]);
     }
 }
