@@ -47,6 +47,6 @@ class ChartWidget extends AbstractWidget
 
     public function getName(): string
     {
-        return 'widget.chartsfffffff.title';
+        return 'widget.charts.title';
     }
 }
