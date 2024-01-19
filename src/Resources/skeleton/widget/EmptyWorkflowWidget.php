@@ -11,15 +11,11 @@ use Twig\Environment;
 
 class <?= $classname ?> extends AbstractWidget
 {
-    protected Environment $twig;
-    private <?= $entity ?>Repository $<?= strtolower($entity) ?>Repository;
-    private Registry $workflows;
-
-    public function __construct(Environment $twig, <?= $entity ?>Repository $<?= strtolower($entity) ?>Repository, Registry $workflows)
-    {
-        $this->twig = $twig;
-        $this-><?= strtolower($entity) ?>Repository = $<?= strtolower($entity) ?>Repository;
-        $this->workflows = $workflows;
+    public function __construct(
+        protected Environment $twig,
+        private <?= $entity ?>Repository $<?= strtolower($entity) ?>Repository,
+        private Registry $workflows,
+    ) {
         $this->height = 2;
         $this->width = 6;
     }
