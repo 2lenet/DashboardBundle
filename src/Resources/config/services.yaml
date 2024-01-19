@@ -13,7 +13,7 @@ services:
         autowire: false
         autoconfigure: false
         calls:
-            - setSecurity: ['@Symfony\Component\Security\Core\Security']
+            - setSecurity: ['@Symfony\Bundle\SecurityBundle\Security']
             - setTwig: ['@twig']
             - setFormFactory: ['@form.factory']
 
