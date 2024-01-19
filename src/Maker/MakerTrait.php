@@ -2,7 +2,6 @@
 
 namespace Lle\DashboardBundle\Maker;
 
-use Doctrine\Common\Annotations\Annotation;
 use Symfony\Bundle\MakerBundle\ConsoleStyle;
 use Symfony\Bundle\MakerBundle\DependencyBuilder;
 use Symfony\Bundle\MakerBundle\Generator;
@@ -28,9 +27,6 @@ trait MakerTrait
 
     public function configureDependencies(DependencyBuilder $dependencies): void
     {
-        $dependencies->addClassDependency(
-            Annotation::class,
-            'annotations'
-        );
+        // do nothing
     }
 }

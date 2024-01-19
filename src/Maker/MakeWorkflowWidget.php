@@ -32,6 +32,11 @@ class MakeWorkflowWidget extends AbstractMaker
         return 'make:workflow-widget';
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Creates a new workflow widget class';
+    }
+
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();

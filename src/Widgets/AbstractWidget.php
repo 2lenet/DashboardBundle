@@ -8,6 +8,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Contracts\Service\Attribute\Required;
 use Twig\Environment;
 
 abstract class AbstractWidget implements WidgetTypeInterface
@@ -216,9 +217,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      * Services injection
      */
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setSecurity(Security $security): self
     {
         $this->security = $security;
@@ -226,9 +225,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setTwig(Environment $twig): self
     {
         $this->twig = $twig;
@@ -236,9 +233,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setFormFactory(FormFactoryInterface $formFactory): self
     {
         $this->formFactory = $formFactory;
@@ -246,9 +241,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
+    #[Required]
     public function getRole(): string
     {
         $widgetName = (new \ReflectionClass($this))->getShortName();

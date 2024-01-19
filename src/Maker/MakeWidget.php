@@ -31,6 +31,11 @@ class MakeWidget extends AbstractMaker
         return 'make:widget';
     }
 
+    public static function getCommandDescription(): string
+    {
+        return 'Creates a new widget class';
+    }
+
     public function configureCommand(Command $command, InputConfiguration $inputConfig): void
     {
         $bundleDir = $this->kernel->getBundle('LleDashboardBundle')->getPath();

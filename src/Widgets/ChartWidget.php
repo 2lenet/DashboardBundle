@@ -30,7 +30,6 @@ class ChartWidget extends AbstractWidget
         }
 
         foreach ($chartProvider as $key => $provider) {
-
             foreach ($provider->getChartList() as $dataConf) {
                 $chartList[$dataConf] = $key . '-' . $dataConf;
             }
