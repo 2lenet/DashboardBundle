@@ -252,4 +252,24 @@ abstract class AbstractWidget implements WidgetTypeInterface
 
         return $role;
     }
+
+    public function getTemplateForPrint(): string
+    {
+        return '@LleDashboard/widget/print_widget.html.twig';
+    }
+
+    public function getDataForPrint(): array
+    {
+        return [];
+    }
+
+    public function getCssTagsForPrint(): array
+    {
+        return [];
+    }
+
+    public function getJsTagsForPrint(): array
+    {
+        return [];
+    }
 }

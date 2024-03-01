@@ -35,4 +35,12 @@ interface WidgetTypeInterface
     public function getCacheKey(): ?string;
 
     public function getCacheTimeout(): ?int;
+
+    public function getTemplateForPrint(): string;
+
+    public function getDataForPrint(): array;
+
+    public function getCssTagsForPrint(): array;
+
+    public function getJsTagsForPrint(): array;
 }

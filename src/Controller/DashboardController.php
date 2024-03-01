@@ -9,6 +9,7 @@ use Lle\DashboardBundle\Service\WidgetCompacterService;
 use Lle\DashboardBundle\Service\WidgetProvider;
 use Lle\DashboardBundle\Widgets\AbstractWidget;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -247,6 +248,35 @@ class DashboardController extends AbstractController
         $repo->deleteAllUserDashboards()->getQuery()->execute();
 
         return $this->redirectToRoute("homepage");
+    }
+
+    #[Route('/dashboard/print_widget/{id}', name: 'print_widget', options: ['expose' => true])]
+    public function printWidget(WidgetProvider $provider, int $id): Response
+    {
+        $widget = $this->em->getRepository(Widget::class)->find($id);
+
+        if ($widget) {
+            /** @var WidgetTypeInterface $widgetType */
+            $widgetType = $provider->getWidgetType((string)$widget->getType());
+            $widgetType->setParams($widget);
+            $htmlContent = '';
+            if ($widgetType) {
+                $widgetContent = $widgetType->render();
+
+                $crawler = new Crawler($widgetContent);
+                $htmlContent = $crawler->filter('#widget_body_' . $widget->getId())->first()->html();
+            }
+
+            return $this->render($widgetType->getTemplateForPrint(), [
+                'title' => $widget->getTitle() ?? ($widgetType ? $widgetType->getName() : ''),
+                'html' => $htmlContent,
+                'data' => $widgetType->getDataForPrint(),
+                'cssTags' => $widgetType->getCssTagsForPrint(),
+                'jsTags' => $widgetType->getJsTagsForPrint(),
+            ]);
+        }
+
+        throw $this->createNotFoundException();
     }
 
     protected function getUser(): ?UserInterface

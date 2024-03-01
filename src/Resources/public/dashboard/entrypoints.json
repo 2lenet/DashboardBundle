@@ -8,6 +8,11 @@
       "js": [
         "/app.js"
       ]
+    },
+    "print": {
+      "js": [
+        "/print.js"
+      ]
     }
   }
 }
