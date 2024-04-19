@@ -266,7 +266,7 @@ class DashboardController extends AbstractController
                 $htmlContent = $crawler->filter('#widget_body_' . $widget->getId())->first()->html();
 
                 return $this->render($widgetType->getTemplateForPrint(), [
-                    'title' => $widget->getTitle() ?? ($widgetType ? $widgetType->getName() : ''),
+                    'title' => $widget->getTitle() ?? $widgetType->getName(),
                     'html' => $htmlContent,
                     'data' => $widgetType->getDataForPrint(),
                     'cssTags' => $widgetType->getCssTagsForPrint(),
