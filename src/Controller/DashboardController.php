@@ -264,15 +264,15 @@ class DashboardController extends AbstractController
 
                 $crawler = new Crawler($widgetContent);
                 $htmlContent = $crawler->filter('#widget_body_' . $widget->getId())->first()->html();
-            }
 
-            return $this->render($widgetType->getTemplateForPrint(), [
-                'title' => $widget->getTitle() ?? ($widgetType ? $widgetType->getName() : ''),
-                'html' => $htmlContent,
-                'data' => $widgetType->getDataForPrint(),
-                'cssTags' => $widgetType->getCssTagsForPrint(),
-                'jsTags' => $widgetType->getJsTagsForPrint(),
-            ]);
+                return $this->render($widgetType->getTemplateForPrint(), [
+                    'title' => $widget->getTitle() ?? ($widgetType ? $widgetType->getName() : ''),
+                    'html' => $htmlContent,
+                    'data' => $widgetType->getDataForPrint(),
+                    'cssTags' => $widgetType->getCssTagsForPrint(),
+                    'jsTags' => $widgetType->getJsTagsForPrint(),
+                ]);
+            }
         }
 
         throw $this->createNotFoundException();
