@@ -256,11 +256,10 @@ class DashboardController extends AbstractController
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
-            /** @var WidgetTypeInterface $widgetType */
             $widgetType = $provider->getWidgetType((string)$widget->getType());
-            $widgetType->setParams($widget);
             $htmlContent = '';
             if ($widgetType) {
+                $widgetType->setParams($widget);
                 $widgetContent = $widgetType->render();
 
                 $crawler = new Crawler($widgetContent);
