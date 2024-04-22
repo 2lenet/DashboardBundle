@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -256,24 +256,23 @@ class DashboardController extends AbstractController
         $widget = $this->em->getRepository(Widget::class)->find($id);
 
         if ($widget) {
-            /** @var WidgetTypeInterface $widgetType */
             $widgetType = $provider->getWidgetType((string)$widget->getType());
-            $widgetType->setParams($widget);
             $htmlContent = '';
             if ($widgetType) {
+                $widgetType->setParams($widget);
                 $widgetContent = $widgetType->render();
 
                 $crawler = new Crawler($widgetContent);
                 $htmlContent = $crawler->filter('#widget_body_' . $widget->getId())->first()->html();
-            }
 
-            return $this->render($widgetType->getTemplateForPrint(), [
-                'title' => $widget->getTitle() ?? ($widgetType ? $widgetType->getName() : ''),
-                'html' => $htmlContent,
-                'data' => $widgetType->getDataForPrint(),
-                'cssTags' => $widgetType->getCssTagsForPrint(),
-                'jsTags' => $widgetType->getJsTagsForPrint(),
-            ]);
+                return $this->render($widgetType->getTemplateForPrint(), [
+                    'title' => $widget->getTitle() ?? $widgetType->getName(),
+                    'html' => $htmlContent,
+                    'data' => $widgetType->getDataForPrint(),
+                    'cssTags' => $widgetType->getCssTagsForPrint(),
+                    'jsTags' => $widgetType->getJsTagsForPrint(),
+                ]);
+            }
         }
 
         throw $this->createNotFoundException();
