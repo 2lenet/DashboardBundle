@@ -176,8 +176,11 @@ function initializeAddWidget(grid) {
 }
 
 function initializeChangeHandler(grid) {
+    const width = window.innerWidth;
     window.addEventListener('resize', function () {
-        location.reload();
+        if (window.innerWidth !== width) {
+            location.reload();
+        }
     });
 
     grid.on('resize', function (event, widget) {
