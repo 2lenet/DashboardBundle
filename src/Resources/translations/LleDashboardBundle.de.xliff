@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="dashboard">
+                <source>dashboard</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="available_widgets">
+                <source>available_widgets</source>
+                <target>Widget hinzufügen</target>
+            </trans-unit>
+            <trans-unit id="widget.editTitle">
+                <source>widget.editTitle</source>
+                <target>Titel bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="widget.deleteWidget">
+                <source>widget.deleteWidget</source>
+                <target>Widget löschen</target>
+            </trans-unit>
+            <trans-unit id="widget.configWidget">
+                <source>widget.configWidget</source>
+                <target>Widget-Konfiguration</target>
+            </trans-unit>
+            <trans-unit id="widget.saveConfig">
+                <source>widget.saveConfig</source>
+                <target>Speichern</target>
+            </trans-unit>
+            <trans-unit id="widget.defaultConfig">
+                <source>widget.defaultConfig</source>
+                <target>Standard-Konfiguration</target>
+            </trans-unit>
+            <trans-unit id="reset_widgets">
+                <source>reset_widgets</source>
+                <target>Standard-Widgets</target>
+            </trans-unit>
+            <trans-unit id="widget.loading">
+                <source>widget.loading</source>
+                <target>Laden läuft</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration">
+                <source>dashboard.administration</source>
+                <target>Verwaltung Dashboard</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.set_as_default">
+                <source>dashboard.administration.set_as_default</source>
+                <target>Mein Dashboard auf Standard setzen</target>
+            </trans-unit>
+            <trans-unit id="dashboard.administration.delete_all">
+                <source>dashboard.administration.delete_all</source>
+                <target>Alle Dashboards zurücksetzen</target>
+            </trans-unit>
+            <trans-unit id="action.validate">
+                <source>action.validate</source>
+                <target>Bestätigen</target>
+            </trans-unit>
+            <trans-unit id="widget.postit.title">
+                <source>widget.postit.title</source>
+                <target>Post-It</target>
+            </trans-unit>
+            <trans-unit id="widget.print">
+                <source>widget.print</source>
+                <target>Drucken</target>
+            </trans-unit>
+            <trans-unit id="widget.stats.title">
+                <source>widget.stats.title</source>
+                <target>Statistiken (konfigurierbar)</target>
+            </trans-unit>
+            <trans-unit id="text.config_stats">
+                <source>text.config_stats</source>
+                <target>Das Widget so konfigurieren, dass es Statistiken liefert</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
