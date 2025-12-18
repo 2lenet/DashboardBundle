@@ -5,5 +5,5 @@ global.Chart = Chart;
 window.addEventListener('load', function () {
     setTimeout(() => {
         print();
-    }, 500);
+    }, 1000);
 });
