@@ -1,3 +1,9 @@
+import Chart from 'chart.js/auto';
+
+global.Chart = Chart;
+
 window.addEventListener('load', function () {
-    print();
+    setTimeout(() => {
+        print();
+    }, 500);
 });

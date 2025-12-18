@@ -1,3 +1,16 @@
+{% block head_stylesheets %}
+    {% for cssTag in cssTags %}
+        {{ encore_entry_link_tags(cssTag) }}
+    {% endfor %}
+{% endblock %}
+
+{% block head_javascript %}
+    <script src="{{ asset('bundles/lledashboard/dashboard/print.js') }}" type="text/javascript"></script>
+    {% for jsTag in jsTags %}
+        {{ encore_entry_script_tags(jsTag) }}
+    {% endfor %}
+{% endblock %}
+
 {% block widget_header %}{% endblock %}
 
 {% block widget_title %}
@@ -11,16 +24,3 @@
 {% endblock widget_body %}
 
 {% block widget_footer %}{% endblock %}
-
-{% block stylesheets %}
-    {% for cssTag in cssTags %}
-        {{ encore_entry_link_tags(cssTag) }}
-    {% endfor %}
-{% endblock %}
-
-{% block javascripts %}
-    <script src="{{ asset('bundles/lledashboard/dashboard/print.js') }}" type="text/javascript"></script>
-    {% for jsTag in jsTags %}
-        {{ encore_entry_script_tags(jsTag) }}
-    {% endfor %}
-{% endblock %}
