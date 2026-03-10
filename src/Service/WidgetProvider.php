@@ -18,7 +18,9 @@ class WidgetProvider
     ) {
         /** @var WidgetTypeInterface $widgetType */
         foreach ($widgetTypes as $widgetType) {
-            $this->widgetTypes[$widgetType->getType()] = $widgetType;
+            if ($widgetType->getType()) {
+                $this->widgetTypes[$widgetType->getType()] = $widgetType;
+            }
         }
     }
 
