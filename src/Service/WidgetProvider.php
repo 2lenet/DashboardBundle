@@ -33,7 +33,10 @@ class WidgetProvider
         $widgetTypes = $this->widgetTypes;
 
         if (array_key_exists($widgetType, $widgetTypes)) {
-            return clone $widgetTypes[$widgetType];
+            /** @var WidgetTypeInterface $widget */
+            $widget = $widgetTypes[$widgetType];
+
+            return clone $widget;
         }
 
         return null;

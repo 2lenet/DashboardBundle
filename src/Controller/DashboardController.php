@@ -37,7 +37,7 @@ class DashboardController extends AbstractController
         /** @var WidgetTypeInterface $widgetType */
         $widgetType = $provider->getWidgetType($type);
 
-        /** @var object $user */
+        /** @var UserInterface $user */
         $user = $this->getUser();
         $userId = method_exists($user, 'getId') ? $user->getId() : null;
 

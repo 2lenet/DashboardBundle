@@ -12,7 +12,7 @@ parameters:
     paths:
         - ../src
         - ../tests
-    excludes_analyse:
+    excludePaths:
         - '../src/Resources/skeleton'
     ignoreErrors:
         -

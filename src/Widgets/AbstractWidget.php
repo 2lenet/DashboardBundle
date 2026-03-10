@@ -178,7 +178,7 @@ abstract class AbstractWidget implements WidgetTypeInterface
      */
     public function getCacheKey(): string
     {
-        /** @var string $uniqueKey */
+        /** @var non-empty-string $uniqueKey */
         $uniqueKey = json_encode(array($this->config, $this->width, $this->height, $this->title, $this->x, $this->y));
 
         return $this->getId() . "_" . md5($uniqueKey);
