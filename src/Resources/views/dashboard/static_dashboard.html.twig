@@ -1,0 +1,69 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}{{ 'dashboard'|trans(domain='messages') }}{% endblock %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/lledashboard/dashboard/app.css') }}"/>
+    <style>
+        .static-dashboard .widget-close,
+        .static-dashboard .widget-config,
+        .static-dashboard .show-hover,
+        .static-dashboard .lle-dashboard-input-title { pointer-events: none; }
+        .static-dashboard .widget-close,
+        .static-dashboard .widget-config,
+        .static-dashboard .show-hover { display: none !important; }
+        .static-dashboard .lle-dashboard-input-title { border: none; background: transparent; }
+    </style>
+{% endblock %}
+
+{% block main %}
+    {{ parent() }}
+    <div class="page-header">
+        <div class="row align-items-center">
+            <div class="col-sm mb-2 mb-sm-0">
+                <h2 class="page-header-title text-dark">
+                    {{ 'dashboard' | trans }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="static-dashboard row">
+        {% for widget in widgets %}
+            <div class="col-md-6 col-xl-4 mb-4 static-widget-container" data-widget-type="{{ widget.type }}">
+                <div class="card border-dark h-100">
+                    <div class="card-header text-dark">
+                        <h5 class="card-title mb-0">{{ widget.title | default(widget.name|trans) }}</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".static-widget-container").forEach(function (container) {
+                var type = container.dataset.widgetType;
+                var url = Routing.generate("render_static_widget", { type: type });
+
+                fetch(url)
+                    .then(function (response) { return response.text(); })
+                    .then(function (html) {
+                        container.innerHTML = html;
+                        Array.from(container.querySelectorAll("script")).forEach(function (oldScript) {
+                            var newScript = document.createElement("script");
+                            Array.from(oldScript.attributes).forEach(function (attr) {
+                                newScript.setAttribute(attr.name, attr.value);
+                            });
+                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                            oldScript.parentNode.replaceChild(newScript, oldScript);
+                        });
+                    });
+            });
+        });
+    </script>
+{% endblock %}

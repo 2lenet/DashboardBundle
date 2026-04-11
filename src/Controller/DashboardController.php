@@ -250,6 +250,38 @@ class DashboardController extends AbstractController
         return $this->redirectToRoute("homepage");
     }
 
+    #[Route('/dashboard/static', name: 'static_dashboard')]
+    public function staticDashboard(WidgetProvider $provider): Response
+    {
+        $widgetTypes = $provider->getWidgetTypes() ?? [];
+
+        $widgets = [];
+
+        foreach ($widgetTypes as $widgetType) {
+            if (!$widgetType->supports()) {
+                continue;
+            }
+
+            $widgets[] = $widgetType;
+        }
+
+        return $this->render("@LleDashboard/dashboard/static_dashboard.html.twig", [
+            "widgets" => $widgets,
+        ]);
+    }
+
+    #[Route('/dashboard/render_static_widget/{type}', name: 'render_static_widget', options: ['expose' => true])]
+    public function renderStaticWidget(WidgetProvider $provider, string $type): Response
+    {
+        $widgetType = $provider->getWidgetType($type);
+
+        if ($widgetType && $widgetType->supports()) {
+            return new Response($widgetType->renderStatic());
+        }
+
+        throw $this->createNotFoundException();
+    }
+
     #[Route('/dashboard/print_widget/{id}', name: 'print_widget', options: ['expose' => true])]
     public function printWidget(WidgetProvider $provider, int $id): Response
     {

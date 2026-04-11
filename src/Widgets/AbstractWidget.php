@@ -91,6 +91,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return "You should implement the render method in " . get_class($this);
     }
 
+    public function renderStatic(): string
+    {
+        return $this->render();
+    }
+
     /**
      * @inheritdoc
      */
