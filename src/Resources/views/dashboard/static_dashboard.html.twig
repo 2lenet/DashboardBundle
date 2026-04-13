@@ -31,7 +31,7 @@
 
     <div class="static-dashboard row">
         {% for widget in widgets %}
-            <div class="col-md-6 col-xl-4 mb-4 static-widget-container" data-widget-type="{{ widget.type }}">
+            <div class="{{ widget.staticCssClass }} mb-4 static-widget-container" data-widget-type="{{ widget.type }}">
                 <div class="card border-dark h-100">
                     <div class="card-header text-dark">
                         <h5 class="card-title mb-0">{{ widget.title | default(widget.name|trans) }}</h5>
