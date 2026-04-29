@@ -5,7 +5,6 @@ namespace Lle\DashboardBundle\DependencyInjection;
 use Lle\DashboardBundle\Contracts\ChartProviderInterface;
 use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
-use Lle\DashboardBundle\Service\WidgetProvider;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
