@@ -359,10 +359,14 @@ use App\Widget\StatsWidget;
 use App\Widget\SuiviTelechargement;
 use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
+use Lle\DashboardBundle\Widgets\AbstractWidget;
 
 class StaticWidgetProvider implements StaticWidgetProviderInterface
 {
+    /** @var array<string, WidgetTypeInterface> */
     protected array $widgetTypes = [];
+
+    /** @var array<string, WidgetTypeInterface> */
     protected array $widgets = [];
 
     public function __construct(iterable $widgetTypes)
@@ -375,18 +379,12 @@ class StaticWidgetProvider implements StaticWidgetProviderInterface
         }
 
         $this->widgets = [
-            "workflow" => $this->getWidgetType(self::classToType(DossierWorkflow::class))
-                ->setConfig(['title' => 'Dossier Workflow']),
-            "boxs" => $this->getWidgetType(self::classToType(MonitoringBoxes::class))
-                ->setConfig(['title' => 'Monitoring Boxes']),
-            "quotaSms" => $this->getWidgetType(self::classToType(QuotaSms::class))
-                ->setConfig(['title' => 'Quota SMS']),
-            "suivisTelechargement" => $this->getWidgetType(self::classToType(SuiviTelechargement::class))
-                ->setConfig(['title' => 'Suivis Téléchargement']),
-            "statsDay" => $this->getWidgetType(self::classToType(StatsDayWidget::class))
-                ->setConfig(['title' => 'Stats par jours']),
-            "statsAnnuelle" => $this->getWidgetType(self::classToType(StatsWidget::class))
-                ->setConfig(['title' => 'Stats']),
+            "workflow" => $this->buildWidget(DossierWorkflow::class, ['title' => 'Dossier Workflow']),
+            "boxs" => $this->buildWidget(MonitoringBoxes::class, ['title' => 'Monitoring Boxes']),
+            "quotaSms" => $this->buildWidget(QuotaSms::class, ['title' => 'Quota SMS']),
+            "suivisTelechargement" => $this->buildWidget(SuiviTelechargement::class, ['title' => 'Suivis Téléchargement']),
+            "statsDay" => $this->buildWidget(StatsDayWidget::class, ['title' => 'Stats par jours']),
+            "statsAnnuelle" => $this->buildWidget(StatsWidget::class, ['title' => 'Stats']),
         ];
     }
 
@@ -397,6 +395,21 @@ class StaticWidgetProvider implements StaticWidgetProviderInterface
         }
 
         return null;
+    }
+
+    private function buildWidget(string $class, array $config): AbstractWidget
+    {
+        $type = self::classToType($class);
+        $widget = $this->widgetTypes[$type] ?? null;
+
+        if (!$widget instanceof AbstractWidget) {
+            throw new \RuntimeException(sprintf('Widget type "%s" is not registered or does not extend AbstractWidget.', $type));
+        }
+
+        $clone = clone $widget;
+        $clone->setConfig($config);
+
+        return $clone;
     }
 
     public function getMyWidgets(): array
@@ -418,8 +431,10 @@ class StaticWidgetProvider implements StaticWidgetProviderInterface
 
 A few things worth noting:
 
-- The instances stored in `$this->widgets` are **clones** (returned by `getWidgetType()`), so calling `setConfig()` does not mutate the shared widget type registered in the container.
-- The array keys (`"workflow"`, `"boxs"`, ...) are stable identifiers used as `static_index` by the ajax refresh route. Don't reorder them lightly if the dashboard is already in production.
+- The `buildWidget()` helper centralizes the lookup-clone-configure logic. It returns `AbstractWidget` (not `WidgetTypeInterface`) because `setConfig()` lives on `AbstractWidget` — typing it that way keeps PHPStan happy and lets callers chain `setConfig()` directly.
+- It throws a `RuntimeException` if the widget type is missing (typo in the FQCN, widget not tagged, etc.) rather than silently returning `null` and crashing later on `->setConfig()`. Failing fast at construction time gives a clear stack trace instead of a confusing "method on null" error.
+- The instances stored in `$this->widgets` are **clones**, so the per-widget `setConfig()` does not mutate the shared widget type registered in the container.
+- The array keys (`"workflow"`, `"boxs"`, ...) are stable identifiers used as `static_index` by the ajax refresh route. Don't rename them lightly if the dashboard is already in production.
 - `setConfig(['title' => '...'])` lets you display the same widget type several times with different titles, without subclassing.
 
 ### 3. Declare your provider to the bundle
