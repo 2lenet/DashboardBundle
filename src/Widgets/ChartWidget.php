@@ -21,7 +21,6 @@ class ChartWidget extends AbstractWidget
         $chartList = [];
         // Add this for a blank choice
         $chartList[''] = '';
-        dd($chartProvider);
 
         $config = $this->getConfig('chart', '');
         if ($config) {

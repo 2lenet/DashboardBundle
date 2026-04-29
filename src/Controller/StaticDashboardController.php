@@ -23,14 +23,6 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class StaticDashboardController extends AbstractController
 {
-    public function __construct(
-        private EntityManagerInterface $em,
-        private TokenStorageInterface $tokenStorage,
-        protected CacheInterface $cache,
-        protected KernelInterface $kernel,
-    ) {
-    }
-
     #[Route('/dashboard/static', name: 'static_dashboard')]
     public function staticDashboard( StaticWidgetProviderInterface $provider): Response
     {
@@ -41,11 +33,11 @@ class StaticDashboardController extends AbstractController
     }
 
     #[Route('/dashboard/render_static_widget/{static_index}', name: 'render_static_widget', options: ['expose' => true])]
-    public function renderStaticWidget(StaticWidgetProviderInterface $provider, string $static_index): Response
+    public function renderStaticWidget(StaticWidgetProviderInterface $provider, string $staticIndex): Response
     {
-        $widget = $provider->getWidget($static_index);
+        $widget = $provider->getWidget($staticIndex);
         if ($widget) {
-            return new Response($widget->renderStatic());
+            return new Response($widget->render());
         }
 
         throw $this->createNotFoundException();
