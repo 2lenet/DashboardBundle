@@ -5,6 +5,7 @@ namespace Lle\DashboardBundle\Controller;
 use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class StaticDashboardController extends AbstractController
 {
