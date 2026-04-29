@@ -2,24 +2,9 @@
 
 namespace Lle\DashboardBundle\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
-use Lle\DashboardBundle\Entity\Widget;
-use Lle\DashboardBundle\Service\WidgetCompacterService;
 use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
-use Lle\DashboardBundle\Service\WidgetProvider;
-use Lle\DashboardBundle\Widgets\AbstractWidget;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class StaticDashboardController extends AbstractController
 {
