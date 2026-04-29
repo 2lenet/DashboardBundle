@@ -2,6 +2,8 @@
   "bundles/dashboard/app.css": "/app.css",
   "bundles/dashboard/app.js": "/app.js",
   "bundles/dashboard/print.js": "/print.js",
+  "bundles/dashboard/staticapp.css": "/staticapp.css",
+  "bundles/dashboard/staticapp.js": "/staticapp.js",
   "bundles/dashboard/856.js": "/856.js",
   "bundles/dashboard/820.js": "/820.js"
 }

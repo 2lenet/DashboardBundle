@@ -156,6 +156,13 @@ abstract class AbstractWidget implements WidgetTypeInterface
 
         return $this;
     }
+    public function setConfig(array $config): self
+    {
+        $this->config = $config;
+        $this->title = $config["title"] ?? null;
+
+        return $this;
+    }
 
     public function __toString(): string
     {
