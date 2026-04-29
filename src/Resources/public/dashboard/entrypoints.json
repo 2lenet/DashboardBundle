@@ -13,6 +13,15 @@
       "js": [
         "/print.js"
       ]
+    },
+    "staticapp": {
+      "css": [
+        "/staticapp.css",
+        "/staticapp.rtl.css"
+      ],
+      "js": [
+        "/staticapp.js"
+      ]
     }
   }
 }

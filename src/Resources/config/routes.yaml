@@ -1,4 +1,3 @@
 dashbord_routes:
-    resource: '@LleDashboardBundle/Controller/DashboardController.php'
-    prefix: /dashboard
+    resource: '@LleDashboardBundle/Controller/'
     type: attribute

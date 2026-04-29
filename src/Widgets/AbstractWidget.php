@@ -13,7 +13,7 @@ use Twig\Environment;
 
 abstract class AbstractWidget implements WidgetTypeInterface
 {
-    protected ?int $id;
+    protected ?int $id = 0;
 
     // x position
     protected ?int $x = 0;
@@ -91,6 +91,18 @@ abstract class AbstractWidget implements WidgetTypeInterface
         return "You should implement the render method in " . get_class($this);
     }
 
+    public function renderStatic(): string
+    {
+        return $this->render();
+    }
+
+    public function getStaticCssClass(): string
+    {
+        $colMd = min($this->getWidth() ?? 4, 12);
+
+        return 'col-12 col-md-' . $colMd;
+    }
+
     /**
      * @inheritdoc
      */
@@ -141,6 +153,13 @@ abstract class AbstractWidget implements WidgetTypeInterface
         $this->height = $widget->getHeight();
         $this->config = $widget->getConfig();
         $this->title = $widget->getTitle();
+
+        return $this;
+    }
+    public function setConfig(array $config): self
+    {
+        $this->config = $config;
+        $this->title = $config["title"] ?? null;
 
         return $this;
     }

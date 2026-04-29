@@ -25,6 +25,7 @@ function basic(path, Encore){
 basic('dashboard', Encore)
     .addEntry("app", "./assets/js/app.js")
     .addEntry("print", "./assets/js/print.js")
+    .addEntry("staticapp", "./assets/js/staticapp.js")
 ;
 const dashboard = Encore.getWebpackConfig();
 Encore.reset();

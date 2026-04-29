@@ -9,6 +9,7 @@ This bundle provides a dashboard with customizable widgets.
   * [Widget configuration](#widget-configuration)
   * [Widget cache](#widget-cache)
   * [Widget roles](#widget-roles)
+* [Static dashboard](#static-dashboard)
 * [Understand the data structure](#understand-the-data-structure)
 
 # Installation
@@ -303,6 +304,179 @@ A full example with a table KPI and KPI Value to graph arbitrary datas:
     }
 ```
 
+
+# Static dashboard
+
+The bundle provides a static dashboard mode that displays a fixed list of widgets without any database storage or user customization (no drag, no add/remove, no per-user config).
+The list of widgets to render is supplied by a service that the application must implement.
+
+## Setup
+
+### 1. Route
+
+Point your home route (or any route you want) to `StaticDashboardController::staticDashboard`:
+
+```yaml
+# config/routes/dashboard.yaml
+home:
+    path: /
+    controller: Lle\DashboardBundle\Controller\StaticDashboardController::staticDashboard
+dashboard:
+    resource: "@LleDashboardBundle/Resources/config/routes.yaml"
+```
+
+The static dashboard is also available out of the box at `/dashboard/static`.
+
+### 2. Implement the static widget provider (mandatory)
+
+The controller does not know which widgets to display: it delegates that to a service implementing `Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface`:
+
+```php
+namespace Lle\DashboardBundle\Contracts;
+
+interface StaticWidgetProviderInterface
+{
+    public function getMyWidgets(): array;
+
+    public function getWidget(string $index): ?WidgetTypeInterface;
+}
+```
+
+`getMyWidgets()` returns the ordered list of widget instances to render. `getWidget($index)` resolves a single widget by the **array key** used in `getMyWidgets()` — that key is the `static_index` passed to the ajax refresh route.
+
+Inject `iterable $widgetTypes` (Symfony tagged iterator) to receive every widget type defined in the project: widgets are auto-tagged with `lle_dashboard.widget` because they implement `WidgetTypeInterface`. Then pick the ones you want to display, optionally overriding their config (title, etc.) via `setConfig()`.
+
+Real example from this project (`src/Service/Dashboard/StaticWidgetProvider.php`):
+
+```php
+namespace App\Service\Dashboard;
+
+use App\Widget\DossierWorkflow;
+use App\Widget\MonitoringBoxes;
+use App\Widget\QuotaSms;
+use App\Widget\StatsDayWidget;
+use App\Widget\StatsWidget;
+use App\Widget\SuiviTelechargement;
+use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
+use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
+use Lle\DashboardBundle\Widgets\AbstractWidget;
+
+class StaticWidgetProvider implements StaticWidgetProviderInterface
+{
+    /** @var array<string, WidgetTypeInterface> */
+    protected array $widgetTypes = [];
+
+    /** @var array<string, WidgetTypeInterface> */
+    protected array $widgets = [];
+
+    public function __construct(iterable $widgetTypes)
+    {
+        /** @var WidgetTypeInterface $widgetType */
+        foreach ($widgetTypes as $widgetType) {
+            if ($widgetType->getType()) {
+                $this->widgetTypes[$widgetType->getType()] = $widgetType;
+            }
+        }
+
+        $this->widgets = [
+            "workflow" => $this->buildWidget(DossierWorkflow::class, ['title' => 'Dossier Workflow']),
+            "boxs" => $this->buildWidget(MonitoringBoxes::class, ['title' => 'Monitoring Boxes']),
+            "quotaSms" => $this->buildWidget(QuotaSms::class, ['title' => 'Quota SMS']),
+            "suivisTelechargement" => $this->buildWidget(SuiviTelechargement::class, ['title' => 'Suivis Téléchargement']),
+            "statsDay" => $this->buildWidget(StatsDayWidget::class, ['title' => 'Stats par jours']),
+            "statsAnnuelle" => $this->buildWidget(StatsWidget::class, ['title' => 'Stats']),
+        ];
+    }
+
+    public function getWidgetType(string $widgetType): ?WidgetTypeInterface
+    {
+        if (array_key_exists($widgetType, $this->widgetTypes)) {
+            return clone $this->widgetTypes[$widgetType];
+        }
+
+        return null;
+    }
+
+    private function buildWidget(string $class, array $config): AbstractWidget
+    {
+        $type = self::classToType($class);
+        $widget = $this->widgetTypes[$type] ?? null;
+
+        if (!$widget instanceof AbstractWidget) {
+            throw new \RuntimeException(sprintf('Widget type "%s" is not registered or does not extend AbstractWidget.', $type));
+        }
+
+        $clone = clone $widget;
+        $clone->setConfig($config);
+
+        return $clone;
+    }
+
+    public function getMyWidgets(): array
+    {
+        return $this->widgets;
+    }
+
+    public function getWidget(string $index): ?WidgetTypeInterface
+    {
+        return $this->widgets[$index] ?? null;
+    }
+
+    private static function classToType(string $class): string
+    {
+        return str_replace('\\', '_', $class) . '_widget';
+    }
+}
+```
+
+A few things worth noting:
+
+- The `buildWidget()` helper centralizes the lookup-clone-configure logic. It returns `AbstractWidget` (not `WidgetTypeInterface`) because `setConfig()` lives on `AbstractWidget` — typing it that way keeps PHPStan happy and lets callers chain `setConfig()` directly.
+- It throws a `RuntimeException` if the widget type is missing (typo in the FQCN, widget not tagged, etc.) rather than silently returning `null` and crashing later on `->setConfig()`. Failing fast at construction time gives a clear stack trace instead of a confusing "method on null" error.
+- The instances stored in `$this->widgets` are **clones**, so the per-widget `setConfig()` does not mutate the shared widget type registered in the container.
+- The array keys (`"workflow"`, `"boxs"`, ...) are stable identifiers used as `static_index` by the ajax refresh route. Don't rename them lightly if the dashboard is already in production.
+- `setConfig(['title' => '...'])` lets you display the same widget type several times with different titles, without subclassing.
+
+### 3. Declare your provider to the bundle
+
+The bundle exposes a `static_widget_provider` configuration key. Set it to your implementation FQCN: the bundle aliases `StaticWidgetProviderInterface` to that service so the controller can autowire it.
+
+```yaml
+# config/packages/lle_dashboard.yaml
+lle_dashboard:
+    static_widget_provider: App\Service\Dashboard\StaticWidgetProvider
+```
+
+If this key is left to its default, autowiring of `StaticWidgetProviderInterface` will fail and the static dashboard route will not work.
+
+### 4. Widget sizing
+
+In static mode, widgets are laid out in a Bootstrap grid. The default CSS class is computed from `getWidth()` (the GridStack column count maps to `col-md-{width}`).
+
+You can override this per widget by implementing `getStaticCssClass()`. For example, `DossierWorkflow` in this project takes the full row:
+
+```php
+// src/Widget/DossierWorkflow.php
+public function getStaticCssClass(): string
+{
+    return 'col-12 col-md-12';
+}
+```
+
+### 5. Custom static rendering
+
+By default, `renderStatic()` calls `render()`. Override it in your widget to provide a different rendering in static mode:
+
+```php
+public function renderStatic(): string
+{
+    return $this->twig('widget/my_widget_static.html.twig', [
+        'data' => $this->getData(),
+    ]);
+}
+```
+
+The ajax refresh route `/dashboard/render_static_widget/{static_index}` calls `getWidget($static_index)` on your provider, then `renderStatic()` on the returned widget. With the provider above, `static_index` is `"workflow"`, `"boxs"`, etc. — the keys of `$this->widgets`.
 
 # Understand the data structure
 
