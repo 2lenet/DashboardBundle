@@ -19,9 +19,9 @@ class StaticDashboardController extends AbstractController
     }
 
     #[Route('/dashboard/render_static_widget/{static_index}', name: 'render_static_widget', options: ['expose' => true])]
-    public function renderStaticWidget(StaticWidgetProviderInterface $provider, string $staticIndex): Response
+    public function renderStaticWidget(StaticWidgetProviderInterface $provider, string $static_index): Response
     {
-        $widget = $provider->getWidget($staticIndex);
+        $widget = $provider->getWidget($static_index);
         if ($widget) {
             return new Response($widget->render());
         }
