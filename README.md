@@ -342,7 +342,7 @@ interface StaticWidgetProviderInterface
 }
 ```
 
-`getMyWidgets()` returns the ordered list of widget instances to render. `getWidget($index)` resolves a single widget by the **array key** used in `getMyWidgets()` — that key is the `static_index` passed to the ajax refresh route.
+`getMyWidgets()` returns the ordered list of widget instances to render. `getWidget($index)` resolves a single widget by the **array key** used in `getMyWidgets()` — that key is the `staticIndex` passed to the ajax refresh route.
 
 Inject `iterable $widgetTypes` (Symfony tagged iterator) to receive every widget type defined in the project: widgets are auto-tagged with `lle_dashboard.widget` because they implement `WidgetTypeInterface`. Then pick the ones you want to display, optionally overriding their config (title, etc.) via `setConfig()`.
 
@@ -434,7 +434,7 @@ A few things worth noting:
 - The `buildWidget()` helper centralizes the lookup-clone-configure logic. It returns `AbstractWidget` (not `WidgetTypeInterface`) because `setConfig()` lives on `AbstractWidget` — typing it that way keeps PHPStan happy and lets callers chain `setConfig()` directly.
 - It throws a `RuntimeException` if the widget type is missing (typo in the FQCN, widget not tagged, etc.) rather than silently returning `null` and crashing later on `->setConfig()`. Failing fast at construction time gives a clear stack trace instead of a confusing "method on null" error.
 - The instances stored in `$this->widgets` are **clones**, so the per-widget `setConfig()` does not mutate the shared widget type registered in the container.
-- The array keys (`"workflow"`, `"boxs"`, ...) are stable identifiers used as `static_index` by the ajax refresh route. Don't rename them lightly if the dashboard is already in production.
+- The array keys (`"workflow"`, `"boxs"`, ...) are stable identifiers used as `staticIndex` by the ajax refresh route. Don't rename them lightly if the dashboard is already in production.
 - `setConfig(['title' => '...'])` lets you display the same widget type several times with different titles, without subclassing.
 
 ### 3. Declare your provider to the bundle
@@ -476,7 +476,7 @@ public function renderStatic(): string
 }
 ```
 
-The ajax refresh route `/dashboard/render_static_widget/{static_index}` calls `getWidget($static_index)` on your provider, then `renderStatic()` on the returned widget. With the provider above, `static_index` is `"workflow"`, `"boxs"`, etc. — the keys of `$this->widgets`.
+The ajax refresh route `/dashboard/render_static_widget/{staticIndex}` calls `getWidget($staticIndex)` on your provider, then `renderStatic()` on the returned widget. With the provider above, `staticIndex` is `"workflow"`, `"boxs"`, etc. — the keys of `$this->widgets`.
 
 # Understand the data structure
 
