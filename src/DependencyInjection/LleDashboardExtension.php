@@ -7,8 +7,8 @@ use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -33,7 +33,9 @@ class LleDashboardExtension extends Extension
         $container->registerForAutoconfiguration(ChartProviderInterface::class)
             ->addTag('lle_dashboard.chart_provider');
 
-        $providerClass = $config['static_widget_provider'];
-        $container->setAlias(StaticWidgetProviderInterface::class, $providerClass)->setPublic(true);
+        $providerId = $config['static_widget_provider'];
+        if ($providerId !== null && StaticWidgetProviderInterface::class !== $providerId) {
+            $container->setAlias(StaticWidgetProviderInterface::class, $providerId)->setPublic(true);
+        }
     }
 }
