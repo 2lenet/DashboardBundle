@@ -447,7 +447,7 @@ lle_dashboard:
     static_widget_provider: App\Service\Dashboard\StaticWidgetProvider
 ```
 
-If this key is left to its default, autowiring of `StaticWidgetProviderInterface` will fail and the static dashboard route will not work.
+The key defaults to `null`: the alias is then simply not registered, so the rest of the bundle (and any project not using the static dashboard) works normally, and only the `/dashboard/static` routes fail — at request time, not at container compile time.
 
 ### 4. Widget sizing
 

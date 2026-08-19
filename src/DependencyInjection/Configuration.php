@@ -2,7 +2,6 @@
 
 namespace Lle\DashboardBundle\DependencyInjection;
 
-use Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -24,7 +23,10 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('static_widget_provider')
-                    ->defaultValue(StaticWidgetProviderInterface::class)
+                    ->defaultNull()
+                    ->info(
+                        'FQCN of your StaticWidgetProviderInterface implementation. Only required to use the static dashboard.'
+                    )
                 ->end()
             ->end();
 

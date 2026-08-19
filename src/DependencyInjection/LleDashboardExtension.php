@@ -33,7 +33,9 @@ class LleDashboardExtension extends Extension
         $container->registerForAutoconfiguration(ChartProviderInterface::class)
             ->addTag('lle_dashboard.chart_provider');
 
-        $providerClass = $config['static_widget_provider'];
-        $container->setAlias(StaticWidgetProviderInterface::class, $providerClass)->setPublic(true);
+        $providerId = $config['static_widget_provider'];
+        if ($providerId !== null && StaticWidgetProviderInterface::class !== $providerId) {
+            $container->setAlias(StaticWidgetProviderInterface::class, $providerId)->setPublic(true);
+        }
     }
 }
