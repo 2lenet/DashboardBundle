@@ -28,6 +28,11 @@ services:
             - '@security.token_storage'
             - !tagged_iterator lle_dashboard.widget
 
+    Lle\DashboardBundle\Service\StaticDashboardService:
+        arguments:
+            # optional: the alias only exists when lle_dashboard.static_widget_provider is configured
+            - '@?Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface'
+
     Lle\DashboardBundle\Service\WidgetCompacterService:
         arguments:
             - '@doctrine.orm.entity_manager'
