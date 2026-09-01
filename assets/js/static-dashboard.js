@@ -12,16 +12,34 @@ let onLoad = (callback) => {
     }
 }
 
+/**
+ * Switches a widget card between its loading spinner and its error message, both rendered by
+ * _static_widgets.html.twig: nothing coming from the response is ever displayed.
+ */
+let toggleError = (container, hasFailed) => {
+    container.querySelector("[data-widget-spinner]")?.toggleAttribute("hidden", hasFailed);
+    container.querySelector("[data-widget-error]")?.toggleAttribute("hidden", !hasFailed);
+}
+
 let loadWidget = (container) => {
     if (container.dataset.widgetLoaded === "1") {
         return;
     }
     container.dataset.widgetLoaded = "1";
 
+    // A previous attempt may have failed: back to the loading state
+    toggleError(container, false);
+
     const url = Routing.generate("render_static_widget", { staticIndex: container.dataset.widgetIndex });
 
     fetch(url)
-        .then((response) => response.text())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`.trim());
+            }
+
+            return response.text();
+        })
         .then((html) => {
             container.innerHTML = html;
 
@@ -34,6 +52,13 @@ let loadWidget = (container) => {
                 newScript.appendChild(document.createTextNode(oldScript.innerHTML));
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             }
+        })
+        .catch((error) => {
+            console.error(`Static dashboard: widget "${container.dataset.widgetIndex}" could not be loaded.`, error);
+
+            // Not flagged as loaded anymore: displaying its tab again gives it another chance
+            container.dataset.widgetLoaded = "0";
+            toggleError(container, true);
         });
 }
 

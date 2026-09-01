@@ -7,7 +7,12 @@
                     <h5 class="card-title mb-0">{{ widget.title | default(widget.name|trans) }}</h5>
                 </div>
                 <div class="card-body text-center">
-                    <i class="fa fa-5x fa-circle-o-notch fa-spin"></i>
+                    <i class="fa fa-5x fa-circle-o-notch fa-spin" data-widget-spinner></i>
+                    {# Displayed by the javascript when the widget could not be loaded #}
+                    <p class="text-danger mb-0" data-widget-error hidden>
+                        <i class="fa fa-exclamation-triangle me-2"></i>
+                        {{ 'widget.loadingError'|trans(domain='LleDashboardBundle') }}
+                    </p>
                 </div>
             </div>
         </div>
