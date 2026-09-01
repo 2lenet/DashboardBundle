@@ -10,6 +10,9 @@ This bundle provides a dashboard with customizable widgets.
   * [Widget cache](#widget-cache)
   * [Widget roles](#widget-roles)
 * [Static dashboard](#static-dashboard)
+  * [Setup](#setup)
+  * [Widget visibility](#widget-visibility)
+  * [Tabs](#tabs)
 * [Understand the data structure](#understand-the-data-structure)
 
 # Installation
@@ -308,7 +311,7 @@ A full example with a table KPI and KPI Value to graph arbitrary datas:
 # Static dashboard
 
 The bundle provides a static dashboard mode that displays a fixed list of widgets without any database storage or user customization (no drag, no add/remove, no per-user config).
-The list of widgets to render is supplied by a service that the application must implement.
+The list of widgets to render is supplied by a service that the application must implement, and can be displayed on a single screen or [split into tabs](#tabs).
 
 ## Setup
 
@@ -476,7 +479,85 @@ public function renderStatic(): string
 }
 ```
 
-The ajax refresh route `/dashboard/render_static_widget/{staticIndex}` calls `getWidget($staticIndex)` on your provider, then `renderStatic()` on the returned widget. With the provider above, `staticIndex` is `"workflow"`, `"boxs"`, etc. — the keys of `$this->widgets`.
+The ajax refresh route `/dashboard/render_static_widget/{staticIndex}` calls `getWidget($staticIndex)` on your provider, checks the widget's role, then calls `renderStatic()` on it. With the provider above, `staticIndex` is `"workflow"`, `"boxs"`, etc. — the keys of `$this->widgets`.
+
+### 6. Assets
+
+The javascript of the static dashboard (ajax loading of the widgets, tabs) ships in the bundle's compiled
+`staticapp.js`, which the template already loads. After upgrading the bundle, refresh the published assets:
+
+```
+php bin/console assets:install
+```
+
+> :warning: Up to 2.6.x this javascript was inlined in the template. If the published assets are not refreshed, the
+> widget cards stay on their loading spinner.
+
+## Widget visibility
+
+The static dashboard applies the same role check as the standard dashboard: a widget whose `supports()` returns
+`false` — by default `ROLE_DASHBOARD_<WIDGET_NAME>`, see [Widget roles](#widget-roles) — is not displayed, and its
+content cannot be fetched either.
+
+- The dashboard filters the widgets returned by your provider, so you don't have to check any role in `getMyWidgets()`.
+- The ajax route `render_static_widget` answers **404** for an unknown key, and **403** for a widget the user is not
+  granted.
+
+> :warning: Up to 2.6.x, the static dashboard displayed every widget returned by the provider, whatever its role.
+> When you migrate a standard dashboard to a static one — or upgrade from 2.6.x — make sure the groups that must see
+> a widget are actually granted its role, otherwise the widget silently disappears from the dashboard.
+
+## Tabs
+
+A static dashboard can be split into tabs. Implement `StaticTabProviderInterface` instead of
+`StaticWidgetProviderInterface` — it extends it, so `getMyWidgets()` and `getWidget()` stay exactly the same — and
+describe the tabs with `StaticTab` objects:
+
+```php
+use Lle\DashboardBundle\Contracts\StaticTabProviderInterface;
+use Lle\DashboardBundle\Dto\StaticTab;
+
+class StaticWidgetProvider implements StaticTabProviderInterface
+{
+    // getMyWidgets() and getWidget() are unchanged
+
+    public function getTabs(): array
+    {
+        return [
+            new StaticTab('monitoring', 'dashboard.tab.monitoring', ['workflow', 'boxs']),
+            new StaticTab(
+                key: 'sms',
+                label: 'dashboard.tab.sms',
+                widgetKeys: ['quotaSms'],
+                icon: 'fa fa-comment',
+                cssClass: 'text-danger',
+            ),
+        ];
+    }
+}
+```
+
+| Argument | Description |
+| --- | --- |
+| `key` | Stable identifier of the tab: used in the DOM, and in the url fragment (`#tab-sms`) that reopens the dashboard on that tab. |
+| `label` | Title of the tab, translated with the default domain. |
+| `widgetKeys` | Keys of the widgets displayed in the tab — the very keys returned by `getMyWidgets()`. |
+| `icon` | Optional css classes of an icon displayed before the label, e.g. `fa fa-docker`. |
+| `cssClass` | Optional css classes added to the tab itself, e.g. `text-danger`. |
+
+A few things worth noting:
+
+- **Tabs or a single screen, not both.** A tabbed dashboard displays nothing outside of its tabs: every key returned by
+  `getMyWidgets()` must be assigned to a tab, otherwise a `LogicException` is thrown — as it is for a tab referencing an
+  unknown widget key, or for a duplicated tab key. To keep the single-screen mode, keep implementing
+  `StaticWidgetProviderInterface`.
+- **A tab whose widgets are all forbidden for the current user is not displayed at all**, so nobody lands on an empty
+  tab. A dashboard whose every tab is hidden displays no tab bar.
+- **The widgets of a tab are only fetched the first time that tab is displayed.** Besides saving requests, this is what
+  lets a widget compute its own width: a table or a chart rendered inside a hidden pane would size itself against a
+  zero-width container.
+- The tab bar is plain Bootstrap 5 markup (`nav-tabs` + `tab-content`) driven by the bundle's own javascript: there is
+  nothing else to load, and the widget templates need no change.
 
 # Understand the data structure
 

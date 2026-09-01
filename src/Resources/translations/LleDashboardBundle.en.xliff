@@ -70,6 +70,10 @@
                 <source>text.config_stats</source>
                 <target>Configure the widget to obtain statistics</target>
             </trans-unit>
+            <trans-unit id="widget.loadingError">
+                <source>widget.loadingError</source>
+                <target>The widget could not be loaded</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
