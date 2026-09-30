@@ -26,6 +26,11 @@
             "Lle\\DashboardBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Lle\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "stable",
     "require-dev": {
         "symfony/maker-bundle": "^1.50",

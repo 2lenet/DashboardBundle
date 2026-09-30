@@ -175,6 +175,21 @@ abstract class AbstractWidget implements WidgetTypeInterface
     }
 
     /**
+     * Static dashboard only. No data_class: the form's array data is merged into the widget config.
+     *
+     * @return class-string<FormTypeInterface<mixed>>|null
+     */
+    public function getConfigFormType(): ?string
+    {
+        return null;
+    }
+
+    public function getConfigFormOptions(): array
+    {
+        return [];
+    }
+
+    /**
      * @inheritdoc
      */
     public function supports(): bool
@@ -270,6 +285,11 @@ abstract class AbstractWidget implements WidgetTypeInterface
         $role = "ROLE_DASHBOARD" . $widgetName;
 
         return $role;
+    }
+
+    public function isStaticPrintable(): bool
+    {
+        return true;
     }
 
     public function getTemplateForPrint(): string

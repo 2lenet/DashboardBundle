@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}{{ widget.title|default(widget.name|trans) }}{% endblock %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    {% for cssTag in cssTags %}
+        {{ encore_entry_link_tags(cssTag) }}
+    {% endfor %}
+    <style>
+        .lle-dashboard-print .widget-close,
+        .lle-dashboard-print .widget-config,
+        .lle-dashboard-print .show-hover { display: none !important; }
+        .lle-dashboard-print .lle-dashboard-input-title { border: none; background: transparent; pointer-events: none; }
+        .lle-dashboard-print .card { height: auto !important; break-inside: auto; }
+        @media print {
+            .lle-dashboard-print { padding: 0 !important; }
+        }
+    </style>
+{% endblock %}
+
+{% block head_javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/lledashboard/dashboard/print.js') }}"></script>
+    {% for jsTag in jsTags %}
+        {{ encore_entry_script_tags(jsTag) }}
+    {% endfor %}
+{% endblock %}
+
+{% block body %}
+    <div class="lle-dashboard-print container-fluid py-3">
+        {{ content|raw }}
+    </div>
+{% endblock %}
+
+{% block scroll_top %}{% endblock %}

@@ -104,6 +104,15 @@ class StaticDashboardService
         return (string) $widget->render();
     }
 
+    public function isPrintable(WidgetTypeInterface $widget): bool
+    {
+        if ($widget instanceof AbstractWidget) {
+            return $widget->isStaticPrintable();
+        }
+
+        return true;
+    }
+
     public function isGranted(WidgetTypeInterface $widget): bool
     {
         return (bool) $widget->supports();

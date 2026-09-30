@@ -1,0 +1,30 @@
+{# Both forms are submitted by ajax (see assets/js/static-dashboard.js), the response replaces the whole widget. #}
+<div class="card border-dark shadow static-widget-config-panel" data-static-widget-config-panel{{ isOpen ? '' : ' hidden' }}>
+    <div class="card-body text-start">
+        {{ form_start(form, {
+            action: path('static_widget_save_config', {staticIndex: staticIndex}),
+            method: 'POST',
+            attr: {'data-static-widget-form': ''},
+        }) }}
+        {{ form_errors(form) }}
+        {{ include('@LleDashboard/dashboard/_static_widget_config_fields.html.twig') }}
+        <button class="btn btn-primary" type="submit">
+            {{ 'widget.saveConfig'|trans(domain='LleDashboardBundle') }}
+        </button>
+        {{ form_end(form) }}
+
+        {% if customized %}
+            <form
+                method="post"
+                action="{{ path('static_widget_reset_config', {staticIndex: staticIndex}) }}"
+                class="mt-2"
+                data-static-widget-form
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('static_widget_reset_' ~ staticIndex) }}">
+                <button class="btn btn-light" type="submit">
+                    {{ 'widget.defaultConfig'|trans(domain='LleDashboardBundle') }}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+</div>
