@@ -174,6 +174,28 @@ class StaticDashboardServiceTest extends TestCase
         $this->assertSame('dynamic', $service->renderWidget($widget));
     }
 
+    public function testIsPrintableFollowsTheWidget(): void
+    {
+        $service = new StaticDashboardService($this->createProvider([]));
+        $notPrintable = new class extends AbstractWidget {
+            public function isStaticPrintable(): bool
+            {
+                return false;
+            }
+        };
+
+        $this->assertTrue($service->isPrintable(new class extends AbstractWidget {
+        }));
+        $this->assertFalse($service->isPrintable($notPrintable));
+    }
+
+    public function testIsPrintableForAPlainWidgetType(): void
+    {
+        $service = new StaticDashboardService($this->createProvider([]));
+
+        $this->assertTrue($service->isPrintable($this->createMock(WidgetTypeInterface::class)));
+    }
+
     private function createWidget(bool $granted): WidgetTypeInterface
     {
         $widget = $this->createMock(WidgetTypeInterface::class);

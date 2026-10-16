@@ -33,6 +33,8 @@ services:
             # optional: the alias only exists when lle_dashboard.static_widget_provider is configured
             - '@?Lle\DashboardBundle\Contracts\StaticWidgetProviderInterface'
 
+    Lle\DashboardBundle\Service\StaticWidgetConfigService: ~
+
     Lle\DashboardBundle\Service\WidgetCompacterService:
         arguments:
             - '@doctrine.orm.entity_manager'

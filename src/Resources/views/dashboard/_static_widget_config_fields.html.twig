@@ -1,0 +1,18 @@
+{# Bootstrap cannot float the label of a checkbox, a radio or a compound field #}
+{% for field in form %}
+    {% if field.vars.name == '_token' %}
+        {# rendered by form_end #}
+    {% elseif field.vars.compound or 'checkbox' in field.vars.block_prefixes or 'radio' in field.vars.block_prefixes %}
+        <div class="mb-3">
+            {{ form_row(field) }}
+        </div>
+    {% else %}
+        <div class="form-floating mb-3">
+            {# an empty placeholder is what lets Bootstrap float the label of a filled text input #}
+            {{ form_widget(field, {attr: {placeholder: ''}|merge(field.vars.attr)}) }}
+            {{ form_label(field) }}
+            {{ form_help(field) }}
+            {{ form_errors(field) }}
+        </div>
+    {% endif %}
+{% endfor %}

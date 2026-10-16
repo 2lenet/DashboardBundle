@@ -13,6 +13,7 @@ This bundle provides a dashboard with customizable widgets.
   * [Setup](#setup)
   * [Widget visibility](#widget-visibility)
   * [Tabs](#tabs)
+  * [Per-user widget configuration](#per-user-widget-configuration)
 * [Understand the data structure](#understand-the-data-structure)
 
 # Installation
@@ -310,7 +311,7 @@ A full example with a table KPI and KPI Value to graph arbitrary datas:
 
 # Static dashboard
 
-The bundle provides a static dashboard mode that displays a fixed list of widgets without any database storage or user customization (no drag, no add/remove, no per-user config).
+The bundle provides a static dashboard mode that displays a fixed list of widgets, without any user customization of the layout (no drag, no add/remove). A widget can still let each user [configure its data](#per-user-widget-configuration), typically to filter it.
 The list of widgets to render is supplied by a service that the application must implement, and can be displayed on a single screen or [split into tabs](#tabs).
 
 ## Setup
@@ -558,6 +559,138 @@ A few things worth noting:
   zero-width container.
 - The tab bar is plain Bootstrap 5 markup (`nav-tabs` + `tab-content`) driven by the bundle's own javascript: there is
   nothing else to load, and the widget templates need no change.
+
+## Per-user widget configuration
+
+A static widget can let each user configure — typically filter — the data it displays. The widget, its place and its
+size stay the same for everyone: only the values each user submits through the widget's config form are stored, one
+row per user and per widget key.
+
+### 1. Declare the config form in the widget
+
+```php
+use Lle\DashboardBundle\Widgets\AbstractWidget;
+
+class ProjectExposureWidget extends AbstractWidget
+{
+    public function getConfigFormType(): ?string
+    {
+        return ProjectExposureWidgetType::class;
+    }
+
+    public function render(): string
+    {
+        return $this->twig('dashboard/widget/project_exposure.html.twig', [
+            // typed values: the form turns the stored ids back into entities
+            // (a Doctrine Collection for a multiple EntityType, null while the user has no config)
+            'rows' => $this->service->getRows($this->getConfig('projets')),
+        ]);
+    }
+}
+```
+
+```php
+class ProjectExposureWidgetType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('projets', EntityType::class, [
+            'class' => Projet::class,
+            'multiple' => true,
+            'required' => false,
+        ]);
+    }
+}
+```
+
+- The form **must not declare a `data_class`**: its data, an array, is merged over the config the provider may have set
+  with `setConfig()`, and each field is read back with `$this->getConfig('field_name')`.
+- `getConfigFormOptions()` returns the options passed to the form, if it needs any.
+- Nothing to change in the widget template: the bundle renders the config button and its panel over the top right
+  corner of the widget's card, outside of the widget's own markup. The button is highlighted while the user has a
+  config of their own.
+- The fields get a Bootstrap floating label each, the layout of Crudit's forms (checkboxes, radios and compound
+  fields are rendered as plain rows). To lay them out differently, override
+  `templates/bundles/LleDashboardBundle/dashboard/_static_widget_config_fields.html.twig`, which receives the `form`.
+
+### 2. Create the table
+
+The configs are stored in a `lle_dashboard_static_widget_config` table, mapped by the bundle (`StaticWidgetConfig`
+entity). Generate the migration in your application:
+
+```bash
+bin/console doctrine:migrations:diff
+```
+
+> :warning: **Upgrading an application that already uses the standard dashboard**: the widgets table is now prefixed
+> like every 2LE bundle's tables, `widgets` became `lle_dashboard_widget`. `doctrine:migrations:diff` sees a dropped
+> table and a new one — **do not keep that DROP/CREATE**, it deletes every user's dashboard. Rename the table instead:
+>
+> ```php
+> $this->addSql('RENAME TABLE widgets TO lle_dashboard_widget');
+> ```
+
+### How it works
+
+- **Stored as posted, typed when read.** The submitted values are stored as the browser sent them (ids, strings), the
+  CSRF token excepted, then submitted again to the same form whenever the widget is rendered: the form turns them back
+  into entities, integers, dates... A stored config that is no longer valid — an entity deleted since, a choice
+  removed from the form — is ignored, the widget falls back to its default config, and the user can reset it.
+- **Per user.** A config belongs to the authenticated user (`UserInterface::getUserIdentifier()`). Without an
+  authenticated user, no config form is offered.
+- **The shared widget service is never modified.** Static widgets are services shared by every user — and, under a
+  persistent worker such as FrankenPHP, by every request: the user's config is always applied to a copy.
+- **Ajax, no page reload.** Saving (`static_widget_save_config`) and resetting (`static_widget_reset_config`) both
+  answer with the widget rendered again, which replaces the previous one: the current tab is kept. An invalid
+  submission answers **422** with the form errors displayed. Both routes are `POST` only, CSRF protected, and apply the
+  same role check as `render_static_widget` (**404** for an unknown or not configurable widget, **403** for a widget
+  the user is not granted).
+
+- **Enhancing the form fields.** The widget markup is injected by ajax, after the page has loaded: javascript that
+  only runs on page load (TomSelect, tooltips...) does not reach it. The bundle dispatches a
+  `lle-dashboard:widget-rendered` event, which bubbles, on the widget container every time a widget is rendered —
+  including after a config is saved or reset:
+
+  ```js
+  document.addEventListener("lle-dashboard:widget-rendered", (event) => {
+      event.target.querySelectorAll("select.choice-tom-select:not(.tomselected)")
+          .forEach((select) => new TomSelect(select, { plugins: ["remove_button"] }));
+  });
+  ```
+
+> The config form is only available on the static dashboard. On the standard dashboard, a widget keeps passing its
+> own `config_form` to its template, see [Widget configuration](#widget-configuration).
+
+## Printing a widget
+
+Every static widget gets a print button, next to its config button, rendered by the bundle outside of the widget's
+template. It opens `print_static_widget` (`/dashboard/print_static_widget/{staticIndex}`) in a new tab: the widget
+alone, with the **config of the current user applied** — what the user sees on the dashboard is what gets printed —
+and the browser's print dialog opens once the page is loaded. The route applies the same role check as
+`render_static_widget`.
+
+The page extends your `base.html.twig`, without its navigation (`body` block), so the widget keeps the application's
+styles. `getCssTagsForPrint()` / `getJsTagsForPrint()` add Encore entries to it, as on the standard dashboard.
+
+A widget sized for the dashboard grid (fixed height, scroll box, collapsed rows...) usually needs a few print rules:
+the widget is wrapped in `.lle-dashboard-print`, so scope them under it in your own stylesheet:
+
+```scss
+.lle-dashboard-print .my-scroll-box {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+}
+```
+
+To remove the print button of a widget:
+
+```php
+public function isStaticPrintable(): bool
+{
+    return false;
+}
+```
 
 # Understand the data structure
 

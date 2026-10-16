@@ -3,6 +3,7 @@
  * provider declares some (see StaticTabProviderInterface).
  */
 const TAB_HASH_PREFIX = "tab-";
+const WIDGET_RENDERED_EVENT = "lle-dashboard:widget-rendered";
 
 let onLoad = (callback) => {
     if (document.readyState !== "loading") {
@@ -19,6 +20,25 @@ let onLoad = (callback) => {
 let toggleError = (container, hasFailed) => {
     container.querySelector("[data-widget-spinner]")?.toggleAttribute("hidden", hasFailed);
     container.querySelector("[data-widget-error]")?.toggleAttribute("hidden", !hasFailed);
+}
+
+let injectWidget = (container, html) => {
+    container.innerHTML = html;
+
+    // Scripts injected through innerHTML are inert: recreate them so they run
+    for (const oldScript of container.querySelectorAll("script")) {
+        const newScript = document.createElement("script");
+        for (const attribute of oldScript.attributes) {
+            newScript.setAttribute(attribute.name, attribute.value);
+        }
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    }
+
+    container.dispatchEvent(new CustomEvent(WIDGET_RENDERED_EVENT, {
+        bubbles: true,
+        detail: { widgetIndex: container.dataset.widgetIndex },
+    }));
 }
 
 let loadWidget = (container) => {
@@ -40,19 +60,7 @@ let loadWidget = (container) => {
 
             return response.text();
         })
-        .then((html) => {
-            container.innerHTML = html;
-
-            // Scripts injected through innerHTML are inert: recreate them so they run
-            for (const oldScript of container.querySelectorAll("script")) {
-                const newScript = document.createElement("script");
-                for (const attribute of oldScript.attributes) {
-                    newScript.setAttribute(attribute.name, attribute.value);
-                }
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            }
-        })
+        .then((html) => injectWidget(container, html))
         .catch((error) => {
             console.error(`Static dashboard: widget "${container.dataset.widgetIndex}" could not be loaded.`, error);
 
@@ -100,6 +108,57 @@ let requestedTabKey = () => {
 
     return document.querySelector(`[data-static-tab-pane="${CSS.escape(tabKey)}"]`) ? tabKey : null;
 }
+
+let toggleConfigPanel = (toggle) => {
+    const panel = toggle.closest(".static-widget-container")?.querySelector("[data-static-widget-config-panel]");
+    if (!panel) {
+        return;
+    }
+
+    const isOpen = panel.hasAttribute("hidden");
+    panel.toggleAttribute("hidden", !isOpen);
+    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+}
+
+let submitConfigForm = (form) => {
+    const container = form.closest(".static-widget-container");
+    const buttons = form.querySelectorAll("button[type=submit]");
+    buttons.forEach((button) => button.disabled = true);
+
+    fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+    })
+        .then((response) => {
+            if (!response.ok && response.status !== 422) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`.trim());
+            }
+
+            return response.text();
+        })
+        .then((html) => injectWidget(container, html))
+        .catch((error) => {
+            console.error(`Static dashboard: the config of widget "${container.dataset.widgetIndex}" could not be saved.`, error);
+            buttons.forEach((button) => button.disabled = false);
+        });
+}
+
+// Delegated: the widget markup is replaced after every submission
+document.addEventListener("click", (event) => {
+    const toggle = event.target.closest("[data-static-widget-config-toggle]");
+    if (toggle) {
+        toggleConfigPanel(toggle);
+    }
+});
+
+document.addEventListener("submit", (event) => {
+    const form = event.target.closest("form[data-static-widget-form]");
+    if (form && form.closest(".static-widget-container")) {
+        event.preventDefault();
+        submitConfigForm(form);
+    }
+});
 
 onLoad(() => {
     const tabs = document.querySelectorAll("[data-static-tab]");

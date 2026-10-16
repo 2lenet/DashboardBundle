@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Lle\DashboardBundle\Contracts\WidgetTypeInterface;
 use Lle\DashboardBundle\Repository\WidgetRepository;
 
-#[ORM\Table(name: 'widgets')]
+#[ORM\Table(name: 'lle_dashboard_widget')]
 #[ORM\Entity(repositoryClass: WidgetRepository::class)]
 class Widget
 {

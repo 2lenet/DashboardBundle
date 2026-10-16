@@ -1,0 +1,32 @@
+{% set isConfigOpen = form and form.vars.submitted and not form.vars.valid %}
+{% if printable or form %}
+    <div class="static-widget-actions">
+        {% if printable %}
+            <a
+                href="{{ path('print_static_widget', {staticIndex: staticIndex}) }}"
+                class="btn btn-sm btn-link text-secondary"
+                title="{{ 'widget.print'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.title|default(widget.name|trans) ~ '"' }}"
+                target="_blank"
+                rel="noopener"
+                data-static-widget-print
+            >
+                <i class="fa fa-print"></i>
+            </a>
+        {% endif %}
+        {% if form %}
+            <button
+                type="button"
+                class="btn btn-sm btn-link static-widget-config-toggle {{ customized ? 'text-primary' : 'text-secondary' }}"
+                title="{{ 'widget.configWidget'|trans(domain='LleDashboardBundle') ~ ' "' ~ widget.title|default(widget.name|trans) ~ '"' }}"
+                aria-expanded="{{ isConfigOpen ? 'true' : 'false' }}"
+                data-static-widget-config-toggle
+            >
+                <i class="fa fa-cog"></i>
+            </button>
+        {% endif %}
+    </div>
+{% endif %}
+{% if form %}
+    {{ include('@LleDashboard/dashboard/_static_widget_config.html.twig', {isOpen: isConfigOpen}) }}
+{% endif %}
+{{ content|raw }}
