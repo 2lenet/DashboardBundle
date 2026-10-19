@@ -86,25 +86,25 @@ class WidgetProvider
      */
     public function setDefaultWidgetsForUser(int $userId): void
     {
-        if ($userId) {
-            $sql = "
-                INSERT INTO widgets
-                SELECT
-                    NULL AS id,
-                    x,
-                    y,
-                    width,
-                    height,
-                    type,
-                    " . $userId . " AS user_id,
-                    NULL AS config,
-                    NULL AS title
-                FROM widgets
-                WHERE user_id IS NULL
-            ";
-
-            $stmt = $this->em->getConnection()->prepare($sql);
-            $stmt->executeQuery();
+        if (!$userId) {
+            return;
         }
+
+        /** @var Widget[] $defaultWidgets */
+        $defaultWidgets = $this->em->getRepository(Widget::class)->findBy(['userId' => null]);
+
+        foreach ($defaultWidgets as $defaultWidget) {
+            $this->em->persist(
+                (new Widget())
+                    ->setX($defaultWidget->getX())
+                    ->setY($defaultWidget->getY())
+                    ->setWidth($defaultWidget->getWidth())
+                    ->setHeight($defaultWidget->getHeight())
+                    ->setType($defaultWidget->getType())
+                    ->setUserId($userId)
+            );
+        }
+
+        $this->em->flush();
     }
 }
